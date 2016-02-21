@@ -90,7 +90,8 @@ public class Game extends Application
 
     light.setTranslateX(CAMERA_INITIAL_X_ANGLE);
     light.setTranslateY(CAMERA_INITIAL_Y_ANGLE);
-    cameraXform.getChildren().add(lightXform);//add light to camera so they move together
+    cameraXform.getChildren().add(lightXform);// add light to camera so they
+                                              // move together
     lightGroup.getChildren().add(light);
 
   }
@@ -179,13 +180,12 @@ public class Game extends Application
         {
           lightXform.ry.setAngle(lightXform.ry.getAngle() - mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED);
           cameraXform.ry.setAngle(cameraXform.ry.getAngle() - mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED);
-          
-          if(cameraXform.ry.getAngle()>360 || cameraXform.ry.getAngle()<-360 )
+
+          if (cameraXform.ry.getAngle() > 360 || cameraXform.ry.getAngle() < -360)
           {
             cameraXform.ry.setAngle(0);
           }
-          
-          
+
           System.out.println(cameraXform.ry.getAngle() + " " + Math.cos(cameraXform.ry.getAngle()) + " "
               + Math.sin(cameraXform.ry.getAngle()));
           // mapXform.setRotateY(mapXform.ry.getAngle() - mouseDeltaX *
@@ -292,11 +292,11 @@ public class Game extends Application
 
     public void handle(long now)
     {
-      /* for moving the world instead of the camera */
-       if (back) mapXform.setTranslateZ(mapXform.getTranslateZ() + speed);
-       if (front) mapXform.setTranslateZ(mapXform.getTranslateZ() - speed);
-       if (right) mapXform.setTranslateX(mapXform.getTranslateX() + speed);
-       if (left) mapXform.setTranslateX(mapXform.getTranslateX() - speed);
+      /* Moves the camer around the world */
+      if (back) cameraXform.setTranslateZ(cameraXform.getTranslateZ() - speed);
+      if (front) cameraXform.setTranslateZ(cameraXform.getTranslateZ() + speed);
+      if (right) cameraXform.setTranslateX(cameraXform.getTranslateX() - speed);
+      if (left) cameraXform.setTranslateX(cameraXform.getTranslateX() + speed);
 
     }
   }
