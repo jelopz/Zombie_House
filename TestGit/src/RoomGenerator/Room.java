@@ -10,6 +10,8 @@ public class Room {
 	private int height;
 	private int centerX;
 	private int centerY;
+	
+	private boolean isConnected;
 
 	public Room(int x, int y, int w, int h) {
 		startX = x;
@@ -18,6 +20,8 @@ public class Room {
 		height = h;
 		endX = x + h;
 		endY = y + h;
+		
+		isConnected = false;
 
 		centerX = (startX + endX) / 2;
 		centerY = (startY + endY) / 2;
