@@ -172,7 +172,7 @@ public class RoomGenerator {
 		}
 	}
 
-	private char[][] getMap() {
+	public char[][] getMap() {
 		return house;
 	}
 
