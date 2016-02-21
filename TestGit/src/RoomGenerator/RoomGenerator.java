@@ -5,10 +5,13 @@
  * Call RoomGenerator(width,height) to denote the width and height of the map
  * in tiles. Then, call RoomGenerator.getMap() to return the char[][] house map when done.
  * 
- * Currently the halls are being placed incorrectly. Program is liable to crash
- * If the mapWidth and mapHeight coordinates aren't large enough. 40x40 seems to be
- * large enough to not crash for now. Also, generator
- * only makes 5 rooms. These things will be changed as we progress in the project
+ * Currently the halls are working better than previous version. Program isn't liable
+ * to crash anymore (as far as I can tell). 20x20 is probably the smallest map to go with,
+ * though.
+ * 
+ * Rooms are not guaranteed to be connecting.
+ * 
+ * Still only makes 5 rooms. Subject to change.
  */
 
 package RoomGenerator;
@@ -115,10 +118,10 @@ public class RoomGenerator {
 			found = false;
 		}
 	}
-	
+
 	/*
-	 * If the hall is vertical, traverse only through the y positions to add path.
-	 * Else, traverse only through the x positions for horizontal path.
+	 * If the hall is vertical, traverse only through the y positions to add
+	 * path. Else, traverse only through the x positions for horizontal path.
 	 */
 
 	private void addHallToMap(Hall hall) {
@@ -179,11 +182,11 @@ public class RoomGenerator {
 		}
 	}
 
-//	private void printHalls() {
-//		for (int i = 0; i < halls.length; i++) {
-//			halls[i].printCoordinates();
-//		}
-//	}
+	// private void printHalls() {
+	// for (int i = 0; i < halls.length; i++) {
+	// halls[i].printCoordinates();
+	// }
+	// }
 
 	public char[][] getMap() {
 		return house;
@@ -199,6 +202,6 @@ public class RoomGenerator {
 	}
 
 	public static void main(String[] args) {
-		RoomGenerator rg = new RoomGenerator(40, 40);
+		RoomGenerator rg = new RoomGenerator(20, 20);
 	}
 }
