@@ -179,11 +179,11 @@ public class RoomGenerator {
 		}
 	}
 
-	private void printHalls() {
-		for (int i = 0; i < halls.length; i++) {
-			halls[i].printCoordinates();
-		}
-	}
+//	private void printHalls() {
+//		for (int i = 0; i < halls.length; i++) {
+//			halls[i].printCoordinates();
+//		}
+//	}
 
 	public char[][] getMap() {
 		return house;
