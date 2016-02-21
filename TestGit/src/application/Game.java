@@ -262,7 +262,7 @@ public class Game extends Application
     handleMouse(scene, world);
     handleKeyboard(scene, world);
 
-    primaryStage.setTitle("Test Application");
+    primaryStage.setTitle("Application");
     primaryStage.setScene(scene);
     primaryStage.show();
 
