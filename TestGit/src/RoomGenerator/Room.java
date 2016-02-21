@@ -68,5 +68,10 @@ public class Room {
 	public int getCenterY() {
 		return centerY;
 	}
-
+	public boolean isConnected(){
+		return isConnected;
+	}
+	public void setIsConnected(boolean b){
+		isConnected = b;
+	}
 }
