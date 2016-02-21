@@ -71,7 +71,7 @@ public class RoomGenerator {
 	private void makeHalls() {
 		Room targetRoom;
 		boolean found = false;
-		
+
 		int startX = 0;
 		int startY = 0;
 		int targetX = 0;
@@ -95,11 +95,16 @@ public class RoomGenerator {
 					// each hall from one room to the other consists of two
 					// halls,
 					// a vertical one and a horizontal one.
-					halls[hallCounter] = new Hall(startX, startY, targetX, targetY, true);
+					halls[hallCounter] = new Hall(startX, startY, targetX, targetY, true); // makes
+																							// vertical
+																							// hall
 					addHallToMap(halls[hallCounter]);
 					hallCounter++;
-					halls[hallCounter] = new Hall(halls[hallCounter - 1].getEndX(), halls[hallCounter - 1].getEndY(),
-							targetX, targetY, false);
+					halls[hallCounter] = halls[hallCounter - 1].getNeighbor(); // adds
+																				// the
+																				// neighboring
+																				// horizontal
+																				// hall
 					addHallToMap(halls[hallCounter]);
 					hallCounter++;
 
