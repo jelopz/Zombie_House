@@ -90,9 +90,8 @@ public class Game extends Application
 
     light.setTranslateX(CAMERA_INITIAL_X_ANGLE);
     light.setTranslateY(CAMERA_INITIAL_Y_ANGLE);
-    cameraXform.getChildren().add(lightXform);
+    cameraXform.getChildren().add(lightXform);//add light to camera so they move together
     lightGroup.getChildren().add(light);
-    // root.getChildren().add(lightGroup);
 
   }
 
@@ -180,10 +179,19 @@ public class Game extends Application
         {
           lightXform.ry.setAngle(lightXform.ry.getAngle() - mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED);
           cameraXform.ry.setAngle(cameraXform.ry.getAngle() - mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED);
-          System.out.println(cameraXform.ry.getAngle() + "  " + Math.cos(cameraXform.ry.getAngle()) + "   "
+          
+          if(cameraXform.ry.getAngle()>360 || cameraXform.ry.getAngle()<-360 )
+          {
+            cameraXform.ry.setAngle(0);
+          }
+          
+          
+          System.out.println(cameraXform.ry.getAngle() + " " + Math.cos(cameraXform.ry.getAngle()) + " "
               + Math.sin(cameraXform.ry.getAngle()));
+          // mapXform.setRotateY(mapXform.ry.getAngle() - mouseDeltaX *
+          // MOUSE_SPEED * modifier * ROTATION_SPEED);
         }
-        else if (me.isSecondaryButtonDown())
+        else if (me.isSecondaryButtonDown())// ignore done by wsad buttons
         {
 
           double cos = Math.cos(cameraXform.ry.getAngle());
@@ -199,7 +207,7 @@ public class Game extends Application
           mapXform.setTranslateX(newX);
 
         }
-        else if (me.isMiddleButtonDown())
+        else if (me.isMiddleButtonDown())// ignore, not needed
         {
           lightXform2.t.setX(lightXform2.t.getX() + mouseDeltaX * MOUSE_SPEED * modifier * TRACK_SPEED);
           lightXform2.t.setY(lightXform2.t.getY() + mouseDeltaY * MOUSE_SPEED * modifier * TRACK_SPEED);
@@ -224,6 +232,14 @@ public class Game extends Application
         if (s.equals("s")) back = true;
         if (s.equals("a")) left = true;
         if (s.equals("d")) right = true;
+        if (s.equals("p"))// print put sin and cos of angle
+        {
+          double cos = Math.cos(cameraXform.ry.getAngle());
+          double sin = Math.sin(cameraXform.ry.getAngle());
+          System.out.println("sin = " + sin);
+          System.out.println("cos = " + cos);
+          System.out.println();
+        }
       }
     });
     scene.setOnKeyReleased(new EventHandler<KeyEvent>()
@@ -250,8 +266,8 @@ public class Game extends Application
     // array{}{} = clas(120,150)
 
     buildCamera();
-    drawMap();
     buildLight();
+    drawMap();
 
     Scene scene = new Scene(root, windowX, windowY, true);
     Stop[] stops = new Stop[] { new Stop(0, Color.RED), new Stop(1, Color.ORANGE) };
@@ -262,7 +278,7 @@ public class Game extends Application
     handleMouse(scene, world);
     handleKeyboard(scene, world);
 
-    primaryStage.setTitle("Test Application");
+    primaryStage.setTitle("Application");
     primaryStage.setScene(scene);
     primaryStage.show();
 
@@ -274,31 +290,14 @@ public class Game extends Application
   class MainGameLoop extends AnimationTimer
   {
 
-    // currently moves the light back and forth along z axis//
     public void handle(long now)
     {
-      if (back) mapXform.setTranslateZ(mapXform.getTranslateZ() + speed);
-      if (front) mapXform.setTranslateZ(mapXform.getTranslateZ() - speed);
-      if (right) mapXform.setTranslateX(mapXform.getTranslateX() + speed);
-      if (left) mapXform.setTranslateX(mapXform.getTranslateX() - speed);
+      /* for moving the world instead of the camera */
+       if (back) mapXform.setTranslateZ(mapXform.getTranslateZ() + speed);
+       if (front) mapXform.setTranslateZ(mapXform.getTranslateZ() - speed);
+       if (right) mapXform.setTranslateX(mapXform.getTranslateX() + speed);
+       if (left) mapXform.setTranslateX(mapXform.getTranslateX() - speed);
 
-      // double z = light.getTranslateZ();
-      // if (z == 100) forward = false;
-      // if (z == -100) forward = true;
-      // //
-      // if (forward)
-      // {
-      // z++;
-      // // camera.setTranslateZ(z);
-      // light.setTranslateZ(z);
-      // System.out.println(z);
-      // }
-      // else
-      // {
-      // z--;
-      // light.setTranslateZ(z);
-      // // camera.setTranslateZ(z);
-      // }
     }
   }
 
