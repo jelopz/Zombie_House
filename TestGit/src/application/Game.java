@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.PointLight;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -22,7 +23,7 @@ import javafx.stage.Stage;
 public class Game extends Application
 {
   double scaleVal = 1;
-  final double TILE_SIZE = 10; //number of subdivisions in tile
+  final double TILE_SIZE = 10; // number of subdivisions in tile
   final Group root = new Group();
   final Xform world = new Xform();
   final PerspectiveCamera camera = new PerspectiveCamera(true);
@@ -34,15 +35,20 @@ public class Game extends Application
   final Xform lightXform = new Xform();
   final Xform lightXform2 = new Xform();
   final Xform lightXform3 = new Xform();
-
   final Group lightGroup = new Group();
 
-  private boolean forward = true;
+  Xform mapXform = new Xform();
+
   private double windowX = 1024;
   private double windowY = 768;
+  private boolean front = false;
+  private boolean back = false;
+  private boolean left = false;
+  private boolean right = false;
+  private double speed = 1;
   private static final double WALL_HEIGHT = 16;
-  private static final double CAMERA_INITIAL_DISTANCE = -450;
-  private static final double CAMERA_INITIAL_X_ANGLE = 90;
+  private static final double CAMERA_INITIAL_DISTANCE = 0;
+  private static final double CAMERA_INITIAL_X_ANGLE = 0;
   private static final double CAMERA_INITIAL_Y_ANGLE = 0;
   private static final double CAMERA_NEAR_CLIP = 0.1;
   private static final double CAMERA_FAR_CLIP = 10000.0;
@@ -72,6 +78,7 @@ public class Game extends Application
     camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
     cameraXform.ry.setAngle(CAMERA_INITIAL_Y_ANGLE);
     cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+    cameraXform.setTranslateY(WALL_HEIGHT / 2);
   }
 
   private void buildLight()
@@ -83,28 +90,29 @@ public class Game extends Application
 
     light.setTranslateX(CAMERA_INITIAL_X_ANGLE);
     light.setTranslateY(CAMERA_INITIAL_Y_ANGLE);
+    cameraXform.getChildren().add(lightXform);
     lightGroup.getChildren().add(light);
-    root.getChildren().add(lightGroup);
+    // root.getChildren().add(lightGroup);
 
   }
 
   private void drawMap()
   {
-    //Material for floors and ceilings//
+    // Material for floors and ceilings//
     PhongMaterial pathable = new PhongMaterial();
     pathable.setDiffuseColor(Color.DARKGREEN);
     pathable.setSpecularColor(Color.ORANGE);
 
-    //material for walls (this and one above may need to be the same, check ruberic//
+    // material for walls (this and one above may need to be the same, check
+    // ruberic//
     PhongMaterial notPathable = new PhongMaterial();
     notPathable.setDiffuseColor(Color.LIGHTGREEN);
     notPathable.setSpecularColor(Color.ORANGE);
 
-    Xform mapXform = new Xform();
     Xform tileXform = new Xform();
     mapXform.getChildren().add(tileXform);
-    
-  //loops through a 2d array, generates rectangles of wall and floor tiles//
+
+    // loops through a 2d array, generates rectangles of wall and floor tiles//
     for (int i = 0; i < 10; i++)
     {
       for (int j = 0; j < 10; j++)
@@ -114,12 +122,12 @@ public class Game extends Application
         tile.setDrawMode(DrawMode.FILL);
         tile.setTranslateX(i * TILE_SIZE);
         tile.setTranslateZ(j * TILE_SIZE);
-        if (i % 2 == 0)//make a floot tile//
+        if (i % 2 == 0)// make a floot tile//
         {
           tile.setTranslateY(0.5);
           tile.setMaterial(pathable);
         }
-        else//make a wall tile//
+        else// make a wall tile//
         {
           tile.setScaleY(WALL_HEIGHT);
           tile.setTranslateY(WALL_HEIGHT / 2);
@@ -171,15 +179,25 @@ public class Game extends Application
         if (me.isPrimaryButtonDown())
         {
           lightXform.ry.setAngle(lightXform.ry.getAngle() - mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED);
-          lightXform.rx.setAngle(lightXform.rx.getAngle() + mouseDeltaY * MOUSE_SPEED * modifier * ROTATION_SPEED);
           cameraXform.ry.setAngle(cameraXform.ry.getAngle() - mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED);
-          cameraXform.rx.setAngle(cameraXform.rx.getAngle() + mouseDeltaY * MOUSE_SPEED * modifier * ROTATION_SPEED);
+          System.out.println(cameraXform.ry.getAngle() + "  " + Math.cos(cameraXform.ry.getAngle()) + "   "
+              + Math.sin(cameraXform.ry.getAngle()));
         }
         else if (me.isSecondaryButtonDown())
         {
-          double z = camera.getTranslateZ();
-          double newZ = z + mouseDeltaX * MOUSE_SPEED * modifier;
-          camera.setTranslateZ(newZ);
+
+          double cos = Math.cos(cameraXform.ry.getAngle());
+          double sin = Math.sin(cameraXform.ry.getAngle());
+          double z = mapXform.getTranslateZ();
+          double newZ = z + mouseDeltaX * MOUSE_SPEED * modifier * sin;
+
+          double x = mapXform.getTranslateX();
+          double newX = x + mouseDeltaX * MOUSE_SPEED * modifier * cos;
+
+          System.out.println(Math.abs(cos) + Math.abs(sin));
+          mapXform.setTranslateZ(newZ);
+          mapXform.setTranslateX(newX);
+
         }
         else if (me.isMiddleButtonDown())
         {
@@ -187,8 +205,38 @@ public class Game extends Application
           lightXform2.t.setY(lightXform2.t.getY() + mouseDeltaY * MOUSE_SPEED * modifier * TRACK_SPEED);
           cameraXform2.t.setX(cameraXform2.t.getX() + mouseDeltaX * MOUSE_SPEED * modifier * TRACK_SPEED);
           cameraXform2.t.setY(cameraXform2.t.getY() + mouseDeltaY * MOUSE_SPEED * modifier * TRACK_SPEED);
-          System.out.println(cameraXform2.getTranslateY());
+
         }
+      }
+    });
+  }
+
+  private void handleKeyboard(Scene scene, final Node root)
+  {
+    scene.setOnKeyPressed(new EventHandler<KeyEvent>()
+    {
+      @Override
+      public void handle(KeyEvent event)
+      {
+        String s = event.getText();
+        System.out.println(s);
+        if (s.equals("w")) front = true;
+        if (s.equals("s")) back = true;
+        if (s.equals("a")) left = true;
+        if (s.equals("d")) right = true;
+      }
+    });
+    scene.setOnKeyReleased(new EventHandler<KeyEvent>()
+    {
+      @Override
+      public void handle(KeyEvent event)
+      {
+        String s = event.getText();
+        if (s.equals("w")) front = false;
+        if (s.equals("s")) back = false;
+        if (s.equals("a")) left = false;
+        if (s.equals("d")) right = false;
+
       }
     });
   }
@@ -212,6 +260,7 @@ public class Game extends Application
     scene.setCamera(camera);
 
     handleMouse(scene, world);
+    handleKeyboard(scene, world);
 
     primaryStage.setTitle("Test Application");
     primaryStage.setScene(scene);
@@ -225,27 +274,31 @@ public class Game extends Application
   class MainGameLoop extends AnimationTimer
   {
 
-    //currently moves the light back and forth along z axis//
+    // currently moves the light back and forth along z axis//
     public void handle(long now)
     {
+      if (back) mapXform.setTranslateZ(mapXform.getTranslateZ() + speed);
+      if (front) mapXform.setTranslateZ(mapXform.getTranslateZ() - speed);
+      if (right) mapXform.setTranslateX(mapXform.getTranslateX() + speed);
+      if (left) mapXform.setTranslateX(mapXform.getTranslateX() - speed);
 
-      double z = light.getTranslateZ();
-      if (z == 100) forward = false;
-      if (z == -100) forward = true;
-      //
-      if (forward)
-      {
-        z++;
-        // camera.setTranslateZ(z);
-        light.setTranslateZ(z);
-        System.out.println(z);
-      }
-      else
-      {
-        z--;
-        light.setTranslateZ(z);
-        // camera.setTranslateZ(z);
-      }
+      // double z = light.getTranslateZ();
+      // if (z == 100) forward = false;
+      // if (z == -100) forward = true;
+      // //
+      // if (forward)
+      // {
+      // z++;
+      // // camera.setTranslateZ(z);
+      // light.setTranslateZ(z);
+      // System.out.println(z);
+      // }
+      // else
+      // {
+      // z--;
+      // light.setTranslateZ(z);
+      // // camera.setTranslateZ(z);
+      // }
     }
   }
 
