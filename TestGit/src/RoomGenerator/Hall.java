@@ -46,13 +46,9 @@ public class Hall {
 		}
 	}
 
-	// public void printCoordinates() {
-	// System.out.println(
-	// "startX: " + startX + " startY: " + startY + " endX: " + endX + " endY: "
-	// + endY);
-	// System.out.println("WIDTH: " + (startX - endX) + " HEIGHT : " + (startY -
-	// endY));
-	// }
+	public void printCoordinates() {
+		System.out.println("startX: " + startX + " startY: " + startY + " endX: " + endX + " endY: " + endY);
+	}
 
 	public int getStartY() {
 		return startY;
@@ -73,8 +69,8 @@ public class Hall {
 	public int getEndY() {
 		return endY;
 	}
-	
-	public Hall getNeighbor(){
+
+	public Hall getNeighbor() {
 		return connectingHall;
 	}
 }
