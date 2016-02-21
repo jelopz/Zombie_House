@@ -59,7 +59,7 @@ public class RoomGenerator {
 	private void cleanMap() {
 		for (int i = 0; i < mapHeight; i++) {
 			for (int j = 0; j < mapWidth; j++) {
-				house[i][j] = '-';
+				house[i][j] = 'X';
 			}
 		}
 	}
