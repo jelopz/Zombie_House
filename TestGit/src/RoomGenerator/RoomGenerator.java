@@ -47,17 +47,19 @@ public class RoomGenerator {
 		rand = new Random();
 		cleanMap();
 		makeRooms();
-		// printRooms();
+		printRooms();
 		makeHalls();
 		// printRooms();
-		// printHalls();
+		printHalls();
+		System.out.println();
+		System.out.println();
 		printMap();
 	}
 
 	private void cleanMap() {
 		for (int i = 0; i < mapHeight; i++) {
 			for (int j = 0; j < mapWidth; j++) {
-				house[i][j] = 'X';
+				house[i][j] = '-';
 			}
 		}
 	}
@@ -85,31 +87,47 @@ public class RoomGenerator {
 			while (!found) {
 				found = true;
 				targetRoom = rooms[rand.nextInt(5)];
-				if (!currentRoom.equals(targetRoom)) {
-					startX = currentRoom.getCenterX();
-					startY = currentRoom.getCenterY();
-					targetX = targetRoom.getCenterX();
-					targetY = targetRoom.getCenterY();
+				if (!(currentRoom.equals(targetRoom))) {
 
-					// make horizontal and vertical hallway
-					// from startXY and endXY
-					// add to halls[hallCounter]
+					// if its the first room in the array
+					if (currentRoom.equals(rooms[0])) {
+						currentRoom.setIsConnected(true);
+						targetRoom.setIsConnected(true);
+					}
 
-					// each hall from one room to the other consists of two
-					// halls,
-					// a vertical one and a horizontal one.
-					halls[hallCounter] = new Hall(startX, startY, targetX, targetY, true); // makes
-																							// vertical
-																							// hall
-					addHallToMap(halls[hallCounter]);
-					hallCounter++;
-					halls[hallCounter] = halls[hallCounter - 1].getNeighbor(); // adds
-																				// the
-																				// neighboring
-																				// horizontal
-																				// hall
-					addHallToMap(halls[hallCounter]);
-					hallCounter++;
+					// if the target room is connected
+					// rooms only make hallways to connected rooms to prevent
+					// unreachable rooms
+					if (targetRoom.isConnected()) {
+						// current room found a valid path and is now connected
+						// to the whole map
+						currentRoom.setIsConnected(true);
+
+						startX = currentRoom.getCenterX();
+						startY = currentRoom.getCenterY();
+						targetX = targetRoom.getCenterX();
+						targetY = targetRoom.getCenterY();
+
+						// make horizontal and vertical hallway
+						// from startXY and endXY
+						// add to halls[hallCounter]
+
+						// each hall from one room to the other consists of two
+						// halls,
+						// a vertical one and a horizontal one.
+
+						// this makes a vertical hall
+						halls[hallCounter] = new Hall(startX, startY, targetX, targetY, true);
+						addHallToMap(halls[hallCounter]);
+						hallCounter++;
+
+						// adds the neighboring horizontal wall
+						halls[hallCounter] = halls[hallCounter - 1].getNeighbor();
+						addHallToMap(halls[hallCounter]);
+						hallCounter++;
+					} else {
+						found = false;
+					}
 
 				} else {
 					found = false;
@@ -126,12 +144,24 @@ public class RoomGenerator {
 
 	private void addHallToMap(Hall hall) {
 		if (hall.isVertical()) {
-			for (int i = hall.getStartY(); i <= hall.getEndY(); i++) {
-				house[i][hall.getStartX()] = 'O';
+			if (hall.getEndY() > hall.getStartY()) {
+				for (int i = hall.getStartY(); i <= hall.getEndY(); i++) {
+					house[i][hall.getStartX()] = 'O';
+				}
+			} else {
+				for (int i = hall.getEndY(); i <= hall.getStartY(); i++) {
+					house[i][hall.getStartX()] = 'O';
+				}
 			}
 		} else {
-			for (int i = hall.getStartX(); i <= hall.getEndX(); i++) {
-				house[hall.getStartY()][i] = 'O';
+			if (hall.getEndX() > hall.getStartY()) {
+				for (int i = hall.getStartX(); i <= hall.getEndX(); i++) {
+					house[hall.getStartY()][i] = 'O';
+				}
+			} else {
+				for (int i = hall.getEndX(); i <= hall.getStartX(); i++) {
+					house[hall.getStartY()][i] = 'O';
+				}
 			}
 		}
 	}
@@ -182,11 +212,11 @@ public class RoomGenerator {
 		}
 	}
 
-	// private void printHalls() {
-	// for (int i = 0; i < halls.length; i++) {
-	// halls[i].printCoordinates();
-	// }
-	// }
+	private void printHalls() {
+		for (int i = 0; i < 10; i++) {
+			halls[i].printCoordinates();
+		}
+	}
 
 	public char[][] getMap() {
 		return house;
