@@ -22,7 +22,7 @@ import javafx.stage.Stage;
 public class Game extends Application
 {
   double scaleVal = 1;
-  final double TILE_SIZE = 10;
+  final double TILE_SIZE = 10; //number of subdivisions in tile
   final Group root = new Group();
   final Xform world = new Xform();
   final PerspectiveCamera camera = new PerspectiveCamera(true);
@@ -90,10 +90,12 @@ public class Game extends Application
 
   private void drawMap()
   {
+    //Material for floors and ceilings//
     PhongMaterial pathable = new PhongMaterial();
     pathable.setDiffuseColor(Color.DARKGREEN);
     pathable.setSpecularColor(Color.ORANGE);
 
+    //material for walls (this and one above may need to be the same, check ruberic//
     PhongMaterial notPathable = new PhongMaterial();
     notPathable.setDiffuseColor(Color.LIGHTGREEN);
     notPathable.setSpecularColor(Color.ORANGE);
@@ -101,6 +103,8 @@ public class Game extends Application
     Xform mapXform = new Xform();
     Xform tileXform = new Xform();
     mapXform.getChildren().add(tileXform);
+    
+  //loops through a 2d array, generates rectangles of wall and floor tiles//
     for (int i = 0; i < 10; i++)
     {
       for (int j = 0; j < 10; j++)
@@ -110,12 +114,12 @@ public class Game extends Application
         tile.setDrawMode(DrawMode.FILL);
         tile.setTranslateX(i * TILE_SIZE);
         tile.setTranslateZ(j * TILE_SIZE);
-        if (i % 2 == 0)
+        if (i % 2 == 0)//make a floot tile//
         {
           tile.setTranslateY(0.5);
           tile.setMaterial(pathable);
         }
-        else
+        else//make a wall tile//
         {
           tile.setScaleY(WALL_HEIGHT);
           tile.setTranslateY(WALL_HEIGHT / 2);
@@ -221,6 +225,7 @@ public class Game extends Application
   class MainGameLoop extends AnimationTimer
   {
 
+    //currently moves the light back and forth along z axis//
     public void handle(long now)
     {
 
