@@ -3,7 +3,7 @@
  * denotes a walkable field and 'X' denotes a wall. 
  * 
  * Call RoomGenerator(width,height) to denote the width and height of the map
- * in tiles. Then, call RoomGenerator.getMap( to return the char[][] house map when done.
+ * in tiles. Then, call RoomGenerator.getMap() to return the char[][] house map when done.
  * 
  * Currently the halls are being placed incorrectly. Program is liable to crash
  * If the mapWidth and mapHeight coordinates aren't large enough. 40x40 seems to be
@@ -18,7 +18,7 @@ import java.util.Random;
 public class RoomGenerator {
 	private final int MIN_ROOM_WIDTH = 4; // arbitrary,
 	private final int MAX_ROOM_WIDTH = 6; // arbitrary, will change once we have
-											// a bad understanding of how big
+											// a better understanding of how big
 											// the map should be
 	private final int MIN_ROOM_HEIGHT = 3;// arbitrary,
 
@@ -71,8 +71,7 @@ public class RoomGenerator {
 	private void makeHalls() {
 		Room targetRoom;
 		boolean found = false;
-		// int side = 0; // 1 = south side, 2 = west, 3 = north, 4 = east
-
+		
 		int startX = 0;
 		int startY = 0;
 		int targetX = 0;
