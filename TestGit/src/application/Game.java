@@ -1,5 +1,6 @@
 package application;
 
+import RoomGenerator.RoomGenerator;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -23,7 +24,7 @@ import javafx.stage.Stage;
 public class Game extends Application
 {
   double scaleVal = 1;
-  final double TILE_SIZE = 10; // number of subdivisions in tile
+  
   final Group root = new Group();
   final Xform world = new Xform();
   final PerspectiveCamera camera = new PerspectiveCamera(true);
@@ -39,6 +40,11 @@ public class Game extends Application
 
   Xform mapXform = new Xform();
 
+  private char[][] tiles;
+  private int mapH = 36;
+  private int mapW = 36;
+  
+  
   private double windowX = 1024;
   private double windowY = 768;
   private boolean front = false;
@@ -46,9 +52,10 @@ public class Game extends Application
   private boolean left = false;
   private boolean right = false;
   private double speed = 1;
+  private static final double TILE_SIZE = 10; // number of subdivisions in tile
   private static final double WALL_HEIGHT = 16;
-  private static final double CAMERA_INITIAL_DISTANCE = 0;
-  private static final double CAMERA_INITIAL_X_ANGLE = 0;
+  private static final double CAMERA_INITIAL_DISTANCE = -1000;
+  private static final double CAMERA_INITIAL_X_ANGLE = 90;
   private static final double CAMERA_INITIAL_Y_ANGLE = 0;
   private static final double CAMERA_NEAR_CLIP = 0.1;
   private static final double CAMERA_FAR_CLIP = 10000.0;
@@ -113,16 +120,16 @@ public class Game extends Application
     mapXform.getChildren().add(tileXform);
 
     // loops through a 2d array, generates rectangles of wall and floor tiles//
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < mapH; i++)
     {
-      for (int j = 0; j < 10; j++)
+      for (int j = 0; j < mapW; j++)
       {
 
         Box tile = new Box(TILE_SIZE, 1, TILE_SIZE);
         tile.setDrawMode(DrawMode.FILL);
         tile.setTranslateX(i * TILE_SIZE);
         tile.setTranslateZ(j * TILE_SIZE);
-        if (i % 2 == 0)// make a floot tile//
+        if (tiles[i][j] == 'O')// make a floot tile//
         {
           tile.setTranslateY(0.5);
           tile.setMaterial(pathable);
@@ -188,8 +195,6 @@ public class Game extends Application
 
           System.out.println(cameraXform.ry.getAngle() + " " + Math.cos(cameraXform.ry.getAngle()) + " "
               + Math.sin(cameraXform.ry.getAngle()));
-          // mapXform.setRotateY(mapXform.ry.getAngle() - mouseDeltaX *
-          // MOUSE_SPEED * modifier * ROTATION_SPEED);
         }
         else if (me.isSecondaryButtonDown())// ignore done by wsad buttons
         {
@@ -263,8 +268,9 @@ public class Game extends Application
     root.getChildren().add(world);
     world.getTransforms().add(new Scale(scaleVal, scaleVal, scaleVal));
 
-    // array{}{} = clas(120,150)
-
+    RoomGenerator newRoom = new RoomGenerator(mapW, mapH);
+    tiles = newRoom.getMap();
+    
     buildCamera();
     buildLight();
     drawMap();
