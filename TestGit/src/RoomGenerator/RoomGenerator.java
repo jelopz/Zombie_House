@@ -115,11 +115,20 @@ public class RoomGenerator {
 			found = false;
 		}
 	}
+	
+	/*
+	 * If the hall is vertical, traverse only through the y positions to add path.
+	 * Else, traverse only through the x positions for horizontal path.
+	 */
 
 	private void addHallToMap(Hall hall) {
-		for (int i = hall.getStartY(); i < (hall.getStartY() + hall.getHeight()); i++) {
-			for (int j = hall.getStartX(); j < (hall.getStartX() + hall.getWidth()); j++) {
-				house[i][j] = 'O';
+		if (hall.isVertical()) {
+			for (int i = hall.getStartY(); i <= hall.getEndY(); i++) {
+				house[i][hall.getStartX()] = 'O';
+			}
+		} else {
+			for (int i = hall.getStartX(); i <= hall.getEndX(); i++) {
+				house[hall.getStartY()][i] = 'O';
 			}
 		}
 	}
