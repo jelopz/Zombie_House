@@ -62,18 +62,6 @@ public class RoomGenerator
     }
   }
 
-  private void printMap() //debug
-  {
-    for (int i = 0; i < mapHeight; i++)
-    {
-      for (int j = 0; j < mapWidth; j++)
-      {
-        System.out.print(house[i][j]);
-      }
-      System.out.println();
-    }
-  }
-
   private void makeHalls()
   {
     Room targetRoom;
@@ -253,6 +241,18 @@ public class RoomGenerator
     for (int i = 0; i < 10; i++)
     {
       halls[i].printCoordinates();
+    }
+  }
+  
+  private void printMap() //debug
+  {
+    for (int i = 0; i < mapHeight; i++)
+    {
+      for (int j = 0; j < mapWidth; j++)
+      {
+        System.out.print(house[i][j]);
+      }
+      System.out.println();
     }
   }
 
