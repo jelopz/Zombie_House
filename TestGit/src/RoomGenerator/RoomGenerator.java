@@ -49,6 +49,7 @@ public class RoomGenerator
     rand = new Random();
     cleanMap();
     makeRooms();
+    makeHalls();
   }
 
   private void cleanMap()
