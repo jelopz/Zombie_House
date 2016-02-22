@@ -1,6 +1,6 @@
 package CPU;
 
-public class Zombie
+public abstract class Zombie
 {
   private int startPointX;
   private int startPointY;
@@ -10,4 +10,7 @@ public class Zombie
     startPointX = x;
     startPointY = y;
   }
+  
+  abstract void determineNextMove();
+  
 }
