@@ -1,77 +1,92 @@
 package RoomGenerator;
 
-public class Room {
+public class Room
+{
 
-	private int startX;
-	private int startY;
-	private int endX;
-	private int endY;
-	private int width;
-	private int height;
-	private int centerX;
-	private int centerY;
-	
-	private boolean isConnected;
+  private int startX;
+  private int startY;
+  private int endX;
+  private int endY;
+  private int width;
+  private int height;
+  private int centerX;
+  private int centerY;
 
-	public Room(int x, int y, int w, int h) {
-		startX = x;
-		startY = y;
-		width = w;
-		height = h;
-		endX = x + h;
-		endY = y + h;
-		
-		isConnected = false;
+  private boolean isConnected;
 
-		centerX = (startX + endX) / 2;
-		centerY = (startY + endY) / 2;
-	}
+  public Room(int x, int y, int w, int h)
+  {
+    startX = x;
+    startY = y;
+    width = w;
+    height = h;
+    endX = x + h;
+    endY = y + h;
 
-	public void printCoordinates() {
-		System.out.println("startX:  " + startX + "  startY:  " + startY + "  endX: " + endX + "   endY: " + endY);
-		System.out.println("width: " + width + "   height:   " + height);
-	}
+    isConnected = false;
 
-	public boolean intersects(Room room) {
-		return (startX < (room.startX + room.width)) && ((startX + width) > room.startX)
-				&& (startY < (room.startY + room.height))
-				&& ((startY + height) > room.startY);
-	}
+    centerX = (startX + endX) / 2;
+    centerY = (startY + endY) / 2;
+  }
 
-	public int getWidth() {
-		return width;
-	}
+  public void printCoordinates()
+  {
+    System.out.println("startX:  " + startX + "  startY:  " + startY + "  endX: " + endX + "   endY: " + endY);
+    System.out.println("width: " + width + "   height:   " + height);
+  }
 
-	public int getStartY() {
-		return startY;
-	}
+  public boolean intersects(Room room)
+  {
+    return (startX < (room.startX + room.width)) && ((startX + width) > room.startX) && (startY < (room.startY + room.height)) && ((startY + height) > room.startY);
+  }
 
-	public int getHeight() {
-		return height;
-	}
+  public int getWidth()
+  {
+    return width;
+  }
 
-	public int getStartX() {
-		return startX;
-	}
+  public int getStartY()
+  {
+    return startY;
+  }
 
-	public int getEndX() {
-		return endX;
-	}
+  public int getHeight()
+  {
+    return height;
+  }
 
-	public int getEndY() {
-		return endY;
-	}
+  public int getStartX()
+  {
+    return startX;
+  }
 
-	public int getCenterX() {
-		return centerX;
-	}
-	public int getCenterY() {
-		return centerY;
-	}
-	public boolean isConnected(){
-		return isConnected;
-	}
-	public void setIsConnected(boolean b){
-		isConnected = b;
-	}
+  public int getEndX()
+  {
+    return endX;
+  }
+
+  public int getEndY()
+  {
+    return endY;
+  }
+
+  public int getCenterX()
+  {
+    return centerX;
+  }
+
+  public int getCenterY()
+  {
+    return centerY;
+  }
+
+  public boolean isConnected()
+  {
+    return isConnected;
+  }
+
+  public void setIsConnected(boolean b)
+  {
+    isConnected = b;
+  }
 }
