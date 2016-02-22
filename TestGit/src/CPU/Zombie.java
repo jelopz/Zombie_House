@@ -1,14 +1,14 @@
 package CPU;
 
+import java.awt.Point;
+
 public abstract class Zombie
 {
-  private int startPointX;
-  private int startPointY;
+  private Point spawnPoint; //(x,y) coordinate of spawn Point
 
   public Zombie(int x, int y)
   {
-    startPointX = x;
-    startPointY = y;
+    spawnPoint = new Point(x,y);
   }
   
   abstract void determineNextMove();
