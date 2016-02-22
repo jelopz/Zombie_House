@@ -4,7 +4,7 @@ import java.awt.Point;
 
 public abstract class Zombie
 {
-  private Point spawnPoint; //(x,y) coordinate of spawn Point
+  private final Point spawnPoint; //(x,y) coordinate of spawn Point
 
   public Zombie(int x, int y)
   {
