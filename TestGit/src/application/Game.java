@@ -1,3 +1,25 @@
+/*****************************************
+ * Main Game Class
+ * Methods:
+ * -makeCamera
+ *    generates the perspective camera and places it in initial position
+ * -makeLight
+ *    generates a pointSourceLight and pairs it with the cameraXform
+ * - drawMap
+ *    uses 2d Char array generated from RoomGenerator class to draw wall and floor tiles
+ * -handleMouse
+ *    primary button and drag = rotate the camera along the Y axis
+ *    center button and drag = raise and lower camera along the Y axis
+ *    secondary button and drag = no effect yet
+ * -handleKeyboard
+ *    'w' sets boolean front true while held
+ *    's' sets boolean back true while held
+ *    'a' sets boolean left true while held
+ *    'd' sets boolean right true while held
+ * Sub-Classes
+ * -MainGameLoop
+ *    translates map relative to the camera angle based on front,back,left, and right booleans.*/
+
 package application;
 
 import RoomGenerator.RoomGenerator;
@@ -18,13 +40,14 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.DrawMode;
+import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 public class Game extends Application
 {
   double scaleVal = 1;
-  
+
   final Group root = new Group();
   final Xform world = new Xform();
   final PerspectiveCamera camera = new PerspectiveCamera(true);
@@ -43,19 +66,18 @@ public class Game extends Application
   private char[][] tiles;
   private int mapH = 36;
   private int mapW = 36;
-  
-  
+
   private double windowX = 1024;
   private double windowY = 768;
   private boolean front = false;
   private boolean back = false;
   private boolean left = false;
   private boolean right = false;
-  private double speed = 1;
+  private double speed = .5;
   private static final double TILE_SIZE = 10; // number of subdivisions in tile
   private static final double WALL_HEIGHT = 16;
-  private static final double CAMERA_INITIAL_DISTANCE = -1000;
-  private static final double CAMERA_INITIAL_X_ANGLE = 90;
+  private static final double CAMERA_INITIAL_DISTANCE = 0;
+  private static final double CAMERA_INITIAL_X_ANGLE = 0;
   private static final double CAMERA_INITIAL_Y_ANGLE = 0;
   private static final double CAMERA_NEAR_CLIP = 0.1;
   private static final double CAMERA_FAR_CLIP = 10000.0;
@@ -185,38 +207,23 @@ public class Game extends Application
         }
         if (me.isPrimaryButtonDown())
         {
+
+          lightXform.ry.setPivotX(lightXform2.t.getTx());
+          lightXform.ry.setPivotZ(lightXform2.t.getTz());
           lightXform.ry.setAngle(lightXform.ry.getAngle() - mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED);
+
+          cameraXform.ry.setPivotX(cameraXform2.t.getTx());
+          cameraXform.ry.setPivotZ(cameraXform2.t.getTz());
           cameraXform.ry.setAngle(cameraXform.ry.getAngle() - mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED);
-
-          if (cameraXform.ry.getAngle() > 360 || cameraXform.ry.getAngle() < -360)
-          {
-            cameraXform.ry.setAngle(0);
-          }
-
-          System.out.println(cameraXform.ry.getAngle() + " " + Math.cos(cameraXform.ry.getAngle()) + " "
-              + Math.sin(cameraXform.ry.getAngle()));
         }
-        else if (me.isSecondaryButtonDown())// ignore done by wsad buttons
+        else if (me.isSecondaryButtonDown())
         {
-
-          double cos = Math.cos(cameraXform.ry.getAngle());
-          double sin = Math.sin(cameraXform.ry.getAngle());
-          double z = mapXform.getTranslateZ();
-          double newZ = z + mouseDeltaX * MOUSE_SPEED * modifier * sin;
-
-          double x = mapXform.getTranslateX();
-          double newX = x + mouseDeltaX * MOUSE_SPEED * modifier * cos;
-
-          System.out.println(Math.abs(cos) + Math.abs(sin));
-          mapXform.setTranslateZ(newZ);
-          mapXform.setTranslateX(newX);
+          System.out.println("No effect yet");// replace with effect
 
         }
-        else if (me.isMiddleButtonDown())// ignore, not needed
+        else if (me.isMiddleButtonDown())// raise and lower camera
         {
-          lightXform2.t.setX(lightXform2.t.getX() + mouseDeltaX * MOUSE_SPEED * modifier * TRACK_SPEED);
           lightXform2.t.setY(lightXform2.t.getY() + mouseDeltaY * MOUSE_SPEED * modifier * TRACK_SPEED);
-          cameraXform2.t.setX(cameraXform2.t.getX() + mouseDeltaX * MOUSE_SPEED * modifier * TRACK_SPEED);
           cameraXform2.t.setY(cameraXform2.t.getY() + mouseDeltaY * MOUSE_SPEED * modifier * TRACK_SPEED);
 
         }
@@ -232,19 +239,11 @@ public class Game extends Application
       public void handle(KeyEvent event)
       {
         String s = event.getText();
-        System.out.println(s);
         if (s.equals("w")) front = true;
         if (s.equals("s")) back = true;
         if (s.equals("a")) left = true;
         if (s.equals("d")) right = true;
-        if (s.equals("p"))// print put sin and cos of angle
-        {
-          double cos = Math.cos(cameraXform.ry.getAngle());
-          double sin = Math.sin(cameraXform.ry.getAngle());
-          System.out.println("sin = " + sin);
-          System.out.println("cos = " + cos);
-          System.out.println();
-        }
+
       }
     });
     scene.setOnKeyReleased(new EventHandler<KeyEvent>()
@@ -270,7 +269,7 @@ public class Game extends Application
 
     RoomGenerator newRoom = new RoomGenerator(mapW, mapH);
     tiles = newRoom.getMap();
-    
+
     buildCamera();
     buildLight();
     drawMap();
@@ -298,11 +297,37 @@ public class Game extends Application
 
     public void handle(long now)
     {
-      /* Moves the camer around the world */
-      if (back) cameraXform.setTranslateZ(cameraXform.getTranslateZ() - speed);
-      if (front) cameraXform.setTranslateZ(cameraXform.getTranslateZ() + speed);
-      if (right) cameraXform.setTranslateX(cameraXform.getTranslateX() - speed);
-      if (left) cameraXform.setTranslateX(cameraXform.getTranslateX() + speed);
+      double cos = Math.cos(Math.toRadians(cameraXform.ry.getAngle()));
+      double sin = Math.sin(Math.toRadians(cameraXform.ry.getAngle()));
+
+      double z = mapXform.t.getTz();
+      double x = mapXform.t.getTx();
+
+      /* Moves the world in realtion to the camera */
+      if (front)
+      {
+        mapXform.t.setX(x - (speed * sin));
+        mapXform.t.setZ(z - (speed * cos));
+
+      }
+      if (back)
+      {
+        mapXform.t.setX(x + (speed * sin));
+        mapXform.t.setZ(z + (speed * cos));
+
+      }
+      if (left)
+      {
+        mapXform.t.setX(x - (speed * cos));
+        mapXform.t.setZ(z + (speed * sin));
+
+      }
+      if (right)
+      {
+        mapXform.t.setX(x + (speed * cos));
+        mapXform.t.setZ(z - (speed * sin));
+
+      }
 
     }
   }
