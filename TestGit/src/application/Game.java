@@ -59,23 +59,23 @@ public class Game extends Application {
 	private static final double MOUSE_SPEED = 0.1;
 	private static final double ROTATION_SPEED = 2.0;
 	private static final double TRACK_SPEED = 0.3;
-	
-	double scaleVal = 1;
 
-	final Group root = new Group();
-	final Xform world = new Xform();
-	final PerspectiveCamera camera = new PerspectiveCamera(true);
-	final PointLight light = new PointLight(Color.WHITE);
-	final Xform cameraXform = new Xform();
-	final Xform cameraXform2 = new Xform();
-	final Xform cameraXform3 = new Xform();
+	private double scaleVal = 1;
 
-	final Xform lightXform = new Xform();
-	final Xform lightXform2 = new Xform();
-	final Xform lightXform3 = new Xform();
-	final Group lightGroup = new Group();
+	private final Group root = new Group();
+	private final Xform world = new Xform();
+	private final PerspectiveCamera camera = new PerspectiveCamera(true);
+	private final PointLight light = new PointLight(Color.WHITE);
+	private final Xform cameraXform = new Xform();
+	private final Xform cameraXform2 = new Xform();
+	private final Xform cameraXform3 = new Xform();
 
-	Xform mapXform = new Xform();
+	private final Xform lightXform = new Xform();
+	private final Xform lightXform2 = new Xform();
+	private final Xform lightXform3 = new Xform();
+	private final Group lightGroup = new Group();
+
+	private Xform mapXform = new Xform();
 
 	private char[][] tiles;
 	private int mapH = 36;
@@ -89,12 +89,12 @@ public class Game extends Application {
 	private boolean right = false;
 	private double speed = .5;
 
-	double mousePosX;
-	double mousePosY;
-	double mouseOldX;
-	double mouseOldY;
-	double mouseDeltaX;
-	double mouseDeltaY;
+	private double mousePosX;
+	private double mousePosY;
+	private double mouseOldX;
+	private double mouseOldY;
+	private double mouseDeltaX;
+	private double mouseDeltaY;
 
 	private void buildCamera() {
 		root.getChildren().add(cameraXform);
