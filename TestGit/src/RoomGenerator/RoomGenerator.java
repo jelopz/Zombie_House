@@ -49,13 +49,6 @@ public class RoomGenerator
     rand = new Random();
     cleanMap();
     makeRooms();
-    printRooms();
-    makeHalls();
-    // printRooms();
-    printHalls();
-    System.out.println();
-    System.out.println();
-    printMap();
   }
 
   private void cleanMap()
@@ -69,7 +62,7 @@ public class RoomGenerator
     }
   }
 
-  private void printMap()
+  private void printMap() //debug
   {
     for (int i = 0; i < mapHeight; i++)
     {
@@ -247,7 +240,7 @@ public class RoomGenerator
     }
   }
 
-  private void printRooms()
+  private void printRooms() //debug
   {
     for (int i = 0; i < rooms.length; i++)
     {
@@ -255,7 +248,7 @@ public class RoomGenerator
     }
   }
 
-  private void printHalls()
+  private void printHalls() //debug
   {
     for (int i = 0; i < 10; i++)
     {
