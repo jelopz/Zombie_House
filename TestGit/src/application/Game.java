@@ -135,6 +135,16 @@ public class Game extends Application
     pathable.setDiffuseColor(Color.WHITE);
     pathable.setSpecularColor(Color.ORANGE);
 
+    // Material for denoting the tile which the player will spawn on
+    PhongMaterial  spawnPoint = new PhongMaterial();
+    spawnPoint.setDiffuseColor(Color.RED);
+    spawnPoint.setSpecularColor(Color.WHITE);
+    
+    // Material for denoting the tile which the zombie will spawn on
+    PhongMaterial zombieSpawn = new PhongMaterial();
+    zombieSpawn.setDiffuseColor(Color.RED);
+    zombieSpawn.setSpecularColor(Color.WHITE);
+    
     // material for walls (this and one above may need to be the same, check
     // ruberic//
     PhongMaterial notPathable = new PhongMaterial();
@@ -159,6 +169,11 @@ public class Game extends Application
         {
           tile.setTranslateY(0.5);
           tile.setMaterial(pathable);
+        }
+        else if(tiles[i][j] == 'P')
+        {
+          tile.setTranslateY(0.5);
+          tile.setMaterial(spawnPoint);
         }
         else// make a wall tile//
         {
