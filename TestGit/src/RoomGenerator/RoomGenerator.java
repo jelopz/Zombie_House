@@ -75,6 +75,14 @@ public class RoomGenerator
 
     house[ySpawn][xSpawn] = 'P';
   }
+  
+  private void makeZombieSpawns()
+  {
+    for(int i = 0; i < NUM_ZOMBIES; i++)
+    {
+      
+    }
+  }
 
   private void cleanMap()
   {
