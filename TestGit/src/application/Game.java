@@ -243,6 +243,11 @@ public class Game extends Application
   }
 
   /*
+   * ***May not work exactly how you think. Suppose you're in a room and you
+   * want to look down at your feet. The spot you will be looking at on the
+   * floor will not be at your feet, but the floor some considerable length
+   * forward
+   * 
    * Allows you to look up and down. The light doesn't follow but since being
    * able to look up and down isn't required it doesn't matter. Nice for
    * maneuvering around the map in it's current state.
