@@ -137,7 +137,7 @@ public class Game extends Application
 
     // Material for denoting the tile which the player will spawn on
     PhongMaterial  spawnPoint = new PhongMaterial();
-    spawnPoint.setDiffuseColor(Color.RED);
+    spawnPoint.setDiffuseColor(Color.LIGHTGREEN);
     spawnPoint.setSpecularColor(Color.WHITE);
     
     // Material for denoting the tile which the zombie will spawn on
@@ -174,6 +174,11 @@ public class Game extends Application
         {
           tile.setTranslateY(0.5);
           tile.setMaterial(spawnPoint);
+        }
+        else if(tiles[i][j] == 'Z')
+        {
+          tile.setTranslateY(0.5);
+          tile.setMaterial(zombieSpawn);
         }
         else// make a wall tile//
         {
