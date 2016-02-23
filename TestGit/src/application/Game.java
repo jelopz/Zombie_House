@@ -61,6 +61,9 @@ public class Game extends Application
   private static final double ROTATION_SPEED = 2.0;
   private static final double TRACK_SPEED = 0.3;
 
+  // Our House
+  RoomGenerator house;
+
   private double scaleVal = 1;
 
   private final Group root = new Group();
@@ -136,15 +139,15 @@ public class Game extends Application
     pathable.setSpecularColor(Color.ORANGE);
 
     // Material for denoting the tile which the player will spawn on
-    PhongMaterial  spawnPoint = new PhongMaterial();
+    PhongMaterial spawnPoint = new PhongMaterial();
     spawnPoint.setDiffuseColor(Color.LIGHTGREEN);
     spawnPoint.setSpecularColor(Color.WHITE);
-    
+
     // Material for denoting the tile which the zombie will spawn on
     PhongMaterial zombieSpawn = new PhongMaterial();
     zombieSpawn.setDiffuseColor(Color.RED);
     zombieSpawn.setSpecularColor(Color.WHITE);
-    
+
     // material for walls (this and one above may need to be the same, check
     // ruberic//
     PhongMaterial notPathable = new PhongMaterial();
@@ -170,12 +173,12 @@ public class Game extends Application
           tile.setTranslateY(0.5);
           tile.setMaterial(pathable);
         }
-        else if(tiles[i][j] == 'P')
+        else if (tiles[i][j] == 'P')
         {
           tile.setTranslateY(0.5);
           tile.setMaterial(spawnPoint);
         }
-        else if(tiles[i][j] == 'Z')
+        else if (tiles[i][j] == 'Z')
         {
           tile.setTranslateY(0.5);
           tile.setMaterial(zombieSpawn);
@@ -292,16 +295,19 @@ public class Game extends Application
           left = true;
         if (s.equals("d"))
           right = true;
+        
+        
+        //Pressing z and x places you perfectly at the spawn point
+        
         if (s.equals("z")) // puts the player on the "ground"
         {
-          System.out.println(cameraXform2.t.getY());
           lightXform2.t.setY(0);
           cameraXform2.t.setY(0);
         }
-        if (s.equals("x")) // shoots player up 50 units for debugging
+        if (s.equals("x")) // PLACES THE CAMERA ABOVE THE PLAYER SPAWN POINT
         {
-          lightXform2.t.setY(lightXform2.t.getY() + 50);
-          cameraXform2.t.setY(lightXform2.t.getY() + 50);
+          mapXform.t.setZ(-house.getPlayerSpawnPoint().x * TILE_SIZE);
+          mapXform.t.setX(-house.getPlayerSpawnPoint().y * TILE_SIZE);
         }
       }
     });
@@ -330,8 +336,8 @@ public class Game extends Application
     root.getChildren().add(world);
     world.getTransforms().add(new Scale(scaleVal, scaleVal, scaleVal));
 
-    RoomGenerator newRoom = new RoomGenerator(mapW, mapH);
-    tiles = newRoom.getMap();
+    house = new RoomGenerator(mapW, mapH);
+    tiles = house.getMap();
 
     buildCamera();
     buildLight();
