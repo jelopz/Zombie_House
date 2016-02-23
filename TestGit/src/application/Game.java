@@ -226,7 +226,7 @@ public class Game extends Application
 
           // Up and Down mouse movements. I don't think this is required but
           // helps maneuver around the map in it's current state
-          handleUpDownRotation(modifier); //comment out if unwanted
+          handleUpDownRotation(modifier); // comment out if unwanted
         }
         else if (me.isSecondaryButtonDown())
         {
@@ -272,7 +272,17 @@ public class Game extends Application
           left = true;
         if (s.equals("d"))
           right = true;
-
+        if (s.equals("z")) // puts the player on the "ground"
+        {
+          System.out.println(cameraXform2.t.getY());
+          lightXform2.t.setY(0);
+          cameraXform2.t.setY(0);
+        }
+        if (s.equals("x")) // shoots player up 50 units for debugging
+        {
+          lightXform2.t.setY(lightXform2.t.getY() + 50);
+          cameraXform2.t.setY(lightXform2.t.getY() + 50);
+        }
       }
     });
     scene.setOnKeyReleased(new EventHandler<KeyEvent>()
