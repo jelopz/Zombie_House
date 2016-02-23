@@ -132,7 +132,7 @@ public class Game extends Application
   {
     // Material for floors and ceilings//
     PhongMaterial pathable = new PhongMaterial();
-    pathable.setDiffuseColor(Color.DARKGREEN);
+    pathable.setDiffuseColor(Color.WHITE);
     pathable.setSpecularColor(Color.ORANGE);
 
     // material for walls (this and one above may need to be the same, check
