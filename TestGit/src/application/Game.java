@@ -212,19 +212,25 @@ public class Game extends Application
         if (me.isPrimaryButtonDown())
         {
 
+          // Moves the light Doesn't take into account up and down movements.
+          // Which doesn't matter as I don't think up and down movements are a
+          // requirement
           lightXform.ry.setPivotX(lightXform2.t.getTx());
           lightXform.ry.setPivotZ(lightXform2.t.getTz());
           lightXform.ry.setAngle(lightXform.ry.getAngle() - mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED);
 
+          // Left and Right mouse movements
           cameraXform.ry.setPivotX(cameraXform2.t.getTx());
           cameraXform.ry.setPivotZ(cameraXform2.t.getTz());
           cameraXform.ry.setAngle(cameraXform.ry.getAngle() - mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED);
+
+          // Up and Down mouse movements. I don't think this is required but
+          // helps maneuver around the map in it's current state
+          handleUpDownRotation(modifier); //comment out if unwanted
         }
         else if (me.isSecondaryButtonDown())
         {
-          // System.out.println("No effect yet");// replace with effect
-          handleSecondaryButtonDown(modifier);
-
+          System.out.println("No effect yet");// replace with effect
         }
         else if (me.isMiddleButtonDown())// raise and lower camera
         {
@@ -239,13 +245,15 @@ public class Game extends Application
   /*
    * Allows you to look up and down. The light doesn't follow but since being
    * able to look up and down isn't required it doesn't matter. Nice for
-   * debugging
+   * maneuvering around the map in it's current state.
+   * 
+   * Doesn't allow you to "fly." You're walking on the ground looking around.
    */
-  private void handleSecondaryButtonDown(double modifier)
+  private void handleUpDownRotation(double modifier)
   {
     cameraXform.rx.setPivotY(cameraXform2.t.getTz());
     cameraXform.rx.setPivotZ(cameraXform2.t.getTz());
-    cameraXform.rx.setAngle(cameraXform.rx.getAngle() - mouseDeltaY * MOUSE_SPEED * modifier * ROTATION_SPEED);
+    cameraXform.rx.setAngle(cameraXform.rx.getAngle() + mouseDeltaY * MOUSE_SPEED * modifier * ROTATION_SPEED);
   }
 
   private void handleKeyboard(Scene scene, final Node root)
