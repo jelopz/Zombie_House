@@ -16,6 +16,7 @@
 
 package RoomGenerator;
 
+import java.awt.Point;
 import java.util.Random;
 
 public class RoomGenerator
@@ -27,7 +28,7 @@ public class RoomGenerator
   private final int MIN_ROOM_HEIGHT = 3;// arbitrary,
 
   private final int NUM_ZOMBIES = 5;
-  
+
   private Room[] rooms; // array of all the rooms
   private Hall[] halls; // array of all the halls
   private char[][] house; // The map, house[y][x]
@@ -53,8 +54,7 @@ public class RoomGenerator
     makeRooms();
     makeHalls();
     makePlayerSpawnPoint();
-
-    printMap();
+    makeZombieSpawns();
   }
 
   /*
@@ -63,25 +63,55 @@ public class RoomGenerator
    */
   private void makePlayerSpawnPoint()
   {
-    int roomSpawn = rand.nextInt(5); // Randomly chooses one of the 5 rooms.
+    int roomSpawn = rand.nextInt(5); // chooses which room to spawn in
+    Point spawnPoint = chooseSpawnPoint(roomSpawn); // chooses where to spawn
+                                                    // inside that room
 
-    // the x and y coordinates relative to the room
-    int xSpawn = rand.nextInt(rooms[roomSpawn].getWidth());
-    int ySpawn = rand.nextInt(rooms[roomSpawn].getHeight());
+    rooms[roomSpawn].setPlayerSpawn(); // tells the room the player is spawning
+                                       // in it
 
-    // the x and y coordinates relative to the whole map
-    xSpawn = xSpawn + rooms[roomSpawn].getStartX();
-    ySpawn = ySpawn + rooms[roomSpawn].getStartY();
-
-    house[ySpawn][xSpawn] = 'P';
+    house[spawnPoint.y][spawnPoint.x] = 'P';
   }
-  
+
   private void makeZombieSpawns()
   {
-    for(int i = 0; i < NUM_ZOMBIES; i++)
+    int roomSpawn;
+    boolean foundValidSpawn = false;
+    Point spawnPoint = null;
+
+    for (int i = 0; i < NUM_ZOMBIES; i++)
     {
-      
+      while (!foundValidSpawn)
+      {
+        roomSpawn = rand.nextInt(5); // Randomly choose one of the 5 rooms
+        if (!rooms[roomSpawn].getPlayerSpawn()) // if the player is not spawning
+                                                // in this room
+        {
+          spawnPoint = chooseSpawnPoint(roomSpawn);
+
+          if (house[spawnPoint.y][spawnPoint.x] == 'O') //if legal spawn point
+          {
+            foundValidSpawn = true;
+          }
+        }
+      }
+
+      house[spawnPoint.y][spawnPoint.x] = 'Z';
+      foundValidSpawn = false;
     }
+  }
+
+  private Point chooseSpawnPoint(int roomIndex)
+  {
+    // the x and y coordinates relative to the room
+    int xSpawn = rand.nextInt(rooms[roomIndex].getWidth());
+    int ySpawn = rand.nextInt(rooms[roomIndex].getHeight());
+
+    // the x and y coordinates relative to the whole map
+    xSpawn = xSpawn + rooms[roomIndex].getStartX();
+    ySpawn = ySpawn + rooms[roomIndex].getStartY();
+
+    return new Point(xSpawn, ySpawn);
   }
 
   private void cleanMap()
