@@ -25,6 +25,7 @@ public class Room
     endY = y + h;
 
     isConnected = false;
+    playerSpawn = false;
 
     centerX = (startX + endX) / 2;
     centerY = (startY + endY) / 2;
@@ -89,5 +90,15 @@ public class Room
   public void setIsConnected(boolean b)
   {
     isConnected = b;
+  }
+  
+  public void setPlayerSpawn()
+  {
+    playerSpawn = true;
+  }
+  
+  public boolean getPlayerSpawn()
+  {
+    return playerSpawn;
   }
 }
