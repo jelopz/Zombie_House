@@ -13,6 +13,7 @@ public class Room
   private int centerY;
 
   private boolean isConnected;
+  private boolean playerSpawn;
 
   public Room(int x, int y, int w, int h)
   {
