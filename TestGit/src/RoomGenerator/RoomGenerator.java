@@ -36,6 +36,8 @@ public class RoomGenerator
   private int mapWidth;
   private int mapHeight;
 
+  private Point playerSpawnPoint;
+
   Random rand;
 
   public RoomGenerator(int w, int h)
@@ -57,6 +59,16 @@ public class RoomGenerator
     makeZombieSpawns();
   }
 
+  public char[][] getMap()
+  {
+    return house;
+  }
+
+  public Point getPlayerSpawnPoint()
+  {
+    return playerSpawnPoint;
+  }
+
   /*
    * Randomly chooses one of the 5 rooms and randomly chooses a spot in the room
    * to mark the player's spawn point on the map as a 'P'.
@@ -64,13 +76,13 @@ public class RoomGenerator
   private void makePlayerSpawnPoint()
   {
     int roomSpawn = rand.nextInt(5); // chooses which room to spawn in
-    Point spawnPoint = chooseSpawnPoint(roomSpawn); // chooses where to spawn
+    playerSpawnPoint = chooseSpawnPoint(roomSpawn); // chooses where to spawn
                                                     // inside that room
 
     rooms[roomSpawn].setPlayerSpawn(); // tells the room the player is spawning
                                        // in it
 
-    house[spawnPoint.y][spawnPoint.x] = 'P';
+    house[playerSpawnPoint.y][playerSpawnPoint.x] = 'P';
   }
 
   private void makeZombieSpawns()
@@ -89,7 +101,7 @@ public class RoomGenerator
         {
           spawnPoint = chooseSpawnPoint(roomSpawn);
 
-          if (house[spawnPoint.y][spawnPoint.x] == 'O') //if legal spawn point
+          if (house[spawnPoint.y][spawnPoint.x] == 'O') // if legal spawn point
           {
             foundValidSpawn = true;
           }
@@ -317,11 +329,6 @@ public class RoomGenerator
       }
       System.out.println();
     }
-  }
-
-  public char[][] getMap()
-  {
-    return house;
   }
 
   private boolean intersection(Room r1, Room r2)
