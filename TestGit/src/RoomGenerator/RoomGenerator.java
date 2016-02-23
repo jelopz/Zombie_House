@@ -28,7 +28,7 @@ public class RoomGenerator
 
   private Room[] rooms; // array of all the rooms
   private Hall[] halls; // array of all the halls
-  private char[][] house; // The map
+  private char[][] house; // The map, house[y][x]
 
   private int mapWidth;
   private int mapHeight;
@@ -50,6 +50,28 @@ public class RoomGenerator
     cleanMap();
     makeRooms();
     makeHalls();
+    makePlayerSpawnPoint();
+
+    printMap();
+  }
+
+  /*
+   * Randomly chooses one of the 5 rooms and randomly chooses a spot in the room
+   * to mark the player's spawn point on the map as a 'P'.
+   */
+  private void makePlayerSpawnPoint()
+  {
+    int roomSpawn = rand.nextInt(5); // Randomly chooses one of the 5 rooms.
+
+    // the x and y coordinates relative to the room
+    int xSpawn = rand.nextInt(rooms[roomSpawn].getWidth());
+    int ySpawn = rand.nextInt(rooms[roomSpawn].getHeight());
+
+    // the x and y coordinates relative to the whole map
+    xSpawn = xSpawn + rooms[roomSpawn].getStartX();
+    ySpawn = ySpawn + rooms[roomSpawn].getStartY();
+
+    house[ySpawn][xSpawn] = 'P';
   }
 
   private void cleanMap()
@@ -229,7 +251,7 @@ public class RoomGenerator
     }
   }
 
-  private void printRooms() //debug
+  private void printRooms() // debug
   {
     for (int i = 0; i < rooms.length; i++)
     {
@@ -237,15 +259,15 @@ public class RoomGenerator
     }
   }
 
-  private void printHalls() //debug
+  private void printHalls() // debug
   {
     for (int i = 0; i < 10; i++)
     {
       halls[i].printCoordinates();
     }
   }
-  
-  private void printMap() //debug
+
+  private void printMap() // debug
   {
     for (int i = 0; i < mapHeight; i++)
     {
