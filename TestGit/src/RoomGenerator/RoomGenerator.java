@@ -26,6 +26,8 @@ public class RoomGenerator
                                         // map should be
   private final int MIN_ROOM_HEIGHT = 3;// arbitrary,
 
+  private final int NUM_ZOMBIES = 5;
+  
   private Room[] rooms; // array of all the rooms
   private Hall[] halls; // array of all the halls
   private char[][] house; // The map, house[y][x]
