@@ -161,6 +161,10 @@ public class Game extends Application
     PhongMaterial zombieColor = new PhongMaterial();
     zombieColor.setDiffuseColor(Color.ORANGE);
     zombieColor.setSpecularColor(Color.RED);
+    
+    PhongMaterial playerColor = new PhongMaterial();
+    playerColor.setDiffuseColor(Color.BLUE);
+    playerColor.setSpecularColor(Color.DARKBLUE);
 
     Xform tileXform = new Xform();
     mapXform.getChildren().add(tileXform);
@@ -188,6 +192,13 @@ public class Game extends Application
           
           cameraXform.t.setX(i * TILE_SIZE);
           cameraXform.t.setZ(j * TILE_SIZE);
+          
+          Cylinder player = new Cylinder(5, WALL_HEIGHT);//Just doing this for testing collisions
+          player.setTranslateX(i * TILE_SIZE);
+          player.setTranslateZ(j * TILE_SIZE);
+          player.setTranslateY(WALL_HEIGHT / 2);
+          player.setMaterial(playerColor);
+          world.getChildren().add(player);
           
         }
         else if (tiles[i][j] == 'Z')
