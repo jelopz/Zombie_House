@@ -372,32 +372,32 @@ public class Game extends Application
       double cos = Math.cos(Math.toRadians(cameraXform.ry.getAngle()));
       double sin = Math.sin(Math.toRadians(cameraXform.ry.getAngle()));
 
-      double z = mapXform.t.getTz();
-      double x = mapXform.t.getTx();
+      double z = cameraXform.t.getTz();
+      double x = cameraXform.t.getTx();
 
       /* Moves the world in realtion to the camera */
-      if (front)
-      {
-        mapXform.t.setX(x - (speed * sin));
-        mapXform.t.setZ(z - (speed * cos));
-
-      }
       if (back)
       {
-        mapXform.t.setX(x + (speed * sin));
-        mapXform.t.setZ(z + (speed * cos));
+        cameraXform.t.setX(x - (speed * sin));
+        cameraXform.t.setZ(z - (speed * cos));
 
       }
-      if (left)
+      if (front)
       {
-        mapXform.t.setX(x - (speed * cos));
-        mapXform.t.setZ(z + (speed * sin));
+        cameraXform.t.setX(x + (speed * sin));
+        cameraXform.t.setZ(z + (speed * cos));
 
       }
       if (right)
       {
-        mapXform.t.setX(x + (speed * cos));
-        mapXform.t.setZ(z - (speed * sin));
+        cameraXform.t.setX(x - (speed * cos));
+        cameraXform.t.setZ(z + (speed * sin));
+
+      }
+      if (left)
+      {
+        cameraXform.t.setX(x + (speed * cos));
+        cameraXform.t.setZ(z - (speed * sin));
 
       }
 
