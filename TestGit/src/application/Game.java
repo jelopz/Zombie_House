@@ -31,7 +31,6 @@ import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.PointLight;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -42,7 +41,6 @@ import javafx.scene.paint.Stop;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.DrawMode;
-import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
@@ -52,17 +50,16 @@ public class Game extends Application
   private static final double TILE_SIZE = 10; // number of subdivisions in
   // tile
   private static final double WALL_HEIGHT = 16;
-  private static final double CAMERA_INITIAL_DISTANCE = 0;
-  private static final double CAMERA_INITIAL_X_ANGLE = 0;
+  private static final double CAMERA_INITIAL_DISTANCE =-500;
+  private static final double CAMERA_INITIAL_X_ANGLE = 90;
   private static final double CAMERA_INITIAL_Y_ANGLE = 0;
   private static final double CAMERA_NEAR_CLIP = 0.1;
   private static final double CAMERA_FAR_CLIP = 10000.0;
-  private static final double CONTROL_MULTIPLIER = 0.1;
-  private static final double SHIFT_MULTIPLIER = 10.0;
   private static final double MOUSE_SPEED = 0.1;
   private static final double ROTATION_SPEED = 2.0;
   private static final double TRACK_SPEED = 0.3;
-
+  private static double cameraInitialX;
+  private static double cameraInitialZ;
   // Our House
   RoomGenerator house;
 
@@ -78,7 +75,6 @@ public class Game extends Application
 
   private final Xform lightXform = new Xform();
   private final Xform lightXform2 = new Xform();
-  private final Xform lightXform3 = new Xform();
   private final Group lightGroup = new Group();
 
   private Xform mapXform = new Xform();
@@ -117,6 +113,8 @@ public class Game extends Application
     camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
     cameraXform.ry.setAngle(CAMERA_INITIAL_Y_ANGLE);
     cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+    cameraXform.t.setX(cameraInitialX);
+    cameraXform.t.setZ(cameraInitialZ);
     cameraXform.setTranslateY(WALL_HEIGHT / 2);
   }
 
@@ -127,8 +125,8 @@ public class Game extends Application
     lightXform.ry.setAngle(CAMERA_INITIAL_Y_ANGLE);
     lightXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
 
-    light.setTranslateX(CAMERA_INITIAL_X_ANGLE);
-    light.setTranslateY(CAMERA_INITIAL_Y_ANGLE);
+    lightXform.t.setX(cameraInitialX);
+    lightXform.t.setZ(cameraInitialZ);
     cameraXform.getChildren().add(lightXform);// add light to camera so they
     // move together
     lightGroup.getChildren().add(light);
@@ -190,8 +188,8 @@ public class Game extends Application
           tile.setTranslateY(0.5);
           tile.setMaterial(spawnPoint);
           
-          cameraXform.t.setX(i * TILE_SIZE);
-          cameraXform.t.setZ(j * TILE_SIZE);
+          cameraInitialX = (i * TILE_SIZE);
+          cameraInitialZ = (j * TILE_SIZE);
           
           Cylinder player = new Cylinder(5, WALL_HEIGHT);//Just doing this for testing collisions
           player.setTranslateX(i * TILE_SIZE);
@@ -334,8 +332,8 @@ public class Game extends Application
         }
         if (s.equals("x")) // PLACES THE CAMERA ABOVE THE PLAYER SPAWN POINT
         {
-          mapXform.t.setZ(-house.getPlayerSpawnPoint().x * TILE_SIZE);
-          mapXform.t.setX(-house.getPlayerSpawnPoint().y * TILE_SIZE);
+          cameraXform.t.setZ(house.getPlayerSpawnPoint().x * TILE_SIZE);
+          cameraXform.t.setX(house.getPlayerSpawnPoint().y * TILE_SIZE);
         }
       }
     });
@@ -368,9 +366,10 @@ public class Game extends Application
     house = new RoomGenerator(mapW, mapH);
     tiles = house.getMap();
 
+    drawMap();
     buildCamera();
     buildLight();
-    drawMap();
+    
 
     Scene scene = new Scene(root, windowX, windowY, true);
     Stop[] stops = new Stop[] { new Stop(0, Color.RED), new Stop(1, Color.ORANGE) };
