@@ -31,6 +31,7 @@ import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.PointLight;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -91,6 +92,8 @@ public class Game extends Application
   private boolean back = false;
   private boolean left = false;
   private boolean right = false;
+  private double sprint = 1;
+  private double walk = .5;
   private double speed = .5;
 
   private double mousePosX;
@@ -177,8 +180,8 @@ public class Game extends Application
         {
           tile.setTranslateY(0.5);
           tile.setMaterial(spawnPoint);
-          cameraXform.t.setX(i*TILE_SIZE);
-          cameraXform.t.setZ(j*TILE_SIZE);
+          cameraXform.t.setX(i * TILE_SIZE);
+          cameraXform.t.setZ(j * TILE_SIZE);
         }
         else if (tiles[i][j] == 'Z')
         {
@@ -225,15 +228,6 @@ public class Game extends Application
         mouseDeltaY = (mousePosY - mouseOldY);
 
         double modifier = 1.0;
-
-        if (me.isControlDown())
-        {
-          modifier = CONTROL_MULTIPLIER;
-        }
-        if (me.isShiftDown())
-        {
-          modifier = SHIFT_MULTIPLIER;
-        }
         if (me.isPrimaryButtonDown())
         {
 
@@ -265,6 +259,7 @@ public class Game extends Application
         }
       }
     });
+
   }
 
   /*
@@ -283,24 +278,30 @@ public class Game extends Application
 
   private void handleKeyboard(Scene scene, final Node root)
   {
+
     scene.setOnKeyPressed(new EventHandler<KeyEvent>()
     {
       @Override
       public void handle(KeyEvent event)
       {
+
+        if (event.isControlDown())// does nothing right now
+        {
+        }
+        if (event.isShiftDown())// adds to the player movement speed
+        {
+          speed = sprint;
+        }
+        else speed = walk;
+
         String s = event.getText();
-        if (s.equals("w"))
-          front = true;
-        if (s.equals("s"))
-          back = true;
-        if (s.equals("a"))
-          left = true;
-        if (s.equals("d"))
-          right = true;
-        
-        
-        //Pressing z and x places you perfectly at the spawn point
-        
+        if (s.equals("w")) front = true;
+        if (s.equals("s")) back = true;
+        if (s.equals("a")) left = true;
+        if (s.equals("d")) right = true;
+
+        // Pressing z and x places you perfectly at the spawn point
+
         if (s.equals("z")) // puts the player on the "ground"
         {
           lightXform2.t.setY(0);
@@ -315,19 +316,20 @@ public class Game extends Application
     });
     scene.setOnKeyReleased(new EventHandler<KeyEvent>()
     {
+
       @Override
       public void handle(KeyEvent event)
       {
+        if (event.isShiftDown())// adds to the player movement speed
+        {
+          speed = sprint;
+        }
+        else speed = walk;
         String s = event.getText();
-        if (s.equals("w"))
-          front = false;
-        if (s.equals("s"))
-          back = false;
-        if (s.equals("a"))
-          left = false;
-        if (s.equals("d"))
-          right = false;
-
+        if (s.equals("w")) front = false;
+        if (s.equals("s")) back = false;
+        if (s.equals("a")) left = false;
+        if (s.equals("d")) right = false;
       }
     });
   }
@@ -346,8 +348,7 @@ public class Game extends Application
     drawMap();
 
     Scene scene = new Scene(root, windowX, windowY, true);
-    Stop[] stops = new Stop[]
-    { new Stop(0, Color.RED), new Stop(1, Color.ORANGE) };
+    Stop[] stops = new Stop[] { new Stop(0, Color.RED), new Stop(1, Color.ORANGE) };
     LinearGradient lg = new LinearGradient(0, 1, 0, 0, true, CycleMethod.NO_CYCLE, stops);
     scene.setFill(lg);
     scene.setCamera(camera);
@@ -372,32 +373,29 @@ public class Game extends Application
       double cos = Math.cos(Math.toRadians(cameraXform.ry.getAngle()));
       double sin = Math.sin(Math.toRadians(cameraXform.ry.getAngle()));
 
-      double z = cameraXform.t.getTz();
-      double x = cameraXform.t.getTx();
-
-      /* Moves the world in realtion to the camera */
+      /* Moves the camera around the world*/
       if (back)
       {
-        cameraXform.t.setX(x - (speed * sin));
-        cameraXform.t.setZ(z - (speed * cos));
+        cameraXform.t.setX(cameraXform.t.getTx() - (speed * sin));
+        cameraXform.t.setZ(cameraXform.t.getTz() - (speed * cos));
 
       }
       if (front)
       {
-        cameraXform.t.setX(x + (speed * sin));
-        cameraXform.t.setZ(z + (speed * cos));
+        cameraXform.t.setX(cameraXform.t.getTx() + (speed * sin));
+        cameraXform.t.setZ(cameraXform.t.getTz() + (speed * cos));
 
       }
       if (right)
       {
-        cameraXform.t.setX(x - (speed * cos));
-        cameraXform.t.setZ(z + (speed * sin));
+        cameraXform.t.setX(cameraXform.t.getTx() - (speed * cos));
+        cameraXform.t.setZ(cameraXform.t.getTz() + (speed * sin));
 
       }
       if (left)
       {
-        cameraXform.t.setX(x + (speed * cos));
-        cameraXform.t.setZ(z - (speed * sin));
+        cameraXform.t.setX(cameraXform.t.getTx() + (speed * cos));
+        cameraXform.t.setZ(cameraXform.t.getTz() - (speed * sin));
 
       }
 
