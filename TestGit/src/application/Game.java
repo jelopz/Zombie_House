@@ -40,6 +40,7 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Box;
+import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.DrawMode;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
@@ -156,6 +157,10 @@ public class Game extends Application
     PhongMaterial notPathable = new PhongMaterial();
     notPathable.setDiffuseColor(Color.LIGHTGREEN);
     notPathable.setSpecularColor(Color.ORANGE);
+    
+    PhongMaterial zombieColor = new PhongMaterial();
+    zombieColor.setDiffuseColor(Color.ORANGE);
+    zombieColor.setSpecularColor(Color.RED);
 
     Xform tileXform = new Xform();
     mapXform.getChildren().add(tileXform);
@@ -180,13 +185,22 @@ public class Game extends Application
         {
           tile.setTranslateY(0.5);
           tile.setMaterial(spawnPoint);
+          
           cameraXform.t.setX(i * TILE_SIZE);
           cameraXform.t.setZ(j * TILE_SIZE);
+          
         }
         else if (tiles[i][j] == 'Z')
         {
           tile.setTranslateY(0.5);
           tile.setMaterial(zombieSpawn);
+          
+          Cylinder zombie = new Cylinder(5, WALL_HEIGHT);
+          zombie.setTranslateX(i * TILE_SIZE);
+          zombie.setTranslateZ(j * TILE_SIZE);
+          zombie.setTranslateY(WALL_HEIGHT / 2);
+          zombie.setMaterial(zombieColor);
+          world.getChildren().add(zombie);
         }
         else// make a wall tile//
         {
