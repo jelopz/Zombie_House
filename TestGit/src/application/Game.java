@@ -50,8 +50,8 @@ public class Game extends Application
   private static final double TILE_SIZE = 10; // number of subdivisions in
   // tile
   private static final double WALL_HEIGHT = 16;
-  private static final double CAMERA_INITIAL_DISTANCE =-500;
-  private static final double CAMERA_INITIAL_X_ANGLE = 90;
+  private static final double CAMERA_INITIAL_DISTANCE =0;
+  private static final double CAMERA_INITIAL_X_ANGLE = 0;
   private static final double CAMERA_INITIAL_Y_ANGLE = 0;
   private static final double CAMERA_NEAR_CLIP = 0.1;
   private static final double CAMERA_FAR_CLIP = 10000.0;
@@ -68,16 +68,13 @@ public class Game extends Application
   private final Group root = new Group();
   private final Xform world = new Xform();
   private final PerspectiveCamera camera = new PerspectiveCamera(true);
-  private final PointLight light = new PointLight(Color.WHITE);
+  private final PointLight light = new PointLight(Color.ALICEBLUE);
   private final Xform cameraXform = new Xform();
   private final Xform cameraXform2 = new Xform();
   private final Xform cameraXform3 = new Xform();
 
-  private final Xform lightXform = new Xform();
-  private final Xform lightXform2 = new Xform();
-  private final Group lightGroup = new Group();
-
-  private Xform mapXform = new Xform();
+  private final Xform playerXform = new Xform();
+  private final Xform mapXform = new Xform();
 
   private char[][] tiles;
   private int mapH = 36;
@@ -122,14 +119,8 @@ public class Game extends Application
   {
 
     light.setTranslateZ(CAMERA_INITIAL_DISTANCE);
-    lightXform.ry.setAngle(CAMERA_INITIAL_Y_ANGLE);
-    lightXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
-
-    lightXform.t.setX(cameraInitialX);
-    lightXform.t.setZ(cameraInitialZ);
-    cameraXform.getChildren().add(lightXform);// add light to camera so they
+    cameraXform.getChildren().add(light);// add light to camera so they
     // move together
-    lightGroup.getChildren().add(light);
 
   }
 
@@ -155,11 +146,11 @@ public class Game extends Application
     PhongMaterial notPathable = new PhongMaterial();
     notPathable.setDiffuseColor(Color.LIGHTGREEN);
     notPathable.setSpecularColor(Color.ORANGE);
-    
+
     PhongMaterial zombieColor = new PhongMaterial();
     zombieColor.setDiffuseColor(Color.ORANGE);
     zombieColor.setSpecularColor(Color.RED);
-    
+
     PhongMaterial playerColor = new PhongMaterial();
     playerColor.setDiffuseColor(Color.BLUE);
     playerColor.setSpecularColor(Color.DARKBLUE);
@@ -187,23 +178,25 @@ public class Game extends Application
         {
           tile.setTranslateY(0.5);
           tile.setMaterial(spawnPoint);
-          
+
           cameraInitialX = (i * TILE_SIZE);
           cameraInitialZ = (j * TILE_SIZE);
-          
-          Cylinder player = new Cylinder(5, WALL_HEIGHT);//Just doing this for testing collisions
-          player.setTranslateX(i * TILE_SIZE);
-          player.setTranslateZ(j * TILE_SIZE);
+
+          Cylinder player = new Cylinder(5, WALL_HEIGHT);// Just doing this for
+                                                         // testing collisions
+          player.setTranslateX(cameraInitialX);
+          player.setTranslateZ(cameraInitialZ);
           player.setTranslateY(WALL_HEIGHT / 2);
           player.setMaterial(playerColor);
-          world.getChildren().add(player);
-          
+          playerXform.getChildren().add(player);
+          world.getChildren().add(playerXform);
+
         }
         else if (tiles[i][j] == 'Z')
         {
           tile.setTranslateY(0.5);
           tile.setMaterial(zombieSpawn);
-          
+
           Cylinder zombie = new Cylinder(5, WALL_HEIGHT);
           zombie.setTranslateX(i * TILE_SIZE);
           zombie.setTranslateZ(j * TILE_SIZE);
@@ -257,9 +250,6 @@ public class Game extends Application
           // Moves the light Doesn't take into account up and down movements.
           // Which doesn't matter as I don't think up and down movements are a
           // requirement
-          lightXform.ry.setPivotX(lightXform2.t.getTx());
-          lightXform.ry.setPivotZ(lightXform2.t.getTz());
-          lightXform.ry.setAngle(lightXform.ry.getAngle() - mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED);
 
           // Left and Right mouse movements
           cameraXform.ry.setPivotX(cameraXform2.t.getTx());
@@ -276,7 +266,6 @@ public class Game extends Application
         }
         else if (me.isMiddleButtonDown())// raise and lower camera
         {
-          lightXform2.t.setY(lightXform2.t.getY() + mouseDeltaY * MOUSE_SPEED * modifier * TRACK_SPEED);
           cameraXform2.t.setY(cameraXform2.t.getY() + mouseDeltaY * MOUSE_SPEED * modifier * TRACK_SPEED);
 
         }
@@ -327,7 +316,7 @@ public class Game extends Application
 
         if (s.equals("z")) // puts the player on the "ground"
         {
-          lightXform2.t.setY(0);
+//          lightXform2.t.setY(0);
           cameraXform2.t.setY(0);
         }
         if (s.equals("x")) // PLACES THE CAMERA ABOVE THE PLAYER SPAWN POINT
@@ -369,7 +358,6 @@ public class Game extends Application
     drawMap();
     buildCamera();
     buildLight();
-    
 
     Scene scene = new Scene(root, windowX, windowY, true);
     Stop[] stops = new Stop[] { new Stop(0, Color.RED), new Stop(1, Color.ORANGE) };
@@ -397,11 +385,15 @@ public class Game extends Application
       double cos = Math.cos(Math.toRadians(cameraXform.ry.getAngle()));
       double sin = Math.sin(Math.toRadians(cameraXform.ry.getAngle()));
 
-      /* Moves the camera around the world*/
+      /* Moves the camera around the world */
       if (back)
       {
+
         cameraXform.t.setX(cameraXform.t.getTx() - (speed * sin));
         cameraXform.t.setZ(cameraXform.t.getTz() - (speed * cos));
+
+        playerXform.t.setX(playerXform.t.getTx() - (speed * sin));
+        playerXform.t.setZ(playerXform.t.getTz() - (speed * cos));
 
       }
       if (front)
@@ -409,17 +401,26 @@ public class Game extends Application
         cameraXform.t.setX(cameraXform.t.getTx() + (speed * sin));
         cameraXform.t.setZ(cameraXform.t.getTz() + (speed * cos));
 
+        playerXform.t.setX(playerXform.t.getTx() + (speed * sin));
+        playerXform.t.setZ(playerXform.t.getTz() + (speed * cos));
+
       }
       if (right)
       {
         cameraXform.t.setX(cameraXform.t.getTx() - (speed * cos));
         cameraXform.t.setZ(cameraXform.t.getTz() + (speed * sin));
 
+        playerXform.t.setX(playerXform.t.getTx() - (speed * cos));
+        playerXform.t.setZ(playerXform.t.getTz() + (speed * sin));
+
       }
       if (left)
       {
         cameraXform.t.setX(cameraXform.t.getTx() + (speed * cos));
         cameraXform.t.setZ(cameraXform.t.getTz() - (speed * sin));
+
+        playerXform.t.setX(playerXform.t.getTx() + (speed * cos));
+        playerXform.t.setZ(playerXform.t.getTz() - (speed * sin));
 
       }
 
