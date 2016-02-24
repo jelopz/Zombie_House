@@ -177,6 +177,8 @@ public class Game extends Application
         {
           tile.setTranslateY(0.5);
           tile.setMaterial(spawnPoint);
+          cameraXform.t.setX(i*TILE_SIZE);
+          cameraXform.t.setZ(j*TILE_SIZE);
         }
         else if (tiles[i][j] == 'Z')
         {
