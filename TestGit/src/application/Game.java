@@ -31,11 +31,13 @@ import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.PointLight;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Material;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Box;
@@ -149,6 +151,7 @@ public class Game extends Application
 
     // material for walls (this and one above may need to be the same, check
     // ruberic//
+
     PhongMaterial notPathable = new PhongMaterial();
     notPathable.setDiffuseColor(Color.LIGHTGREEN);
     notPathable.setSpecularColor(Color.BLACK);
@@ -157,10 +160,13 @@ public class Game extends Application
     zombieColor.setDiffuseColor(Color.ORANGE);
     zombieColor.setSpecularColor(Color.RED);
 
+    //creates a blue cylinder centered on the camera for testing//
     PhongMaterial playerColor = new PhongMaterial();
     playerColor.setDiffuseColor(Color.BLUE);
     playerColor.setSpecularColor(Color.DARKBLUE);
 
+    PhongMaterial bricks = new PhongMaterial();
+    bricks.setDiffuseMap(new Image(getClass().getResource("img.png").toExternalForm()));
     Xform tileXform = new Xform();
     mapXform.getChildren().add(tileXform);
 
@@ -178,7 +184,7 @@ public class Game extends Application
         if (tiles[i][j] == 'O')// make a floot tile//
         {
           tile.setTranslateY(0.5);
-          tile.setMaterial(pathable);
+          tile.setMaterial(bricks);
         }
         else if (tiles[i][j] == 'P')
         {
@@ -217,7 +223,7 @@ public class Game extends Application
         {
           tile.setScaleY(WALL_HEIGHT);
           tile.setTranslateY(WALL_HEIGHT / 2);
-          tile.setMaterial(notPathable);
+          tile.setMaterial(bricks);
         }
         tileXform.getChildren().add(tile);
       }
@@ -297,8 +303,7 @@ public class Game extends Application
         playerXform.getChildren().add(newBox);
       }
     }
-      world.getChildren().add(mapXform);
-   
+    world.getChildren().add(mapXform);
 
   }
 
