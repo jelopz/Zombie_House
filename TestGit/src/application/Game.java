@@ -22,10 +22,6 @@
 
 package application;
 
-import java.util.HashMap;
-
-import javax.rmi.CORBA.Tie;
-
 import RoomGenerator.RoomGenerator;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -54,8 +50,8 @@ public class Game extends Application
   private static final double TILE_SIZE = 56; // number of subdivisions in
   // tile
   private static final double WALL_HEIGHT = 64;
-  private static final double CAMERA_INITIAL_DISTANCE = -1000;
-  private static final double CAMERA_INITIAL_X_ANGLE = 90;
+  private static final double CAMERA_INITIAL_DISTANCE = 0;
+  private static final double CAMERA_INITIAL_X_ANGLE = 0;
   private static final double CAMERA_INITIAL_Y_ANGLE = 0;
   private static final double CAMERA_NEAR_CLIP = 0.1;
   private static final double CAMERA_FAR_CLIP = 10000.0;
@@ -90,8 +86,9 @@ public class Game extends Application
   private boolean back = false;
   private boolean left = false;
   private boolean right = false;
-  private double sprint = 5;
-  private double walk = 3;
+  private boolean collisions = false;
+  private double sprint = 3;
+  private double walk = 2;
   private double speed = 1;
 
   private double mousePosX;
@@ -225,83 +222,83 @@ public class Game extends Application
         tileXform.getChildren().add(tile);
       }
     }
-    for (int t = 0; t < 8; t++)
+    if (collisions)
     {
-      Box newBox = new Box(1, 100, 1);
-      newBox.setMaterial(zombieColor);
-      newBox.setTranslateY(WALL_HEIGHT / 2);
-
-      if (t == 1)
+      for (int t = 0; t < 8; t++)
       {
-        points[t][0] = (cameraInitialX + TILE_SIZE / 2);
-        points[t][1] = (cameraInitialZ + TILE_SIZE / 4);
-
-        newBox.setTranslateX(cameraInitialX + TILE_SIZE / 2);
-        newBox.setTranslateZ(cameraInitialZ + TILE_SIZE / 4);
+        Box newBox = new Box(1, 100, 1);
         newBox.setMaterial(zombieColor);
-      }
-      if (t == 2)
-      {
-        points[t][0] = (cameraInitialX + TILE_SIZE / 2);
-        points[t][1] = (cameraInitialZ - TILE_SIZE / 4);
-        newBox.setTranslateX(cameraInitialX + TILE_SIZE / 2);
-        newBox.setTranslateZ(cameraInitialZ - TILE_SIZE / 4);
-        newBox.setMaterial(playerColor);
-      }
-      if (t == 6)
-      {
-        points[t][0] = (cameraInitialX - TILE_SIZE / 2);
-        points[t][1] = (cameraInitialZ + TILE_SIZE / 4);
-        newBox.setTranslateX(cameraInitialX - TILE_SIZE / 2);
-        newBox.setTranslateZ(cameraInitialZ + TILE_SIZE / 4);
-        newBox.setMaterial(pathable);
-      }
-      if (t == 5)
-      {
-        points[t][0] = (cameraInitialX - TILE_SIZE / 2);
-        points[t][1] = (cameraInitialZ - TILE_SIZE / 4);
-        newBox.setTranslateX(cameraInitialX - TILE_SIZE / 2);
-        newBox.setTranslateZ(cameraInitialZ - TILE_SIZE / 4);
-        newBox.setMaterial(notPathable);
-      }
-      if (t == 0)
-      {
-        points[t][0] = (cameraInitialX + TILE_SIZE / 4);
-        points[t][1] = (cameraInitialZ + TILE_SIZE / 2);
-        newBox.setTranslateX(cameraInitialX + TILE_SIZE / 4);
-        newBox.setTranslateZ(cameraInitialZ + TILE_SIZE / 2);
-        newBox.setMaterial(spawnPoint);
-      }
-      if (t == 7)
-      {
-        points[t][0] = (cameraInitialX - TILE_SIZE / 4);
-        points[t][1] = (cameraInitialZ + TILE_SIZE / 2);
+        newBox.setTranslateY(WALL_HEIGHT / 2);
 
-        newBox.setTranslateX(cameraInitialX - TILE_SIZE / 4);
-        newBox.setTranslateZ(cameraInitialZ + TILE_SIZE / 2);
-        newBox.setMaterial(zombieSpawn);
+        if (t == 1)
+        {
+          points[t][0] = (cameraInitialX + TILE_SIZE / 2);
+          points[t][1] = (cameraInitialZ + TILE_SIZE / 4);
+
+          newBox.setTranslateX(cameraInitialX + TILE_SIZE / 2);
+          newBox.setTranslateZ(cameraInitialZ + TILE_SIZE / 4);
+          newBox.setMaterial(zombieColor);
+        }
+        if (t == 2)
+        {
+          points[t][0] = (cameraInitialX + TILE_SIZE / 2);
+          points[t][1] = (cameraInitialZ - TILE_SIZE / 4);
+          newBox.setTranslateX(cameraInitialX + TILE_SIZE / 2);
+          newBox.setTranslateZ(cameraInitialZ - TILE_SIZE / 4);
+          newBox.setMaterial(playerColor);
+        }
+        if (t == 6)
+        {
+          points[t][0] = (cameraInitialX - TILE_SIZE / 2);
+          points[t][1] = (cameraInitialZ + TILE_SIZE / 4);
+          newBox.setTranslateX(cameraInitialX - TILE_SIZE / 2);
+          newBox.setTranslateZ(cameraInitialZ + TILE_SIZE / 4);
+          newBox.setMaterial(pathable);
+        }
+        if (t == 5)
+        {
+          points[t][0] = (cameraInitialX - TILE_SIZE / 2);
+          points[t][1] = (cameraInitialZ - TILE_SIZE / 4);
+          newBox.setTranslateX(cameraInitialX - TILE_SIZE / 2);
+          newBox.setTranslateZ(cameraInitialZ - TILE_SIZE / 4);
+          newBox.setMaterial(notPathable);
+        }
+        if (t == 0)
+        {
+          points[t][0] = (cameraInitialX + TILE_SIZE / 4);
+          points[t][1] = (cameraInitialZ + TILE_SIZE / 2);
+          newBox.setTranslateX(cameraInitialX + TILE_SIZE / 4);
+          newBox.setTranslateZ(cameraInitialZ + TILE_SIZE / 2);
+          newBox.setMaterial(spawnPoint);
+        }
+        if (t == 7)
+        {
+          points[t][0] = (cameraInitialX - TILE_SIZE / 4);
+          points[t][1] = (cameraInitialZ + TILE_SIZE / 2);
+
+          newBox.setTranslateX(cameraInitialX - TILE_SIZE / 4);
+          newBox.setTranslateZ(cameraInitialZ + TILE_SIZE / 2);
+          newBox.setMaterial(zombieSpawn);
+        }
+        if (t == 3)
+        {
+          points[t][0] = (cameraInitialX + TILE_SIZE / 4);
+          points[t][1] = (cameraInitialZ - TILE_SIZE / 2);
+          newBox.setTranslateX(cameraInitialX + TILE_SIZE / 4);
+          newBox.setTranslateZ(cameraInitialZ - TILE_SIZE / 2);
+        }
+        if (t == 4)
+        {
+          points[t][0] = (cameraInitialX - TILE_SIZE / 4);
+          points[t][1] = (cameraInitialZ - TILE_SIZE / 2);
+          newBox.setTranslateX(cameraInitialX - TILE_SIZE / 4);
+          newBox.setTranslateZ(cameraInitialZ - TILE_SIZE / 2);
+        }
+        playerXform.getChildren().add(newBox);
       }
-      if (t == 3)
-      {
-        points[t][0] = (cameraInitialX + TILE_SIZE / 4);
-        points[t][1] = (cameraInitialZ - TILE_SIZE / 2);
-        newBox.setTranslateX(cameraInitialX + TILE_SIZE / 4);
-        newBox.setTranslateZ(cameraInitialZ - TILE_SIZE / 2);
-      }
-      if (t == 4)
-      {
-        points[t][0] = (cameraInitialX - TILE_SIZE / 4);
-        points[t][1] = (cameraInitialZ - TILE_SIZE / 2);
-        newBox.setTranslateX(cameraInitialX - TILE_SIZE / 4);
-        newBox.setTranslateZ(cameraInitialZ - TILE_SIZE / 2);
-      }
-      playerXform.getChildren().add(newBox);
-      System.out.println(playerXform.getChildren().get(t).getTranslateX());
-      System.out.println(playerXform.getChildren().get(t).getTranslateZ());
-      System.out.println();
     }
-
-    world.getChildren().add(mapXform);
+      world.getChildren().add(mapXform);
+   
 
   }
 
@@ -331,6 +328,7 @@ public class Game extends Application
         mouseDeltaY = (mousePosY - mouseOldY);
 
         double modifier = 1.0;
+
         if (me.isPrimaryButtonDown())
         {
 
@@ -343,6 +341,15 @@ public class Game extends Application
           cameraXform.ry.setPivotZ(cameraXform2.t.getTz());
           cameraXform.ry.setAngle(cameraXform.ry.getAngle() - mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED);
 
+          if (cameraXform.ry.getAngle() > 360)
+          {
+            cameraXform.ry.setAngle(0);
+          }
+          if (cameraXform.ry.getAngle() < 0)
+          {
+            cameraXform.ry.setAngle(360);
+          }
+          // System.out.println(cameraXform.ry.getAngle()/45);
           // Up and Down mouse movements. I don't think this is required but
           // helps maneuver around the map in it's current state
           handleUpDownRotation(modifier); // comment out if unwanted
@@ -474,10 +481,10 @@ public class Game extends Application
       /* Moves the camera around the world */
       if (back)
       {
-        if (CollisionMap.generateMap('s', speed, cos, sin, tiles, TILE_SIZE, cameraXform))
+        if (collisions && CollisionMap.generateMap('s', speed, cos, sin, tiles, TILE_SIZE, cameraXform))
         {
           System.out.println("Back Wall");
-          
+
         }
         else
         {
@@ -491,7 +498,7 @@ public class Game extends Application
 
       if (front)
       {
-        if (CollisionMap.generateMap('w', speed, cos, sin, tiles, TILE_SIZE, cameraXform))
+        if (collisions && CollisionMap.generateMap('w', speed, cos, sin, tiles, TILE_SIZE, cameraXform))
         {
           System.out.println("Front Wall");
         }
@@ -506,7 +513,7 @@ public class Game extends Application
       }
       if (right)
       {
-        if (CollisionMap.generateMap('a', speed, cos, sin, tiles, TILE_SIZE, cameraXform))
+        if (collisions && CollisionMap.generateMap('a', speed, cos, sin, tiles, TILE_SIZE, cameraXform))
         {
           System.out.println("Right Wall");
         }
@@ -521,7 +528,7 @@ public class Game extends Application
       }
       if (left)
       {
-        if (CollisionMap.generateMap('d', speed, cos, sin, tiles, TILE_SIZE, cameraXform))
+        if (collisions && CollisionMap.generateMap('d', speed, cos, sin, tiles, TILE_SIZE, cameraXform))
         {
           System.out.println("Left Wall");
         }

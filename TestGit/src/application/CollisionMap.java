@@ -4,11 +4,18 @@ public class CollisionMap
 {
 
   public static boolean generateMap(double d, double speed, double cos, double sin, char[][] tiles, double TILE_SIZE,
-      Xform playerXform)
+      Xform cameraXform)
   {
-    double x = (playerXform.t.getTx() + TILE_SIZE / 2) / TILE_SIZE;
-    double z = (playerXform.t.getTz() + TILE_SIZE / 2) / TILE_SIZE;
-
+//  double x = Math.floor(((cameraXform.t.getTx() /*+ (speed * sin)*/)+(TILE_SIZE/2))/TILE_SIZE);
+//  double z = Math.floor(((cameraXform.t.getTz() /*+ (speed * cos)*/)+(TILE_SIZE/2))/TILE_SIZE);
+    
+    double angle = cameraXform.ry.getAngle()/45;
+    double anglePlus = angle+1;
+    double angleMin = angle-1;
+    if(anglePlus > 7) anglePlus = 0;
+    if(angleMin <0) angleMin = 7;
+    double x = (cameraXform.t.getTx() + TILE_SIZE / 2) / TILE_SIZE;
+    double z = (cameraXform.t.getTz() + TILE_SIZE / 2) / TILE_SIZE;
     if (Math.floor(x + .5) < tiles.length && Math.floor(z + .5) < tiles.length && Math.floor(x - .5) >= 0
         && Math.floor(z - .5) >= 0)
     {
@@ -61,7 +68,17 @@ public class CollisionMap
 
       if (d == 'w')
       {
-        if (point[0] == true || point[1] == true)
+//        0 -45
+//        45 -90
+//        90 -135
+//        135-180
+//        180 -225
+//        225 - 270
+//        270 - 315
+//        315 - 360
+        
+        System.out.println((int) angle + "   " + (int) (anglePlus));
+        if (point[(int) angleMin] == true || point[(int) angle] == true /*|| point[(int) (anglePlus)] == true*/)
         {
           return true;
         }
@@ -90,7 +107,7 @@ public class CollisionMap
         }
 
       }
-      System.out.println((int) x + "   " + (int) z);
+//      System.out.println((int) x + "   " + (int) z);
     }
     return false;
 
