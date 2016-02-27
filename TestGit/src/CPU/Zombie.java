@@ -6,8 +6,8 @@ import javafx.scene.shape.Cylinder;
 
 public abstract class Zombie
 {
-  private final Point spawnPoint; //(x,y) coordinate of spawn Point
-  private Cylinder model;
+  protected final Point spawnPoint; //(x,y) coordinate of spawn Point
+  protected Cylinder model;
 
   public Zombie(int x, int y, Cylinder m)
   {
