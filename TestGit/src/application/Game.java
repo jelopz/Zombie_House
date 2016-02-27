@@ -43,6 +43,7 @@ import javafx.scene.paint.Stop;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.DrawMode;
+import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
@@ -70,7 +71,7 @@ public class Game extends Application
   private final Group root = new Group();
   private final Xform world = new Xform();
   private final PerspectiveCamera camera = new PerspectiveCamera(true);
-  private final PointLight light = new PointLight(Color.ALICEBLUE);
+  private final PointLight light = new PointLight(Color.WHITE);
   private final Xform cameraXform = new Xform();
   private final Xform cameraXform2 = new Xform();
   private final Xform cameraXform3 = new Xform();
@@ -123,9 +124,7 @@ public class Game extends Application
   private void buildLight()
   {
 
-    light.setTranslateZ(CAMERA_INITIAL_DISTANCE);
-    // light.setColor(new Color(.3, .3, .2, 0)); //this seemed like a good color
-    // to start with
+    light.setTranslateZ(WALL_HEIGHT / 2);
     light.setColor(Color.WHITE);
     cameraXform.getChildren().add(light);// add light to camera so they
     // move together
@@ -160,13 +159,16 @@ public class Game extends Application
     zombieColor.setDiffuseColor(Color.ORANGE);
     zombieColor.setSpecularColor(Color.RED);
 
-    //creates a blue cylinder centered on the camera for testing//
+    // creates a blue cylinder centered on the camera for testing//
     PhongMaterial playerColor = new PhongMaterial();
     playerColor.setDiffuseColor(Color.BLUE);
     playerColor.setSpecularColor(Color.DARKBLUE);
 
     PhongMaterial bricks = new PhongMaterial();
     bricks.setDiffuseMap(new Image(getClass().getResource("img.png").toExternalForm()));
+    bricks.setDiffuseColor(Color.WHITE);
+    bricks.setSpecularPower(0);
+
     Xform tileXform = new Xform();
     mapXform.getChildren().add(tileXform);
 
@@ -181,23 +183,34 @@ public class Game extends Application
         tile.setDrawMode(DrawMode.FILL);
         tile.setTranslateX(i * TILE_SIZE);
         tile.setTranslateZ(j * TILE_SIZE);
+        Box ceiling = new Box(TILE_SIZE, 1, TILE_SIZE);
+        ceiling.setDrawMode(DrawMode.FILL);
+        ceiling.setTranslateX(i * TILE_SIZE);
+        ceiling.setTranslateZ(j * TILE_SIZE);
+        ceiling.setMaterial(bricks);
         if (tiles[i][j] == 'O')// make a floot tile//
         {
+
+          ceiling.setTranslateY(WALL_HEIGHT + .5);
+          tileXform.getChildren().add(ceiling);
+
           tile.setTranslateY(0.5);
           tile.setMaterial(bricks);
+
         }
         else if (tiles[i][j] == 'P')
         {
+          ceiling.setTranslateY(WALL_HEIGHT + .5);
+          tileXform.getChildren().add(ceiling);
+
           tile.setTranslateY(0.5);
           tile.setMaterial(spawnPoint);
 
           cameraInitialX = (i * TILE_SIZE);
           cameraInitialZ = (j * TILE_SIZE);
 
-          Cylinder player = new Cylinder(TILE_SIZE / 2, WALL_HEIGHT);// Just
-                                                                     // doing
-                                                                     // this for
-          // testing collisions
+          // Just doing this for testing collisions
+          Cylinder player = new Cylinder(TILE_SIZE / 2, WALL_HEIGHT);
           player.setTranslateX(cameraInitialX);
           player.setTranslateZ(cameraInitialZ);
           player.setTranslateY(WALL_HEIGHT / 2);
@@ -209,6 +222,13 @@ public class Game extends Application
         }
         else if (tiles[i][j] == 'Z')
         {
+          ceiling.setTranslateY(WALL_HEIGHT + .5);
+          tileXform.getChildren().add(ceiling);
+       // Just
+          // doing
+          // this for
+          // testing
+          // collisions
           tile.setTranslateY(0.5);
           tile.setMaterial(zombieSpawn);
 
@@ -228,7 +248,7 @@ public class Game extends Application
         tileXform.getChildren().add(tile);
       }
     }
-    if (collisions)
+    if (collisions)// sets 8 points around the player for testinf collisions
     {
       for (int t = 0; t < 8; t++)
       {
@@ -342,9 +362,10 @@ public class Game extends Application
           // requirement
 
           // Left and Right mouse movements
-          cameraXform.ry.setPivotX(cameraXform2.t.getTx());
-          cameraXform.ry.setPivotZ(cameraXform2.t.getTz());
+
           cameraXform.ry.setAngle(cameraXform.ry.getAngle() - mouseDeltaX * MOUSE_SPEED * modifier * ROTATION_SPEED);
+          light.setRotationAxis(Rotate.Y_AXIS);
+          light.setRotate(cameraXform.ry.getAngle());
 
           if (cameraXform.ry.getAngle() > 360)
           {
@@ -381,8 +402,10 @@ public class Game extends Application
    */
   private void handleUpDownRotation(double modifier)
   {
-    cameraXform.rx.setPivotY(cameraXform2.t.getTz());
-    cameraXform.rx.setPivotZ(cameraXform2.t.getTz());
+    light.setRotationAxis(Rotate.X_AXIS);
+    light.setRotate(cameraXform.ry.getAngle());
+    // cameraXform.rx.setPivotY(cameraXform2.t.getTz());
+    // cameraXform.rx.setPivotZ(cameraXform2.t.getTz());
     cameraXform.rx.setAngle(cameraXform.rx.getAngle() + mouseDeltaY * MOUSE_SPEED * modifier * ROTATION_SPEED);
   }
 
