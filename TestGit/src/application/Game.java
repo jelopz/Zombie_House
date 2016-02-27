@@ -22,6 +22,11 @@
 
 package application;
 
+import java.awt.Point;
+import java.util.ArrayList;
+
+import CPU.RandomWalk;
+import CPU.Zombie;
 import RoomGenerator.RoomGenerator;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -78,7 +83,10 @@ public class Game extends Application
 
   private final Xform playerXform = new Xform();
   private final Xform mapXform = new Xform();
-
+  
+  private ArrayList<Zombie> zombies; //List of Zombies
+  private Point startPointZ;
+  
   private char[][] tiles;
   private int mapH = 36;
   private int mapW = 36;
@@ -133,6 +141,7 @@ public class Game extends Application
 
   private void drawMap()
   {
+	zombies = new ArrayList<>();
     // Material for floors and ceilings//
     PhongMaterial pathable = new PhongMaterial();
     pathable.setDiffuseColor(Color.WHITE);
@@ -209,12 +218,12 @@ public class Game extends Application
           cameraInitialX = (i * TILE_SIZE);
           cameraInitialZ = (j * TILE_SIZE);
 
-          // Just doing this for testing collisions
+//          // Just doing this for testing collisions
           Cylinder player = new Cylinder(TILE_SIZE / 2, WALL_HEIGHT);
           player.setTranslateX(cameraInitialX);
           player.setTranslateZ(cameraInitialZ);
           player.setTranslateY(WALL_HEIGHT / 2);
-          player.setMaterial(playerColor);
+          player.setMaterial(playerColor); 
           playerXform.getChildren().add(player);
           // cameraXform.getChildren().add(playerXform);
           world.getChildren().add(playerXform);
@@ -236,7 +245,19 @@ public class Game extends Application
           zombie.setTranslateX(i * TILE_SIZE);
           zombie.setTranslateZ(j * TILE_SIZE);
           zombie.setTranslateY(WALL_HEIGHT / 2);
+          
           zombie.setMaterial(zombieColor);
+          if(zombies.isEmpty())
+          {
+//        	  zombie.setMaterial(zombieSpawn);
+        	  startPointZ = new Point(j,i);
+          }
+//          else
+//          {
+        	  zombie.setMaterial(zombieColor);
+        	  
+//          }
+          zombies.add(new RandomWalk(j,i, zombie));
           world.getChildren().add(zombie);
         }
         else// make a wall tile//
@@ -445,6 +466,13 @@ public class Game extends Application
           cameraXform.t.setZ(house.getPlayerSpawnPoint().x * TILE_SIZE);
           cameraXform.t.setX(house.getPlayerSpawnPoint().y * TILE_SIZE);
         }
+        if(s.equals("c")) //Moves player to the position of the first zombie created
+        	//for debugging purposes
+        {
+            cameraXform.t.setZ(startPointZ.x * TILE_SIZE);
+            cameraXform.t.setX(startPointZ.y * TILE_SIZE);
+            
+        }
       }
     });
     scene.setOnKeyReleased(new EventHandler<KeyEvent>()
@@ -506,6 +534,12 @@ public class Game extends Application
 
       double cos = Math.cos(Math.toRadians(cameraXform.ry.getAngle()));
       double sin = Math.sin(Math.toRadians(cameraXform.ry.getAngle()));
+      
+      for(Zombie z: zombies) //tells zombies to figure out their next move
+      {
+    	  z.determineNextMove();
+      }
+      
       /* Moves the camera around the world */
       if (back)
       {
