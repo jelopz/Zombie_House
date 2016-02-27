@@ -1,7 +1,5 @@
 package CPU;
 
-import java.util.Random;
-
 import javafx.scene.shape.Cylinder;
 
 public class LineWalk extends Zombie
