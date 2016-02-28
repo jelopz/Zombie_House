@@ -1,3 +1,9 @@
+/*
+ * ZombieBuilder imports a .stl model
+ * Method: getZombie returns a group consisting of the triangle
+ * mesh generated from the .stl file
+ * */
+
 package ZombieBuilder;
 
 import java.io.File;
@@ -20,6 +26,7 @@ public class ZombieBuilder
 
   static MeshView[] loadMeshViews()
   {
+    //load file
     URL in = Game.class.getResource("Zombie.stl");
     File file = null;
     try
@@ -30,6 +37,7 @@ public class ZombieBuilder
     {
       e.printStackTrace();
     }
+    //imports as triangle mesh
     StlMeshImporter importer = new StlMeshImporter();
     importer.read(file);
     Mesh mesh = importer.getImport();
