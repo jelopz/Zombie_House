@@ -225,13 +225,16 @@ public class Game extends Application
           cameraInitialZ = (j * TILE_SIZE);
 
           // Just doing this for testing collisions
-          Cylinder player = new Cylinder(TILE_SIZE / 2, WALL_HEIGHT);
-          player.setTranslateX(cameraInitialX);
-          player.setTranslateZ(cameraInitialZ);
-          player.setTranslateY(WALL_HEIGHT / 2);
-          player.setMaterial(playerColor);
-          playerXform.getChildren().add(player);
-          world.getChildren().add(playerXform);
+          if (collisions)
+          {
+            Cylinder player = new Cylinder(TILE_SIZE / 2, WALL_HEIGHT);
+            player.setTranslateX(cameraInitialX);
+            player.setTranslateZ(cameraInitialZ);
+            player.setTranslateY(WALL_HEIGHT / 2);
+            player.setMaterial(playerColor);
+            playerXform.getChildren().add(player);
+            world.getChildren().add(playerXform);
+          }
 
         }
         else if (tiles[i][j] == 'Z')
@@ -486,17 +489,17 @@ public class Game extends Application
           speed = sprint;
         }
         else speed = walk;
-        
+
         String s = event.getText();
         if (s.equals("w")) front = true;
         if (s.equals("s")) back = true;
         if (s.equals("a")) left = true;
         if (s.equals("d")) right = true;
-       
-        //hold and release mouse from center of screen by pressing c
-        if(s.equals("c"))
+
+        // hold and release mouse from center of screen by pressing c
+        if (s.equals("r"))
         {
-          if(holdMouse == true) holdMouse = false;
+          if (holdMouse == true) holdMouse = false;
           else holdMouse = true;
         }
 
