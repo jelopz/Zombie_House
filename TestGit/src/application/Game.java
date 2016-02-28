@@ -65,8 +65,8 @@ public class Game extends Application
   private static final double TILE_SIZE = 56; // number of subdivisions in
   // tile
   private static final double WALL_HEIGHT = 64;
-  private static final double CAMERA_INITIAL_DISTANCE = -700;
-  private static final double CAMERA_INITIAL_X_ANGLE = 90;
+  private static final double CAMERA_INITIAL_DISTANCE = 0;
+  private static final double CAMERA_INITIAL_X_ANGLE = 0;
   private static final double CAMERA_INITIAL_Y_ANGLE = 0;
   private static final double CAMERA_NEAR_CLIP = 0.1;
   private static final double CAMERA_FAR_CLIP = 10000.0;
@@ -104,7 +104,7 @@ public class Game extends Application
   private boolean back = false;
   private boolean left = false;
   private boolean right = false;
-  private boolean collisions = true;
+  private boolean collisions = false;
   private double sprint = 3;
   private double walk = 2;
   private double speed = 1;
@@ -117,7 +117,7 @@ public class Game extends Application
   private double mouseDeltaY;
 
   private double[][] points = new double[8][2];
-  private static final double MODEL_SCALE_FACTOR = 1.5;
+  private static final double MODEL_SCALE_FACTOR = 1;
 
   private static final Color lightColor = Color.rgb(244, 255, 250);
   private static final Color jewelColor = Color.rgb(0, 190, 222);
@@ -173,25 +173,6 @@ public class Game extends Application
   private void drawMap()
   {
 
-    ///////////////////////////////////////////
-    MeshView[] meshViews = loadMeshViews();
-    for (int i = 0; i < meshViews.length; i++)
-    {
-      meshViews[i].setScaleX(MODEL_SCALE_FACTOR);
-      meshViews[i].setScaleY(MODEL_SCALE_FACTOR);
-      meshViews[i].setScaleZ(MODEL_SCALE_FACTOR);
-
-      PhongMaterial sample = new PhongMaterial(jewelColor);
-      sample.setSpecularColor(lightColor);
-      sample.setSpecularPower(16);
-      meshViews[i].setMaterial(sample);
-
-      meshViews[i].getTransforms().setAll(new Rotate(90, Rotate.X_AXIS));
-    }
-    Group mesh = new Group(meshViews);
-    mapXform.getChildren().add(mesh);
-
-    ///////////////////////////////////////////
     zombies = new ArrayList<>();
     // Material for floors and ceilings//
     PhongMaterial pathable = new PhongMaterial();
@@ -293,24 +274,46 @@ public class Game extends Application
           tile.setTranslateY(0.5);
           tile.setMaterial(zombieSpawn);
 
-          Cylinder zombie = new Cylinder(TILE_SIZE / 2, WALL_HEIGHT);
-          zombie.setTranslateX(i * TILE_SIZE);
-          zombie.setTranslateZ(j * TILE_SIZE);
-          zombie.setTranslateY(WALL_HEIGHT / 2);
+//          Cylinder zombie = new Cylinder(TILE_SIZE / 2, WALL_HEIGHT);
+//          zombie.setTranslateX(i * TILE_SIZE);
+//          zombie.setTranslateZ(j * TILE_SIZE);
+//          zombie.setTranslateY(WALL_HEIGHT / 2);
+//
+//          zombie.setMaterial(zombieColor);
+          
+          ///////////////////////////////////////////
+          MeshView[] meshViews = loadMeshViews();
+          for (int t = 0; t < meshViews.length; t++)
+          {
+            meshViews[t].setTranslateX(i*TILE_SIZE+TILE_SIZE);
+            meshViews[t].setTranslateZ(j*TILE_SIZE);
+            meshViews[t].setTranslateY(.5);
+            meshViews[t].setScaleX(MODEL_SCALE_FACTOR);
+            meshViews[t].setScaleY(MODEL_SCALE_FACTOR);
+            meshViews[t].setScaleZ(MODEL_SCALE_FACTOR);
 
-          zombie.setMaterial(zombieColor);
+            PhongMaterial sample = new PhongMaterial(jewelColor);
+            sample.setSpecularColor(lightColor);
+            sample.setSpecularPower(16);
+            meshViews[t].setMaterial(sample);
+
+            meshViews[t].getTransforms().setAll(new Rotate(90, Rotate.X_AXIS));
+          }
+          Group mesh = new Group(meshViews);
+          
           if (zombies.isEmpty())
           {
             // zombie.setMaterial(zombieSpawn);
             startPointZ = new Point(j, i);
           }
-          // else
-          // {
-          zombie.setMaterial(zombieColor);
 
-          // }
-          zombies.add(new RandomWalk(j, i, zombie));
-          world.getChildren().add(zombie);
+          zombies.add(new RandomWalk(j, i, mesh));
+          
+          
+//          mapXform.getChildren().add(mesh);
+
+          ///////////////////////////////////////////
+          world.getChildren().add(mesh);
         }
         else// make a wall tile//
         {

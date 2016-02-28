@@ -3,15 +3,15 @@ package CPU;
 import java.awt.Point;
 import java.util.Random;
 
-import javafx.scene.shape.Cylinder;
+import javafx.scene.Group;
 
 public abstract class Zombie
 {
   protected final Point spawnPoint; // (x,y) coordinate of spawn Point
-  protected Cylinder model;
+  protected Group model;
   protected static Random rand;
 
-  public Zombie(int x, int y, Cylinder m)
+  public Zombie(int x, int y, Group m)
   {
     spawnPoint = new Point(x, y);
     model = m;

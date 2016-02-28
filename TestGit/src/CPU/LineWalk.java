@@ -1,10 +1,10 @@
 package CPU;
 
-import javafx.scene.shape.Cylinder;
+import javafx.scene.Group;
 
 public class LineWalk extends Zombie
 {
-  public LineWalk(int x, int y, Cylinder m)
+  public LineWalk(int x, int y, Group m)
   {
     super(x, y, m);
   }

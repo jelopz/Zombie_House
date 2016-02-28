@@ -1,14 +1,13 @@
 package CPU;
 
-import java.util.Random;
 
-import javafx.scene.shape.Cylinder;
+import javafx.scene.Group;
 
 public class RandomWalk extends Zombie
 {
   private double translation;
 
-  public RandomWalk(int x, int y, Cylinder m)
+  public RandomWalk(int x, int y, Group m)
   {
     super(x, y, m);
   }
