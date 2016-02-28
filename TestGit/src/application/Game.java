@@ -22,7 +22,11 @@
 
 package application;
 
+import java.awt.AWTException;
+import java.awt.Cursor;
+import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.Robot;
 import java.util.ArrayList;
 
 import ZombieBuilder.ZombieBuilder;
@@ -238,7 +242,7 @@ public class Game extends Application
           tile.setTranslateY(0.5);
           tile.setMaterial(zombieSpawn);
 
-          Group zomb = ZombieBuilder.getZombie(i,j,TILE_SIZE);
+          Group zomb = ZombieBuilder.getZombie(i, j, TILE_SIZE);
 
           if (zombies.isEmpty())
           {
@@ -337,6 +341,53 @@ public class Game extends Application
 
   private void handleMouse(Scene scene, final Node root)
   {
+
+    scene.setOnMouseMoved(new EventHandler<MouseEvent>()
+    {
+
+      @Override
+      public void handle(MouseEvent event)
+      {
+        Point p = MouseInfo.getPointerInfo().getLocation();
+        int x = p.x;
+        int y = p.y;
+        System.out.println(x + "  " + y);
+        System.out.println();
+        mousePosX = x;
+        mousePosY = y;
+        mouseOldX = 950;
+        mouseOldY = 500;
+
+        mouseDeltaX = (mousePosX - mouseOldX);
+        mouseDeltaY = (mousePosY - mouseOldY);
+
+        cameraXform.ry.setAngle(cameraXform.ry.getAngle() - mouseDeltaX * MOUSE_SPEED * ROTATION_SPEED);
+        light.setRotationAxis(Rotate.Y_AXIS);
+        light.setRotate(cameraXform.ry.getAngle());
+
+        if (cameraXform.ry.getAngle() > 360)
+        {
+          cameraXform.ry.setAngle(0);
+        }
+        if (cameraXform.ry.getAngle() < 0)
+        {
+          cameraXform.ry.setAngle(360);
+
+        }
+        light.setRotationAxis(Rotate.X_AXIS);
+        light.setRotate(cameraXform.ry.getAngle());
+        cameraXform.rx.setAngle(cameraXform.rx.getAngle() + mouseDeltaY * MOUSE_SPEED * ROTATION_SPEED);
+
+        try
+        {
+          new Robot().mouseMove(950, 500);
+        }
+        catch (AWTException e)
+        {
+          e.printStackTrace();
+        }
+      }
+    });
     scene.setOnMousePressed(new EventHandler<MouseEvent>()
     {
       @Override
@@ -346,6 +397,7 @@ public class Game extends Application
         mousePosY = me.getSceneY();
         mouseOldX = me.getSceneX();
         mouseOldY = me.getSceneY();
+
       }
     });
     scene.setOnMouseDragged(new EventHandler<MouseEvent>()
@@ -502,7 +554,7 @@ public class Game extends Application
     handleMouse(scene, world);
     handleKeyboard(scene, world);
 
-    primaryStage.setTitle("Application");
+    primaryStage.setTitle("Zombie House");
     primaryStage.setScene(scene);
     primaryStage.show();
 
