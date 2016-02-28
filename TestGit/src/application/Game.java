@@ -23,7 +23,6 @@
 package application;
 
 import java.awt.AWTException;
-import java.awt.Cursor;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Robot;
@@ -102,6 +101,7 @@ public class Game extends Application
   private boolean left = false;
   private boolean right = false;
   private boolean collisions = false;
+  private boolean holdMouse = true;
   private double sprint = 3;
   private double walk = 2;
   private double speed = 1;
@@ -344,47 +344,49 @@ public class Game extends Application
 
     scene.setOnMouseMoved(new EventHandler<MouseEvent>()
     {
-
       @Override
       public void handle(MouseEvent event)
       {
-        Point p = MouseInfo.getPointerInfo().getLocation();
-        int x = p.x;
-        int y = p.y;
-        System.out.println(x + "  " + y);
-        System.out.println();
-        mousePosX = x;
-        mousePosY = y;
-        mouseOldX = 950;
-        mouseOldY = 500;
-
-        mouseDeltaX = (mousePosX - mouseOldX);
-        mouseDeltaY = (mousePosY - mouseOldY);
-
-        cameraXform.ry.setAngle(cameraXform.ry.getAngle() - mouseDeltaX * MOUSE_SPEED * ROTATION_SPEED);
-        light.setRotationAxis(Rotate.Y_AXIS);
-        light.setRotate(cameraXform.ry.getAngle());
-
-        if (cameraXform.ry.getAngle() > 360)
+        if (holdMouse)
         {
-          cameraXform.ry.setAngle(0);
-        }
-        if (cameraXform.ry.getAngle() < 0)
-        {
-          cameraXform.ry.setAngle(360);
+          Point p = MouseInfo.getPointerInfo().getLocation();
+          int x = p.x;
+          int y = p.y;
+          System.out.println(x + "  " + y);
+          System.out.println();
+          mousePosX = x;
+          mousePosY = y;
+          mouseOldX = 950;
+          mouseOldY = 500;
 
-        }
-        light.setRotationAxis(Rotate.X_AXIS);
-        light.setRotate(cameraXform.ry.getAngle());
-        cameraXform.rx.setAngle(cameraXform.rx.getAngle() + mouseDeltaY * MOUSE_SPEED * ROTATION_SPEED);
+          mouseDeltaX = (mousePosX - mouseOldX);
+          mouseDeltaY = (mousePosY - mouseOldY);
 
-        try
-        {
-          new Robot().mouseMove(950, 500);
-        }
-        catch (AWTException e)
-        {
-          e.printStackTrace();
+          cameraXform.ry.setAngle(cameraXform.ry.getAngle() - mouseDeltaX * MOUSE_SPEED * ROTATION_SPEED);
+          light.setRotationAxis(Rotate.Y_AXIS);
+          light.setRotate(cameraXform.ry.getAngle());
+
+          if (cameraXform.ry.getAngle() > 360)
+          {
+            cameraXform.ry.setAngle(0);
+          }
+          if (cameraXform.ry.getAngle() < 0)
+          {
+            cameraXform.ry.setAngle(360);
+
+          }
+          light.setRotationAxis(Rotate.X_AXIS);
+          light.setRotate(cameraXform.ry.getAngle());
+          cameraXform.rx.setAngle(cameraXform.rx.getAngle() + mouseDeltaY * MOUSE_SPEED * ROTATION_SPEED);
+
+          try
+          {
+            new Robot().mouseMove(950, 500);
+          }
+          catch (AWTException e)
+          {
+            e.printStackTrace();
+          }
         }
       }
     });
@@ -484,12 +486,19 @@ public class Game extends Application
           speed = sprint;
         }
         else speed = walk;
-
+        
         String s = event.getText();
         if (s.equals("w")) front = true;
         if (s.equals("s")) back = true;
         if (s.equals("a")) left = true;
         if (s.equals("d")) right = true;
+       
+        //hold and release mouse from center of screen by pressing c
+        if(s.equals("c"))
+        {
+          if(holdMouse == true) holdMouse = false;
+          else holdMouse = true;
+        }
 
         // Pressing z and x places you perfectly at the spawn point
 
