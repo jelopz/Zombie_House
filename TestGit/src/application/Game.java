@@ -24,7 +24,6 @@ package application;
 
 import java.awt.Point;
 import java.util.ArrayList;
-
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -64,6 +63,7 @@ public class Game extends Application
 
   private static final double TILE_SIZE = 56; // number of subdivisions in
   // tile
+
   private static final double WALL_HEIGHT = 64;
   private static final double CAMERA_INITIAL_DISTANCE = 0;
   private static final double CAMERA_INITIAL_X_ANGLE = 0;
@@ -79,7 +79,6 @@ public class Game extends Application
   RoomGenerator house;
 
   private double scaleVal = 1;
-
   private final Group root = new Group();
   private final Xform world = new Xform();
   private final PerspectiveCamera camera = new PerspectiveCamera(true);
@@ -118,9 +117,6 @@ public class Game extends Application
 
   private double[][] points = new double[8][2];
   private static final double MODEL_SCALE_FACTOR = 1;
-
-  private static final Color lightColor = Color.rgb(244, 255, 250);
-  private static final Color jewelColor = Color.rgb(0, 190, 222);
 
   static MeshView[] loadMeshViews()
   {
@@ -165,8 +161,8 @@ public class Game extends Application
     light.setTranslateZ(WALL_HEIGHT / 2);
     if (collisions) light.setTranslateZ(CAMERA_INITIAL_DISTANCE);
     light.setColor(Color.WHITE);
-    cameraXform.getChildren().add(light);// add light to camera so they
-    // move together
+    // add light to camera so they move together
+    cameraXform.getChildren().add(light);
 
   }
 
@@ -213,8 +209,7 @@ public class Game extends Application
     Xform tileXform = new Xform();
     mapXform.getChildren().add(tileXform);
 
-    // loops through a 2d array, generates rectangles of wall and floor
-    // tiles//
+    // loops through a 2d array, generates rectangles of wall and floor tiles//
     for (int i = 0; i < mapH; i++)
     {
       for (int j = 0; j < mapW; j++)
@@ -230,7 +225,7 @@ public class Game extends Application
         ceiling.setTranslateX(i * TILE_SIZE);
         ceiling.setTranslateZ(j * TILE_SIZE);
         ceiling.setMaterial(bricks);
-        if (tiles[i][j] == 'O')// make a floot tile//
+        if (tiles[i][j] == 'O')// make a floor tile//
         {
 
           ceiling.setTranslateY(WALL_HEIGHT + .5);
@@ -251,14 +246,13 @@ public class Game extends Application
           cameraInitialX = (i * TILE_SIZE);
           cameraInitialZ = (j * TILE_SIZE);
 
-          // // Just doing this for testing collisions
+          // Just doing this for testing collisions
           Cylinder player = new Cylinder(TILE_SIZE / 2, WALL_HEIGHT);
           player.setTranslateX(cameraInitialX);
           player.setTranslateZ(cameraInitialZ);
           player.setTranslateY(WALL_HEIGHT / 2);
           player.setMaterial(playerColor);
           playerXform.getChildren().add(player);
-          // cameraXform.getChildren().add(playerXform);
           world.getChildren().add(playerXform);
 
         }
@@ -266,54 +260,35 @@ public class Game extends Application
         {
           ceiling.setTranslateY(WALL_HEIGHT + .5);
           tileXform.getChildren().add(ceiling);
-          // Just
-          // doing
-          // this for
-          // testing
-          // collisions
+          // Just doing this for testing collisions
           tile.setTranslateY(0.5);
           tile.setMaterial(zombieSpawn);
 
-//          Cylinder zombie = new Cylinder(TILE_SIZE / 2, WALL_HEIGHT);
-//          zombie.setTranslateX(i * TILE_SIZE);
-//          zombie.setTranslateZ(j * TILE_SIZE);
-//          zombie.setTranslateY(WALL_HEIGHT / 2);
-//
-//          zombie.setMaterial(zombieColor);
-          
-          ///////////////////////////////////////////
           MeshView[] meshViews = loadMeshViews();
           for (int t = 0; t < meshViews.length; t++)
           {
-            meshViews[t].setTranslateX(i*TILE_SIZE+TILE_SIZE);
-            meshViews[t].setTranslateZ(j*TILE_SIZE);
+            meshViews[t].setTranslateX(i * TILE_SIZE + TILE_SIZE);
+            meshViews[t].setTranslateZ(j * TILE_SIZE);
             meshViews[t].setTranslateY(.5);
             meshViews[t].setScaleX(MODEL_SCALE_FACTOR);
             meshViews[t].setScaleY(MODEL_SCALE_FACTOR);
             meshViews[t].setScaleZ(MODEL_SCALE_FACTOR);
 
-            PhongMaterial sample = new PhongMaterial(jewelColor);
-            sample.setSpecularColor(lightColor);
-            sample.setSpecularPower(16);
-            meshViews[t].setMaterial(sample);
+            PhongMaterial zombieMaterial = new PhongMaterial(Color.DARKGREEN);
+            zombieMaterial.setSpecularColor(Color.LIGHTGREEN);
+            zombieMaterial.setSpecularPower(16);
+            meshViews[t].setMaterial(zombieMaterial);
 
             meshViews[t].getTransforms().setAll(new Rotate(90, Rotate.X_AXIS));
           }
-          Group mesh = new Group(meshViews);
-          
+          Group zomb = new Group(meshViews);
+
           if (zombies.isEmpty())
           {
-            // zombie.setMaterial(zombieSpawn);
             startPointZ = new Point(j, i);
           }
-
-          zombies.add(new RandomWalk(j, i, mesh));
-          
-          
-//          mapXform.getChildren().add(mesh);
-
-          ///////////////////////////////////////////
-          world.getChildren().add(mesh);
+          zombies.add(new RandomWalk(j, i, zomb));
+          world.getChildren().add(zomb);
         }
         else// make a wall tile//
         {
@@ -324,7 +299,7 @@ public class Game extends Application
         tileXform.getChildren().add(tile);
       }
     }
-    if (collisions)// sets 8 points around the player for testinf collisions
+    if (collisions)// sets 8 points around the player for testing collisions
     {
       for (int t = 0; t < 8; t++)
       {
@@ -480,8 +455,6 @@ public class Game extends Application
   {
     light.setRotationAxis(Rotate.X_AXIS);
     light.setRotate(cameraXform.ry.getAngle());
-    // cameraXform.rx.setPivotY(cameraXform2.t.getTz());
-    // cameraXform.rx.setPivotZ(cameraXform2.t.getTz());
     cameraXform.rx.setAngle(cameraXform.rx.getAngle() + mouseDeltaY * MOUSE_SPEED * modifier * ROTATION_SPEED);
   }
 
@@ -513,7 +486,6 @@ public class Game extends Application
 
         if (s.equals("z")) // puts the player on the "ground"
         {
-          // lightXform2.t.setY(0);
           cameraXform2.t.setY(0);
         }
         if (s.equals("x")) // PLACES THE CAMERA ABOVE THE PLAYER SPAWN POINT
