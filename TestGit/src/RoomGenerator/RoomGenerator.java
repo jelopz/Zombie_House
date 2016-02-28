@@ -68,13 +68,23 @@ public class RoomGenerator
   {
     return playerSpawnPoint;
   }
-  
+
   /*
    * Checks to see if a location is a legal spot to be on.
+   * 
+   * I think this will be very useful for collision testing. Essentially, you
+   * pass the (players position)/tile_size to get the players location
+   * represented on the 2D array. If the players position does not equal 'X', a
+   * wall, then the position is valid.
+   * 
+   * There's still a little bit more thinking to go into it but I think this is
+   * the route that I was planning to use in conjunction with the Zombie AI and
+   * I feel this will also
    */
   public boolean isPointLegal(int x, int y)
   {
-    if(house[y][x] != 'X') return true;
+    if (house[y][x] != 'X')
+      return true;
     return false;
   }
 
