@@ -68,6 +68,15 @@ public class RoomGenerator
   {
     return playerSpawnPoint;
   }
+  
+  /*
+   * Checks to see if a location is a legal spot to be on.
+   */
+  public boolean isPointLegal(int x, int y)
+  {
+    if(house[y][x] != 'X') return true;
+    return false;
+  }
 
   /*
    * Randomly chooses one of the 5 rooms and randomly chooses a spot in the room
