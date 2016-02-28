@@ -1,0 +1,62 @@
+package ZombieBuilder;
+
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
+
+import com.interactivemesh.jfx.importer.stl.StlMeshImporter;
+
+import application.Game;
+import javafx.scene.Group;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.Mesh;
+import javafx.scene.shape.MeshView;
+import javafx.scene.transform.Rotate;
+
+public class ZombieBuilder
+{
+  private static final double MODEL_SCALE_FACTOR = 1;
+
+  static MeshView[] loadMeshViews()
+  {
+    URL in = Game.class.getResource("Zombie.stl");
+    File file = null;
+    try
+    {
+      file = new File(in.toURI());
+    }
+    catch (URISyntaxException e)
+    {
+      e.printStackTrace();
+    }
+    StlMeshImporter importer = new StlMeshImporter();
+    importer.read(file);
+    Mesh mesh = importer.getImport();
+
+    return new MeshView[] { new MeshView(mesh) };
+  }
+
+  public static Group getZombie(int i, int j, double TILE_SIZE)
+  {
+    MeshView[] meshViews = loadMeshViews();
+    for (int t = 0; t < meshViews.length; t++)
+    {
+      meshViews[t].setTranslateX(i * TILE_SIZE + TILE_SIZE);
+      meshViews[t].setTranslateZ(j * TILE_SIZE);
+      meshViews[t].setTranslateY(.5);
+      meshViews[t].setScaleX(MODEL_SCALE_FACTOR);
+      meshViews[t].setScaleY(MODEL_SCALE_FACTOR);
+      meshViews[t].setScaleZ(MODEL_SCALE_FACTOR);
+
+      PhongMaterial zombieMaterial = new PhongMaterial(Color.DARKGREEN);
+      zombieMaterial.setSpecularColor(Color.LIGHTGREEN);
+      zombieMaterial.setSpecularPower(16);
+      meshViews[t].setMaterial(zombieMaterial);
+
+      meshViews[t].getTransforms().setAll(new Rotate(90, Rotate.X_AXIS));
+    }
+   
+    return  new Group(meshViews);
+  }
+}

@@ -24,12 +24,8 @@ package application;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
 
-import com.interactivemesh.jfx.importer.stl.StlMeshImporter;
-
+import ZombieBuilder.ZombieBuilder;
 import CPU.RandomWalk;
 import CPU.Zombie;
 import RoomGenerator.RoomGenerator;
@@ -52,8 +48,6 @@ import javafx.scene.paint.Stop;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.DrawMode;
-import javafx.scene.shape.Mesh;
-import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
@@ -116,26 +110,6 @@ public class Game extends Application
   private double mouseDeltaY;
 
   private double[][] points = new double[8][2];
-  private static final double MODEL_SCALE_FACTOR = 1;
-
-  static MeshView[] loadMeshViews()
-  {
-    URL in = Game.class.getResource("Zombie.stl");
-    File file = null;
-    try
-    {
-      file = new File(in.toURI());
-    }
-    catch (URISyntaxException e)
-    {
-      e.printStackTrace();
-    }
-    StlMeshImporter importer = new StlMeshImporter();
-    importer.read(file);
-    Mesh mesh = importer.getImport();
-
-    return new MeshView[] { new MeshView(mesh) };
-  }
 
   private void buildCamera()
   {
@@ -264,24 +238,7 @@ public class Game extends Application
           tile.setTranslateY(0.5);
           tile.setMaterial(zombieSpawn);
 
-          MeshView[] meshViews = loadMeshViews();
-          for (int t = 0; t < meshViews.length; t++)
-          {
-            meshViews[t].setTranslateX(i * TILE_SIZE + TILE_SIZE);
-            meshViews[t].setTranslateZ(j * TILE_SIZE);
-            meshViews[t].setTranslateY(.5);
-            meshViews[t].setScaleX(MODEL_SCALE_FACTOR);
-            meshViews[t].setScaleY(MODEL_SCALE_FACTOR);
-            meshViews[t].setScaleZ(MODEL_SCALE_FACTOR);
-
-            PhongMaterial zombieMaterial = new PhongMaterial(Color.DARKGREEN);
-            zombieMaterial.setSpecularColor(Color.LIGHTGREEN);
-            zombieMaterial.setSpecularPower(16);
-            meshViews[t].setMaterial(zombieMaterial);
-
-            meshViews[t].getTransforms().setAll(new Rotate(90, Rotate.X_AXIS));
-          }
-          Group zomb = new Group(meshViews);
+          Group zomb = ZombieBuilder.getZombie(i,j,TILE_SIZE);
 
           if (zombies.isEmpty())
           {
