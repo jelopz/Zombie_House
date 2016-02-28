@@ -25,6 +25,12 @@ package application;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
+
+import com.interactivemesh.jfx.importer.stl.StlMeshImporter;
+
 import CPU.RandomWalk;
 import CPU.Zombie;
 import RoomGenerator.RoomGenerator;
@@ -42,12 +48,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Material;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.DrawMode;
+import javafx.scene.shape.Mesh;
+import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
@@ -83,10 +90,10 @@ public class Game extends Application
 
   private final Xform playerXform = new Xform();
   private final Xform mapXform = new Xform();
-  
-  private ArrayList<Zombie> zombies; //List of Zombies
+
+  private ArrayList<Zombie> zombies; // List of Zombies
   private Point startPointZ;
-  
+
   private char[][] tiles;
   private int mapH = 36;
   private int mapW = 36;
@@ -110,6 +117,29 @@ public class Game extends Application
   private double mouseDeltaY;
 
   private double[][] points = new double[8][2];
+  private static final double MODEL_SCALE_FACTOR = 1.5;
+
+  private static final Color lightColor = Color.rgb(244, 255, 250);
+  private static final Color jewelColor = Color.rgb(0, 190, 222);
+
+  static MeshView[] loadMeshViews()
+  {
+    URL in = Game.class.getResource("Zombie.stl");
+    File file = null;
+    try
+    {
+      file = new File(in.toURI());
+    }
+    catch (URISyntaxException e)
+    {
+      e.printStackTrace();
+    }
+    StlMeshImporter importer = new StlMeshImporter();
+    importer.read(file);
+    Mesh mesh = importer.getImport();
+
+    return new MeshView[] { new MeshView(mesh) };
+  }
 
   private void buildCamera()
   {
@@ -141,7 +171,27 @@ public class Game extends Application
 
   private void drawMap()
   {
-	zombies = new ArrayList<>();
+
+    ///////////////////////////////////////////
+    MeshView[] meshViews = loadMeshViews();
+    for (int i = 0; i < meshViews.length; i++)
+    {
+      meshViews[i].setScaleX(MODEL_SCALE_FACTOR);
+      meshViews[i].setScaleY(MODEL_SCALE_FACTOR);
+      meshViews[i].setScaleZ(MODEL_SCALE_FACTOR);
+
+      PhongMaterial sample = new PhongMaterial(jewelColor);
+      sample.setSpecularColor(lightColor);
+      sample.setSpecularPower(16);
+      meshViews[i].setMaterial(sample);
+
+      meshViews[i].getTransforms().setAll(new Rotate(90, Rotate.X_AXIS));
+    }
+    Group mesh = new Group(meshViews);
+    mapXform.getChildren().add(mesh);
+
+    ///////////////////////////////////////////
+    zombies = new ArrayList<>();
     // Material for floors and ceilings//
     PhongMaterial pathable = new PhongMaterial();
     pathable.setDiffuseColor(Color.WHITE);
@@ -218,12 +268,12 @@ public class Game extends Application
           cameraInitialX = (i * TILE_SIZE);
           cameraInitialZ = (j * TILE_SIZE);
 
-//          // Just doing this for testing collisions
+          // // Just doing this for testing collisions
           Cylinder player = new Cylinder(TILE_SIZE / 2, WALL_HEIGHT);
           player.setTranslateX(cameraInitialX);
           player.setTranslateZ(cameraInitialZ);
           player.setTranslateY(WALL_HEIGHT / 2);
-          player.setMaterial(playerColor); 
+          player.setMaterial(playerColor);
           playerXform.getChildren().add(player);
           // cameraXform.getChildren().add(playerXform);
           world.getChildren().add(playerXform);
@@ -233,7 +283,7 @@ public class Game extends Application
         {
           ceiling.setTranslateY(WALL_HEIGHT + .5);
           tileXform.getChildren().add(ceiling);
-       // Just
+          // Just
           // doing
           // this for
           // testing
@@ -245,19 +295,19 @@ public class Game extends Application
           zombie.setTranslateX(i * TILE_SIZE);
           zombie.setTranslateZ(j * TILE_SIZE);
           zombie.setTranslateY(WALL_HEIGHT / 2);
-          
+
           zombie.setMaterial(zombieColor);
-          if(zombies.isEmpty())
+          if (zombies.isEmpty())
           {
-//        	  zombie.setMaterial(zombieSpawn);
-        	  startPointZ = new Point(j,i);
+            // zombie.setMaterial(zombieSpawn);
+            startPointZ = new Point(j, i);
           }
-//          else
-//          {
-        	  zombie.setMaterial(zombieColor);
-        	  
-//          }
-          zombies.add(new RandomWalk(j,i, zombie));
+          // else
+          // {
+          zombie.setMaterial(zombieColor);
+
+          // }
+          zombies.add(new RandomWalk(j, i, zombie));
           world.getChildren().add(zombie);
         }
         else// make a wall tile//
@@ -466,12 +516,13 @@ public class Game extends Application
           cameraXform.t.setZ(house.getPlayerSpawnPoint().x * TILE_SIZE);
           cameraXform.t.setX(house.getPlayerSpawnPoint().y * TILE_SIZE);
         }
-        if(s.equals("c")) //Moves player to the position of the first zombie created
-        	//for debugging purposes
+        if (s.equals("c")) // Moves player to the position of the first zombie
+                           // created
+        // for debugging purposes
         {
-            cameraXform.t.setZ(startPointZ.x * TILE_SIZE);
-            cameraXform.t.setX(startPointZ.y * TILE_SIZE);
-            
+          cameraXform.t.setZ(startPointZ.x * TILE_SIZE);
+          cameraXform.t.setX(startPointZ.y * TILE_SIZE);
+
         }
       }
     });
@@ -534,12 +585,12 @@ public class Game extends Application
 
       double cos = Math.cos(Math.toRadians(cameraXform.ry.getAngle()));
       double sin = Math.sin(Math.toRadians(cameraXform.ry.getAngle()));
-      
-      for(Zombie z: zombies) //tells zombies to figure out their next move
+
+      for (Zombie z : zombies) // tells zombies to figure out their next move
       {
-    	  z.determineNextMove();
+        z.determineNextMove();
       }
-      
+
       /* Moves the camera around the world */
       if (back)
       {
