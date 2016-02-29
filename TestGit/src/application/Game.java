@@ -602,34 +602,42 @@ public class Game extends Application
 
   }
 
+  /*
+   * Updates the 8 points on the collision detecting octogon based on the
+   * players location
+   */
   private void updateBoundaryPoints(double nextZ, double nextX)
   {
 
     // updates the points on the octogon
 
-    points[0][0] = (nextX + TILE_SIZE / 4 / 2);
-    points[0][1] = (nextZ + TILE_SIZE / 2 / 2);
+    // I tried to simplify this further but apparently I don't know
+    // how to do algebra and broke it so I'm leaving it like this
+    // for now
 
-    points[1][0] = (nextX + TILE_SIZE / 2 / 2);
-    points[1][1] = (nextZ + TILE_SIZE / 4 / 2);
+    points[0][0] = (nextX + TILE_SIZE / 8 + (TILE_SIZE / 2));
+    points[0][1] = (nextZ + TILE_SIZE / 4 + (TILE_SIZE / 2));
 
-    points[2][0] = (nextX + TILE_SIZE / 2 / 2);
-    points[2][1] = (nextZ - TILE_SIZE / 4 / 2);
+    points[1][0] = (nextX + TILE_SIZE / 4 + (TILE_SIZE / 2));
+    points[1][1] = (nextZ + TILE_SIZE / 8 + (TILE_SIZE / 2));
 
-    points[3][0] = (nextX + TILE_SIZE / 4 / 2);
-    points[3][1] = (nextZ - TILE_SIZE / 2 / 2);
+    points[2][0] = (nextX + TILE_SIZE / 4 + (TILE_SIZE / 2));
+    points[2][1] = (nextZ - TILE_SIZE / 8 + (TILE_SIZE / 2));
 
-    points[4][0] = (nextX - TILE_SIZE / 4 / 2);
-    points[4][1] = (nextZ - TILE_SIZE / 2 / 2);
+    points[3][0] = (nextX + TILE_SIZE / 8 + (TILE_SIZE / 2));
+    points[3][1] = (nextZ - TILE_SIZE / 4 + (TILE_SIZE / 2));
 
-    points[5][0] = (nextX - TILE_SIZE / 2 / 2);
-    points[5][1] = (nextZ - TILE_SIZE / 4 / 2);
+    points[4][0] = (nextX - TILE_SIZE / 8 + (TILE_SIZE / 2));
+    points[4][1] = (nextZ - TILE_SIZE / 4 + (TILE_SIZE / 2));
 
-    points[6][0] = (nextX - TILE_SIZE / 2 / 2);
-    points[6][1] = (nextZ + TILE_SIZE / 4 / 2);
+    points[5][0] = (nextX - TILE_SIZE / 4 + (TILE_SIZE / 2));
+    points[5][1] = (nextZ - TILE_SIZE / 8 + (TILE_SIZE / 2));
 
-    points[7][0] = (nextX - TILE_SIZE / 4 / 2);
-    points[7][1] = (nextZ + TILE_SIZE / 2 / 2);
+    points[6][0] = (nextX - TILE_SIZE / 4 + (TILE_SIZE / 2));
+    points[6][1] = (nextZ + TILE_SIZE / 8 + (TILE_SIZE / 2));
+
+    points[7][0] = (nextX - TILE_SIZE / 8 + (TILE_SIZE / 2));
+    points[7][1] = (nextZ + TILE_SIZE / 4 + (TILE_SIZE / 2));
   }
 
   /*
@@ -641,21 +649,18 @@ public class Game extends Application
     if (collisions)
     {
       int x, y;
-      for (int i = 0; i < 8; i++)
+      for (int i = 0; i < 8; i++) // get what tile the point is on.
       {
         x = (int) (points[i][1] / TILE_SIZE);
         y = (int) (points[i][0] / TILE_SIZE);
 
-        if (!house.isPointLegal(x, y))
+        if (!house.isPointLegal(x, y)) // is that tile not a legal move?
         {
-          // System.out.println(x + " " + y);
-          // System.out.println(points[i][1] + " " + points[i][0]);
-          // System.out.println(i);
-          return true;
+          return true; // the point is colliding with something
         }
       }
     }
-    return false;
+    return false; // no point is colliding
   }
 
   class MainGameLoop extends AnimationTimer
@@ -675,19 +680,31 @@ public class Game extends Application
       }
 
       /* Moves the camera around the world */
+
+      // For each direction, before updating the player position, we take where
+      // the player would move,
+      // update the 8 collision detecting points to be in that position, and
+      // then test to see if
+      // either of those points are found ontop of a wall tile. If any of them
+      // are, the player does not
+      // move to that spot. Else, if none of them are, we update the players
+      // position to that position.
       if (back)
       {
         nextZ = playerXform.t.getTz() - (speed * cos);
         nextX = playerXform.t.getTx() - (speed * sin);
-        updateBoundaryPoints(nextZ, nextX); // sets the boundary points for the
-                                            // nextMove
+
+        // sets the boundary points for the nextMove
+        updateBoundaryPoints(nextZ, nextX);
+
         if (isCollision()) // tests if the next move will cause a collision
         {
+          // Do nothing
           System.out.println("Back Wall");
-
         }
         else
         {
+          // Update coordinates
           cameraXform.t.setX(cameraXform.t.getTx() - (speed * sin));
           cameraXform.t.setZ(cameraXform.t.getTz() - (speed * cos));
 
@@ -701,6 +718,7 @@ public class Game extends Application
         nextZ = playerXform.t.getTz() + (speed * cos);
         nextX = playerXform.t.getTx() + (speed * sin);
         updateBoundaryPoints(nextZ, nextX);
+
         if (isCollision())
         {
           System.out.println("Front Wall");
@@ -720,6 +738,7 @@ public class Game extends Application
         nextZ = playerXform.t.getTz() + (speed * sin);
         nextX = playerXform.t.getTx() - (speed * cos);
         updateBoundaryPoints(nextZ, nextX);
+
         if (isCollision())
         {
           System.out.println("Right Wall");
@@ -738,6 +757,7 @@ public class Game extends Application
         nextZ = playerXform.t.getTz() - (speed * sin);
         nextX = playerXform.t.getTx() + (speed * cos);
         updateBoundaryPoints(nextZ, nextX);
+
         if (isCollision())
         {
           System.out.println("Left Wall");
