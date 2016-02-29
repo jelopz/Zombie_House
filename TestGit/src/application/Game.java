@@ -682,13 +682,12 @@ public class Game extends Application
       /* Moves the camera around the world */
 
       // For each direction, before updating the player position, we take where
-      // the player would move,
-      // update the 8 collision detecting points to be in that position, and
-      // then test to see if
-      // either of those points are found ontop of a wall tile. If any of them
-      // are, the player does not
-      // move to that spot. Else, if none of them are, we update the players
-      // position to that position.
+      // the player would move, update the 8 collision detecting points to be in
+      // that position, and then test to see if either of those points are found
+      // ontop of a wall tile. If any of them are, the player does not move to
+      // that spot. Else, if none of them are, we update the players position to
+      // that position.
+      
       if (back)
       {
         nextZ = playerXform.t.getTz() - (speed * cos);
