@@ -277,7 +277,7 @@ public class Game extends Application
           points[t][0] = (0 + TILE_SIZE / 2) / 2;
           points[t][1] = (0 + TILE_SIZE / 4) / 2;
 
-          newBox.setTranslateX(0 + TILE_SIZE / 2  / 2);
+          newBox.setTranslateX(0 + TILE_SIZE / 2 / 2);
           newBox.setTranslateZ(0 + TILE_SIZE / 4 / 2);
           newBox.setMaterial(zombieColor);
         }
@@ -527,9 +527,13 @@ public class Game extends Application
           // playerXform.t.setZ(house.getPlayerSpawnPoint().x * TILE_SIZE);
           // playerXform.t.setX(house.getPlayerSpawnPoint().y * TILE_SIZE);
           if (collisions)
+          {
             collisions = false;
+          }
           else
+          {
             collisions = true;
+          }
         }
         if (s.equals("c")) // Moves player to the position of the first zombie
                            // created
