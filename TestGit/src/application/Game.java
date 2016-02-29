@@ -513,19 +513,12 @@ public class Game extends Application
           else
             holdMouse = true;
         }
-
-        // Pressing z and x places you perfectly at the spawn point
-
         if (s.equals("z")) // puts the player on the "ground"
         {
           cameraXform2.t.setY(0);
         }
-        if (s.equals("x")) // PLACES THE CAMERA ABOVE THE PLAYER SPAWN POINT
+        if (s.equals("x")) //turns on and off collision detection
         {
-          // cameraXform.t.setZ(house.getPlayerSpawnPoint().x * TILE_SIZE);
-          // cameraXform.t.setX(house.getPlayerSpawnPoint().y * TILE_SIZE);
-          // playerXform.t.setZ(house.getPlayerSpawnPoint().x * TILE_SIZE);
-          // playerXform.t.setX(house.getPlayerSpawnPoint().y * TILE_SIZE);
           if (collisions)
           {
             collisions = false;
@@ -534,14 +527,6 @@ public class Game extends Application
           {
             collisions = true;
           }
-        }
-        if (s.equals("c")) // Moves player to the position of the first zombie
-                           // created
-        // for debugging purposes
-        {
-          cameraXform.t.setZ(startPointZ.x * TILE_SIZE);
-          cameraXform.t.setX(startPointZ.y * TILE_SIZE);
-
         }
       }
     });
