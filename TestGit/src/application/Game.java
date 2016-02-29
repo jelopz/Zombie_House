@@ -228,11 +228,9 @@ public class Game extends Application
           // Just doing this for testing collisions
           if (collisions)
           {
-            Cylinder player = new Cylinder(TILE_SIZE / 2, WALL_HEIGHT);
-            // JESUS
+            Cylinder player = new Cylinder(TILE_SIZE / 4, WALL_HEIGHT);
             player.setTranslateX(0);
             player.setTranslateZ(0);
-            //
             player.setTranslateY(WALL_HEIGHT / 2);
             player.setMaterial(playerColor);
             playerXform.getChildren().add(player);
@@ -276,74 +274,74 @@ public class Game extends Application
 
         if (t == 1)
         {
-          points[t][0] = (0 + TILE_SIZE / 2);
-          points[t][1] = (0 + TILE_SIZE / 4);
+          points[t][0] = (0 + TILE_SIZE / 2) / 2;
+          points[t][1] = (0 + TILE_SIZE / 4) / 2;
 
-          newBox.setTranslateX(0 + TILE_SIZE / 2);
-          newBox.setTranslateZ(0 + TILE_SIZE / 4);
+          newBox.setTranslateX(0 + TILE_SIZE / 2  / 2);
+          newBox.setTranslateZ(0 + TILE_SIZE / 4 / 2);
           newBox.setMaterial(zombieColor);
         }
         if (t == 2)
         {
-          points[t][0] = (0 + TILE_SIZE / 2);
-          points[t][1] = (0 - TILE_SIZE / 4);
-          newBox.setTranslateX(0 + TILE_SIZE / 2);
-          newBox.setTranslateZ(0 - TILE_SIZE / 4);
+          points[t][0] = (0 + TILE_SIZE / 2) / 2;
+          points[t][1] = (0 - TILE_SIZE / 4) / 2;
+          newBox.setTranslateX(0 + TILE_SIZE / 2 / 2);
+          newBox.setTranslateZ(0 - TILE_SIZE / 4 / 2);
           newBox.setMaterial(playerColor);
         }
         if (t == 6)
         {
-          points[t][0] = (0 - TILE_SIZE / 2);
-          points[t][1] = (0 + TILE_SIZE / 4);
-          newBox.setTranslateX(0 - TILE_SIZE / 2);
-          newBox.setTranslateZ(0 + TILE_SIZE / 4);
+          points[t][0] = (0 - TILE_SIZE / 2) / 2;
+          points[t][1] = (0 + TILE_SIZE / 4) / 2;
+          newBox.setTranslateX(0 - TILE_SIZE / 2 / 2);
+          newBox.setTranslateZ(0 + TILE_SIZE / 4 / 2);
           newBox.setMaterial(pathable);
         }
         if (t == 5)
         {
-          points[t][0] = (0 - TILE_SIZE / 2);
-          points[t][1] = (0 - TILE_SIZE / 4);
-          newBox.setTranslateX(0 - TILE_SIZE / 2);
-          newBox.setTranslateZ(0 - TILE_SIZE / 4);
+          points[t][0] = (0 - TILE_SIZE / 2) / 2;
+          points[t][1] = (0 - TILE_SIZE / 4) / 2;
+          newBox.setTranslateX(0 - TILE_SIZE / 2 / 2);
+          newBox.setTranslateZ(0 - TILE_SIZE / 4 / 2);
           newBox.setMaterial(notPathable);
         }
         if (t == 0)
         {
-          points[t][0] = (0 + TILE_SIZE / 4);
-          points[t][1] = (0 + TILE_SIZE / 2);
-          newBox.setTranslateX(0 + TILE_SIZE / 4);
-          newBox.setTranslateZ(0 + TILE_SIZE / 2);
+          points[t][0] = (0 + TILE_SIZE / 4) / 2;
+          points[t][1] = (0 + TILE_SIZE / 2) / 2;
+          newBox.setTranslateX(0 + TILE_SIZE / 4 / 2);
+          newBox.setTranslateZ(0 + TILE_SIZE / 2 / 2);
           newBox.setMaterial(spawnPoint);
         }
         if (t == 7)
         {
-          points[t][0] = (0 - TILE_SIZE / 4);
-          points[t][1] = (0 + TILE_SIZE / 2);
+          points[t][0] = (0 - TILE_SIZE / 4) / 2;
+          points[t][1] = (0 + TILE_SIZE / 2) / 2;
 
-          newBox.setTranslateX(0 - TILE_SIZE / 4);
-          newBox.setTranslateZ(0 + TILE_SIZE / 2);
+          newBox.setTranslateX(0 - TILE_SIZE / 4 / 2);
+          newBox.setTranslateZ(0 + TILE_SIZE / 2 / 2);
           newBox.setMaterial(zombieSpawn);
         }
         if (t == 3)
         {
-          points[t][0] = (0 + TILE_SIZE / 4);
-          points[t][1] = (0 - TILE_SIZE / 2);
-          newBox.setTranslateX(0 + TILE_SIZE / 4);
-          newBox.setTranslateZ(0 - TILE_SIZE / 2);
+          points[t][0] = (0 + TILE_SIZE / 4) / 2;
+          points[t][1] = (0 - TILE_SIZE / 2) / 2;
+          newBox.setTranslateX(0 + TILE_SIZE / 4 / 2);
+          newBox.setTranslateZ(0 - TILE_SIZE / 2 / 2);
         }
         if (t == 4)
         {
-          points[t][0] = (0 - TILE_SIZE / 4);
-          points[t][1] = (0 - TILE_SIZE / 2);
-          newBox.setTranslateX(0 - TILE_SIZE / 4);
-          newBox.setTranslateZ(0 - TILE_SIZE / 2);
+          points[t][0] = (0 - TILE_SIZE / 4) / 2;
+          points[t][1] = (0 - TILE_SIZE / 2) / 2;
+          newBox.setTranslateX(0 - TILE_SIZE / 4 / 2);
+          newBox.setTranslateZ(0 - TILE_SIZE / 2 / 2);
         }
         playerXform.getChildren().add(newBox);
       }
     }
     world.getChildren().add(mapXform);
-    
-    //places playerXform on spawn point
+
+    // places playerXform on spawn point
     playerXform.t.setZ(house.getPlayerSpawnPoint().x * TILE_SIZE);
     playerXform.t.setX(house.getPlayerSpawnPoint().y * TILE_SIZE);
   }
@@ -524,10 +522,14 @@ public class Game extends Application
         }
         if (s.equals("x")) // PLACES THE CAMERA ABOVE THE PLAYER SPAWN POINT
         {
-          cameraXform.t.setZ(house.getPlayerSpawnPoint().x * TILE_SIZE);
-          cameraXform.t.setX(house.getPlayerSpawnPoint().y * TILE_SIZE);
-          playerXform.t.setZ(house.getPlayerSpawnPoint().x * TILE_SIZE);
-          playerXform.t.setX(house.getPlayerSpawnPoint().y * TILE_SIZE);
+          // cameraXform.t.setZ(house.getPlayerSpawnPoint().x * TILE_SIZE);
+          // cameraXform.t.setX(house.getPlayerSpawnPoint().y * TILE_SIZE);
+          // playerXform.t.setZ(house.getPlayerSpawnPoint().x * TILE_SIZE);
+          // playerXform.t.setX(house.getPlayerSpawnPoint().y * TILE_SIZE);
+          if (collisions)
+            collisions = false;
+          else
+            collisions = true;
         }
         if (s.equals("c")) // Moves player to the position of the first zombie
                            // created
@@ -599,31 +601,31 @@ public class Game extends Application
   private void updateBoundaryPoints(double nextZ, double nextX)
   {
 
-    //updates the points on the octogon
-    
-    points[0][0] = (nextX + TILE_SIZE / 4);
-    points[0][1] = (nextZ + TILE_SIZE / 2);
+    // updates the points on the octogon
 
-    points[1][0] = (nextX + TILE_SIZE / 2);
-    points[1][1] = (nextZ + TILE_SIZE / 4);
+    points[0][0] = (nextX + TILE_SIZE / 4 / 2);
+    points[0][1] = (nextZ + TILE_SIZE / 2 / 2);
 
-    points[2][0] = (nextX + TILE_SIZE / 2);
-    points[2][1] = (nextZ - TILE_SIZE / 4);
+    points[1][0] = (nextX + TILE_SIZE / 2 / 2);
+    points[1][1] = (nextZ + TILE_SIZE / 4 / 2);
 
-    points[3][0] = (nextX + TILE_SIZE / 4);
-    points[3][1] = (nextZ - TILE_SIZE / 2);
+    points[2][0] = (nextX + TILE_SIZE / 2 / 2);
+    points[2][1] = (nextZ - TILE_SIZE / 4 / 2);
 
-    points[4][0] = (nextX - TILE_SIZE / 4);
-    points[4][1] = (nextZ - TILE_SIZE / 2);
+    points[3][0] = (nextX + TILE_SIZE / 4 / 2);
+    points[3][1] = (nextZ - TILE_SIZE / 2 / 2);
 
-    points[5][0] = (nextX - TILE_SIZE / 2);
-    points[5][1] = (nextZ - TILE_SIZE / 4);
+    points[4][0] = (nextX - TILE_SIZE / 4 / 2);
+    points[4][1] = (nextZ - TILE_SIZE / 2 / 2);
 
-    points[6][0] = (nextX - TILE_SIZE / 2);
-    points[6][1] = (nextZ + TILE_SIZE / 4);
+    points[5][0] = (nextX - TILE_SIZE / 2 / 2);
+    points[5][1] = (nextZ - TILE_SIZE / 4 / 2);
 
-    points[7][0] = (nextX - TILE_SIZE / 4);
-    points[7][1] = (nextZ + TILE_SIZE / 2);
+    points[6][0] = (nextX - TILE_SIZE / 2 / 2);
+    points[6][1] = (nextZ + TILE_SIZE / 4 / 2);
+
+    points[7][0] = (nextX - TILE_SIZE / 4 / 2);
+    points[7][1] = (nextZ + TILE_SIZE / 2 / 2);
   }
 
   /*
@@ -632,18 +634,21 @@ public class Game extends Application
    */
   private boolean isCollision()
   {
-    int x, y;
-    for (int i = 0; i < 8; i++)
+    if (collisions)
     {
-      x = (int) (points[i][1] / TILE_SIZE);
-      y = (int) (points[i][0] / TILE_SIZE);
-
-      if (!house.isPointLegal(x, y))
+      int x, y;
+      for (int i = 0; i < 8; i++)
       {
-//        System.out.println(x + " " + y);
-//        System.out.println(points[i][1] + " " + points[i][0]);
-//        System.out.println(i);
-        return true;
+        x = (int) (points[i][1] / TILE_SIZE);
+        y = (int) (points[i][0] / TILE_SIZE);
+
+        if (!house.isPointLegal(x, y))
+        {
+          // System.out.println(x + " " + y);
+          // System.out.println(points[i][1] + " " + points[i][0]);
+          // System.out.println(i);
+          return true;
+        }
       }
     }
     return false;
@@ -664,14 +669,15 @@ public class Game extends Application
       {
         z.determineNextMove();
       }
-      
+
       /* Moves the camera around the world */
       if (back)
       {
         nextZ = playerXform.t.getTz() - (speed * cos);
         nextX = playerXform.t.getTx() - (speed * sin);
-        updateBoundaryPoints(nextZ, nextX); //sets the boundary points for the nextMove
-        if (isCollision()) //tests if the next move will cause a collision
+        updateBoundaryPoints(nextZ, nextX); // sets the boundary points for the
+                                            // nextMove
+        if (isCollision()) // tests if the next move will cause a collision
         {
           System.out.println("Back Wall");
 
