@@ -8,19 +8,23 @@ import javafx.scene.shape.Box;
 
 public class Hitbox
 {
-  private Point[] points;
-  
+  private Point[] points; //The 8 points on the octogon shaped hitbox
+
   public Hitbox(Xform xform)
   {
     points = new Point[8];
     generateHitbox(xform);
   }
-  
+
+  /*
+   * Returns the point from the given index. Does not test for an index out of
+   * bounds anywhere in any class
+   */
   public Point getPoint(int i)
   {
     return points[i];
   }
-  
+
   /*
    * Updates the 8 points on the collision detecting octogon based on the
    * players location
@@ -58,7 +62,15 @@ public class Hitbox
     points[7].x = (nextX - Game.TILE_SIZE / 8 + (Game.TILE_SIZE / 2));
     points[7].z = (nextZ + Game.TILE_SIZE / 4 + (Game.TILE_SIZE / 2));
   }
-  
+
+  /*
+   * Generates a set of 8 points in the shape of an octogon to create a hitbox
+   * for the player. A valid move is defined as a location where none of these 8
+   * points are on a Wall tile.
+   * 
+   * Passing in the appropriate xform is only necessary for creating the
+   * graphical representation of the hitbox
+   */
   private void generateHitbox(Xform xform)
   {
     double z, x;
@@ -77,9 +89,9 @@ public class Hitbox
       {
         x = (0 + Game.TILE_SIZE / 4) / 2;
         z = (0 + Game.TILE_SIZE / 2) / 2;
-        
-        points[0] = new Point(z,x);
-        
+
+        points[0] = new Point(z, x);
+
         newBox.setTranslateX(x);
         newBox.setTranslateZ(z);
       }
@@ -88,8 +100,8 @@ public class Hitbox
         x = (0 + Game.TILE_SIZE / 2) / 2;
         z = (0 + Game.TILE_SIZE / 4) / 2;
 
-        points[1] = new Point(z,x);
-        
+        points[1] = new Point(z, x);
+
         newBox.setTranslateX(x);
         newBox.setTranslateZ(z);
       }
@@ -97,9 +109,9 @@ public class Hitbox
       {
         x = (0 + Game.TILE_SIZE / 2) / 2;
         z = (0 - Game.TILE_SIZE / 4) / 2;
-        
-        points[2] = new Point(z,x);
-        
+
+        points[2] = new Point(z, x);
+
         newBox.setTranslateX(x);
         newBox.setTranslateZ(z);
       }
@@ -108,8 +120,8 @@ public class Hitbox
         x = (0 + Game.TILE_SIZE / 4) / 2;
         z = (0 - Game.TILE_SIZE / 2) / 2;
 
-        points[3] = new Point(z,x);
-        
+        points[3] = new Point(z, x);
+
         newBox.setTranslateX(x);
         newBox.setTranslateZ(z);
       }
@@ -118,8 +130,8 @@ public class Hitbox
         x = (0 - Game.TILE_SIZE / 4) / 2;
         z = (0 - Game.TILE_SIZE / 2) / 2;
 
-        points[4] = new Point(z,x);
-        
+        points[4] = new Point(z, x);
+
         newBox.setTranslateX(x);
         newBox.setTranslateZ(z);
       }
@@ -128,8 +140,8 @@ public class Hitbox
         x = (0 - Game.TILE_SIZE / 2) / 2;
         z = (0 - Game.TILE_SIZE / 4) / 2;
 
-        points[5] = new Point(z,x);
-        
+        points[5] = new Point(z, x);
+
         newBox.setTranslateX(x);
         newBox.setTranslateZ(z);
       }
@@ -138,8 +150,8 @@ public class Hitbox
         x = (0 - Game.TILE_SIZE / 2) / 2;
         z = (0 + Game.TILE_SIZE / 4) / 2;
 
-        points[6] = new Point(z,x);
-        
+        points[6] = new Point(z, x);
+
         newBox.setTranslateX(x);
         newBox.setTranslateZ(z);
       }
@@ -148,8 +160,8 @@ public class Hitbox
         x = (0 - Game.TILE_SIZE / 4) / 2;
         z = (0 + Game.TILE_SIZE / 2) / 2;
 
-        points[7] = new Point(z,x);
-        
+        points[7] = new Point(z, x);
+
         newBox.setTranslateX(x);
         newBox.setTranslateZ(z);
       }
