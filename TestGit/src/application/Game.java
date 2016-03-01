@@ -101,7 +101,7 @@ public class Game extends Application
   private boolean back = false;
   private boolean left = false;
   private boolean right = false;
-  private boolean collisions = true;
+  public static boolean collisions = true; //made static for debugging
   private boolean holdMouse = true;
   private double sprint = 3;
   private double walk = 2;
@@ -587,7 +587,7 @@ public class Game extends Application
         // sets the boundary points for the nextMove
         playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
-        if (Hitbox.isCollision(house, playerHitbox)) // tests if the next move
+        if (playerHitbox.isCollision(house)) // tests if the next move
                                                      // will cause a collision
         {
           // Do nothing
@@ -610,7 +610,7 @@ public class Game extends Application
         nextX = playerXform.t.getTx() + (speed * sin);
         playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
-        if (Hitbox.isCollision(house, playerHitbox))
+        if (playerHitbox.isCollision(house))
         {
           System.out.println("Front Wall");
         }
@@ -630,7 +630,7 @@ public class Game extends Application
         nextX = playerXform.t.getTx() - (speed * cos);
         playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
-        if (Hitbox.isCollision(house, playerHitbox))
+        if (playerHitbox.isCollision(house))
         {
           System.out.println("Right Wall");
         }
@@ -649,7 +649,7 @@ public class Game extends Application
         nextX = playerXform.t.getTx() + (speed * cos);
         playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
-        if (Hitbox.isCollision(house, playerHitbox))
+        if (playerHitbox.isCollision(house))
         {
           System.out.println("Left Wall");
         }

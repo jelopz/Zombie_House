@@ -26,7 +26,8 @@ public class RandomWalk extends Zombie
         hitbox.updateBoundaryPoints(model.getTranslateZ(), translation);
 
         // tests if the next move will cause a collision
-        if (!Hitbox.isCollision(house, hitbox))
+//        if (!Hitbox.isCollision(house, hitbox))
+        if(!hitbox.isCollision(house))
         {
           model.setTranslateX(translation);
         }
@@ -37,7 +38,7 @@ public class RandomWalk extends Zombie
         translation = model.getTranslateZ() + 1;
         hitbox.updateBoundaryPoints(translation, model.getTranslateX());
 
-        if (!Hitbox.isCollision(house, hitbox))
+        if(!hitbox.isCollision(house))
         {
           model.setTranslateZ(translation);
         }
@@ -48,7 +49,7 @@ public class RandomWalk extends Zombie
         translation = model.getTranslateX() - 1;
         hitbox.updateBoundaryPoints(model.getTranslateZ(), translation);
 
-        if (!Hitbox.isCollision(house, hitbox))
+        if(!hitbox.isCollision(house))
         {
           model.setTranslateX(translation);
         }
@@ -59,7 +60,7 @@ public class RandomWalk extends Zombie
         translation = model.getTranslateZ() - 1;
         hitbox.updateBoundaryPoints(translation, model.getTranslateX());
 
-        if (!Hitbox.isCollision(house, hitbox))
+        if(!hitbox.isCollision(house))
         {
           model.setTranslateZ(translation);
         }

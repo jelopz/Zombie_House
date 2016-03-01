@@ -10,7 +10,7 @@ import javafx.scene.shape.Box;
 
 public class Hitbox
 {
-  private Point[] points; //The 8 points on the octogon shaped hitbox
+  private Point[] points; // The 8 points on the octogon shaped hitbox
 
   public Hitbox(Group xform)
   {
@@ -64,26 +64,29 @@ public class Hitbox
     points[7].x = (nextX - Game.TILE_SIZE / 8 + (Game.TILE_SIZE / 2));
     points[7].z = (nextZ + Game.TILE_SIZE / 4 + (Game.TILE_SIZE / 2));
   }
-  
+
   /*
    * Takes a look at each point on the octogon and determines what tile it's on.
    * it then checks to see if that tile is a legal tile to be on.
    */
-  public static boolean isCollision(RoomGenerator house, Hitbox hitbox)
+  public boolean isCollision(RoomGenerator house)
   {
+    if (Game.collisions)
+    {
       int x, y;
       for (int i = 0; i < 8; i++) // get what tile the point is on.
       {
-        
-      x = (int) (hitbox.getPoint(i).z / Game.TILE_SIZE); // z //x
-      y = (int) (hitbox.getPoint(i).x / Game.TILE_SIZE); // x //y
+
+        x = (int) (points[i].z / Game.TILE_SIZE); // z //x
+        y = (int) (points[i].x / Game.TILE_SIZE); // x //y
 
         if (!house.isPointLegal(x, y)) // is that tile not a legal move?
         {
           return true; // the point is colliding with something
         }
       }
-    return false; // no point is colliding
+    }
+    return false;
   }
 
   /*
