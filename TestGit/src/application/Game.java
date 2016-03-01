@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import ZombieBuilder.ZombieBuilder;
 import CPU.RandomWalk;
 import CPU.Zombie;
+import Hitbox.Hitbox;
 import RoomGenerator.RoomGenerator;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -58,10 +59,10 @@ import javafx.stage.Stage;
 public class Game extends Application
 {
 
-  private static final double TILE_SIZE = 56; // number of subdivisions in
+  public static final double TILE_SIZE = 56; // number of subdivisions in
   // tile
 
-  private static final double WALL_HEIGHT = 64;
+  public static final double WALL_HEIGHT = 64;
   private static final double CAMERA_INITIAL_DISTANCE = -1000;
   private static final double CAMERA_INITIAL_X_ANGLE = 0;
   private static final double CAMERA_INITIAL_Y_ANGLE = 90;
@@ -113,7 +114,9 @@ public class Game extends Application
   private double mouseDeltaX;
   private double mouseDeltaY;
 
-  private double[][] points = new double[8][2];
+  // private double[][] points = new double[8][2];
+  private Point[] playerCollisionPoints = new Point[8];
+  private Hitbox playerHitbox;
 
   private void buildCamera()
   {
@@ -192,7 +195,6 @@ public class Game extends Application
     {
       for (int j = 0; j < mapW; j++)
       {
-
         Box tile = new Box(TILE_SIZE, 1, TILE_SIZE);
         tile.setDrawMode(DrawMode.FILL);
         tile.setTranslateX(i * TILE_SIZE);
@@ -200,7 +202,9 @@ public class Game extends Application
         Box ceiling = new Box(TILE_SIZE, 1, TILE_SIZE);
         ceiling.setDrawMode(DrawMode.FILL);
         if (collisions)
+        {
           ceiling.setDrawMode(DrawMode.LINE);
+        }
         ceiling.setTranslateX(i * TILE_SIZE);
         ceiling.setTranslateZ(j * TILE_SIZE);
         ceiling.setMaterial(bricks);
@@ -248,10 +252,6 @@ public class Game extends Application
 
           Group zomb = ZombieBuilder.getZombie(i, j, TILE_SIZE);
 
-          if (zombies.isEmpty())
-          {
-            startPointZ = new Point(j, i);
-          }
           zombies.add(new RandomWalk(j, i, zomb));
           world.getChildren().add(zomb);
         }
@@ -266,78 +266,7 @@ public class Game extends Application
     }
     if (collisions)// sets 8 points around the player for testing collisions
     {
-      for (int t = 0; t < 8; t++)
-      {
-        Box newBox = new Box(1, 100, 1);
-        newBox.setMaterial(zombieColor);
-        newBox.setTranslateY(WALL_HEIGHT / 2);
-
-        if (t == 1)
-        {
-          points[t][0] = (0 + TILE_SIZE / 2) / 2;
-          points[t][1] = (0 + TILE_SIZE / 4) / 2;
-
-          newBox.setTranslateX(0 + TILE_SIZE / 2 / 2);
-          newBox.setTranslateZ(0 + TILE_SIZE / 4 / 2);
-          newBox.setMaterial(zombieColor);
-        }
-        if (t == 2)
-        {
-          points[t][0] = (0 + TILE_SIZE / 2) / 2;
-          points[t][1] = (0 - TILE_SIZE / 4) / 2;
-          newBox.setTranslateX(0 + TILE_SIZE / 2 / 2);
-          newBox.setTranslateZ(0 - TILE_SIZE / 4 / 2);
-          newBox.setMaterial(playerColor);
-        }
-        if (t == 6)
-        {
-          points[t][0] = (0 - TILE_SIZE / 2) / 2;
-          points[t][1] = (0 + TILE_SIZE / 4) / 2;
-          newBox.setTranslateX(0 - TILE_SIZE / 2 / 2);
-          newBox.setTranslateZ(0 + TILE_SIZE / 4 / 2);
-          newBox.setMaterial(pathable);
-        }
-        if (t == 5)
-        {
-          points[t][0] = (0 - TILE_SIZE / 2) / 2;
-          points[t][1] = (0 - TILE_SIZE / 4) / 2;
-          newBox.setTranslateX(0 - TILE_SIZE / 2 / 2);
-          newBox.setTranslateZ(0 - TILE_SIZE / 4 / 2);
-          newBox.setMaterial(notPathable);
-        }
-        if (t == 0)
-        {
-          points[t][0] = (0 + TILE_SIZE / 4) / 2;
-          points[t][1] = (0 + TILE_SIZE / 2) / 2;
-          newBox.setTranslateX(0 + TILE_SIZE / 4 / 2);
-          newBox.setTranslateZ(0 + TILE_SIZE / 2 / 2);
-          newBox.setMaterial(spawnPoint);
-        }
-        if (t == 7)
-        {
-          points[t][0] = (0 - TILE_SIZE / 4) / 2;
-          points[t][1] = (0 + TILE_SIZE / 2) / 2;
-
-          newBox.setTranslateX(0 - TILE_SIZE / 4 / 2);
-          newBox.setTranslateZ(0 + TILE_SIZE / 2 / 2);
-          newBox.setMaterial(zombieSpawn);
-        }
-        if (t == 3)
-        {
-          points[t][0] = (0 + TILE_SIZE / 4) / 2;
-          points[t][1] = (0 - TILE_SIZE / 2) / 2;
-          newBox.setTranslateX(0 + TILE_SIZE / 4 / 2);
-          newBox.setTranslateZ(0 - TILE_SIZE / 2 / 2);
-        }
-        if (t == 4)
-        {
-          points[t][0] = (0 - TILE_SIZE / 4) / 2;
-          points[t][1] = (0 - TILE_SIZE / 2) / 2;
-          newBox.setTranslateX(0 - TILE_SIZE / 4 / 2);
-          newBox.setTranslateZ(0 - TILE_SIZE / 2 / 2);
-        }
-        playerXform.getChildren().add(newBox);
-      }
+      playerHitbox = new Hitbox(playerXform);
     }
     world.getChildren().add(mapXform);
 
@@ -517,7 +446,7 @@ public class Game extends Application
         {
           cameraXform2.t.setY(0);
         }
-        if (s.equals("x")) //turns on and off collision detection
+        if (s.equals("x")) // turns on and off collision detection
         {
           if (collisions)
           {
@@ -588,44 +517,6 @@ public class Game extends Application
   }
 
   /*
-   * Updates the 8 points on the collision detecting octogon based on the
-   * players location
-   */
-  private void updateBoundaryPoints(double nextZ, double nextX)
-  {
-
-    // updates the points on the octogon
-
-    // I tried to simplify this further but apparently I don't know
-    // how to do algebra and broke it so I'm leaving it like this
-    // for now
-
-    points[0][0] = (nextX + TILE_SIZE / 8 + (TILE_SIZE / 2));
-    points[0][1] = (nextZ + TILE_SIZE / 4 + (TILE_SIZE / 2));
-
-    points[1][0] = (nextX + TILE_SIZE / 4 + (TILE_SIZE / 2));
-    points[1][1] = (nextZ + TILE_SIZE / 8 + (TILE_SIZE / 2));
-
-    points[2][0] = (nextX + TILE_SIZE / 4 + (TILE_SIZE / 2));
-    points[2][1] = (nextZ - TILE_SIZE / 8 + (TILE_SIZE / 2));
-
-    points[3][0] = (nextX + TILE_SIZE / 8 + (TILE_SIZE / 2));
-    points[3][1] = (nextZ - TILE_SIZE / 4 + (TILE_SIZE / 2));
-
-    points[4][0] = (nextX - TILE_SIZE / 8 + (TILE_SIZE / 2));
-    points[4][1] = (nextZ - TILE_SIZE / 4 + (TILE_SIZE / 2));
-
-    points[5][0] = (nextX - TILE_SIZE / 4 + (TILE_SIZE / 2));
-    points[5][1] = (nextZ - TILE_SIZE / 8 + (TILE_SIZE / 2));
-
-    points[6][0] = (nextX - TILE_SIZE / 4 + (TILE_SIZE / 2));
-    points[6][1] = (nextZ + TILE_SIZE / 8 + (TILE_SIZE / 2));
-
-    points[7][0] = (nextX - TILE_SIZE / 8 + (TILE_SIZE / 2));
-    points[7][1] = (nextZ + TILE_SIZE / 4 + (TILE_SIZE / 2));
-  }
-
-  /*
    * Takes a look at each point on the octogon and determines what tile it's on.
    * it then checks to see if that tile is a legal tile to be on.
    */
@@ -636,8 +527,9 @@ public class Game extends Application
       int x, y;
       for (int i = 0; i < 8; i++) // get what tile the point is on.
       {
-        x = (int) (points[i][1] / TILE_SIZE);
-        y = (int) (points[i][0] / TILE_SIZE);
+
+        x = (int) (playerHitbox.getPoint(i).z / TILE_SIZE); // z //x
+        y = (int) (playerHitbox.getPoint(i).x / TILE_SIZE); // x //y
 
         if (!house.isPointLegal(x, y)) // is that tile not a legal move?
         {
@@ -672,14 +564,14 @@ public class Game extends Application
       // ontop of a wall tile. If any of them are, the player does not move to
       // that spot. Else, if none of them are, we update the players position to
       // that position.
-      
+
       if (back)
       {
         nextZ = playerXform.t.getTz() - (speed * cos);
         nextX = playerXform.t.getTx() - (speed * sin);
 
         // sets the boundary points for the nextMove
-        updateBoundaryPoints(nextZ, nextX);
+        playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
         if (isCollision()) // tests if the next move will cause a collision
         {
@@ -701,7 +593,7 @@ public class Game extends Application
       {
         nextZ = playerXform.t.getTz() + (speed * cos);
         nextX = playerXform.t.getTx() + (speed * sin);
-        updateBoundaryPoints(nextZ, nextX);
+        playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
         if (isCollision())
         {
@@ -721,7 +613,7 @@ public class Game extends Application
       {
         nextZ = playerXform.t.getTz() + (speed * sin);
         nextX = playerXform.t.getTx() - (speed * cos);
-        updateBoundaryPoints(nextZ, nextX);
+        playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
         if (isCollision())
         {
@@ -740,7 +632,7 @@ public class Game extends Application
       {
         nextZ = playerXform.t.getTz() - (speed * sin);
         nextX = playerXform.t.getTx() + (speed * cos);
-        updateBoundaryPoints(nextZ, nextX);
+        playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
         if (isCollision())
         {
