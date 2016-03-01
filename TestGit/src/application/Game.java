@@ -245,10 +245,24 @@ public class Game extends Application
           // Just doing this for testing collisions
           tile.setTranslateY(0.5);
           tile.setMaterial(zombieSpawn);
-
-          Group zomb = ZombieBuilder.getZombie(i, j, TILE_SIZE);
-
+          
+          //Code for making the zombie model
+//          Group zomb = ZombieBuilder.getZombie(i, j, TILE_SIZE);
+//
+//          zombies.add(new RandomWalk(j, i, zomb));
+//          world.getChildren().add(zomb);
+          
+          
+          //Zombie model is a cylinder
+          Cylinder c = new Cylinder(TILE_SIZE/4, WALL_HEIGHT);
+          c.setMaterial(notPathable);
+          Group zomb = new Group(c);
           zombies.add(new RandomWalk(j, i, zomb));
+          
+          zomb.setTranslateX(i*TILE_SIZE);
+          zomb.setTranslateZ(j*TILE_SIZE);
+          zomb.setTranslateY(WALL_HEIGHT / 2);
+          
           world.getChildren().add(zomb);
         }
         else// make a wall tile//
