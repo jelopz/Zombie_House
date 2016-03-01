@@ -3,6 +3,7 @@ package CPU;
 import java.awt.Point;
 import java.util.Random;
 import Hitbox.Hitbox;
+import RoomGenerator.RoomGenerator;
 import javafx.scene.Group;
 
 public abstract class Zombie
@@ -20,6 +21,6 @@ public abstract class Zombie
     hitbox = new Hitbox(model);
   }
 
-  abstract public void determineNextMove();
+  abstract public void determineNextMove(RoomGenerator house);
 
 }

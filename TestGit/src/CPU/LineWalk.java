@@ -1,5 +1,6 @@
 package CPU;
 
+import RoomGenerator.RoomGenerator;
 import javafx.scene.Group;
 
 public class LineWalk extends Zombie
@@ -10,7 +11,7 @@ public class LineWalk extends Zombie
   }
 
   @Override
-  public void determineNextMove()
+  public void determineNextMove(RoomGenerator house)
   {
     // TODO Auto-generated method stub
 

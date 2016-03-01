@@ -74,7 +74,7 @@ public class Game extends Application
   private static double cameraInitialX;
   private static double cameraInitialZ;
   // Our House
-  RoomGenerator house;
+  private RoomGenerator house;
 
   private double scaleVal = 1;
   private final Group root = new Group();
@@ -245,24 +245,23 @@ public class Game extends Application
           // Just doing this for testing collisions
           tile.setTranslateY(0.5);
           tile.setMaterial(zombieSpawn);
-          
-          //Code for making the zombie model
-//          Group zomb = ZombieBuilder.getZombie(i, j, TILE_SIZE);
-//
-//          zombies.add(new RandomWalk(j, i, zomb));
-//          world.getChildren().add(zomb);
-          
-          
-          //Zombie model is a cylinder
-          Cylinder c = new Cylinder(TILE_SIZE/4, WALL_HEIGHT);
+
+          // Code for making the zombie model
+          // Group zomb = ZombieBuilder.getZombie(i, j, TILE_SIZE);
+          //
+          // zombies.add(new RandomWalk(j, i, zomb));
+          // world.getChildren().add(zomb);
+
+          // Zombie model is a cylinder
+          Cylinder c = new Cylinder(TILE_SIZE / 4, WALL_HEIGHT);
           c.setMaterial(notPathable);
           Group zomb = new Group(c);
           zombies.add(new RandomWalk(j, i, zomb));
-          
-          zomb.setTranslateX(i*TILE_SIZE);
-          zomb.setTranslateZ(j*TILE_SIZE);
+
+          zomb.setTranslateX(i * TILE_SIZE);
+          zomb.setTranslateZ(j * TILE_SIZE);
           zomb.setTranslateY(WALL_HEIGHT / 2);
-          
+
           world.getChildren().add(zomb);
         }
         else// make a wall tile//
@@ -274,12 +273,12 @@ public class Game extends Application
         tileXform.getChildren().add(tile);
       }
     }
-    
+
     if (collisions)// sets 8 points around the player for testing collisions
     {
       playerHitbox = new Hitbox(playerXform);
     }
-    
+
     world.getChildren().add(mapXform);
 
     // places playerXform on spawn point
@@ -528,29 +527,30 @@ public class Game extends Application
 
   }
 
-  /*
-   * Takes a look at each point on the octogon and determines what tile it's on.
-   * it then checks to see if that tile is a legal tile to be on.
-   */
-  private boolean isCollision()
-  {
-    if (collisions)
-    {
-      int x, y;
-      for (int i = 0; i < 8; i++) // get what tile the point is on.
-      {
-
-        x = (int) (playerHitbox.getPoint(i).z / TILE_SIZE); // z //x
-        y = (int) (playerHitbox.getPoint(i).x / TILE_SIZE); // x //y
-
-        if (!house.isPointLegal(x, y)) // is that tile not a legal move?
-        {
-          return true; // the point is colliding with something
-        }
-      }
-    }
-    return false; // no point is colliding
-  }
+  // /*
+  // * Takes a look at each point on the octogon and determines what tile it's
+  // on.
+  // * it then checks to see if that tile is a legal tile to be on.
+  // */
+  // private boolean isCollision()
+  // {
+  // if (collisions)
+  // {
+  // int x, y;
+  // for (int i = 0; i < 8; i++) // get what tile the point is on.
+  // {
+  //
+  // x = (int) (playerHitbox.getPoint(i).z / TILE_SIZE); // z //x
+  // y = (int) (playerHitbox.getPoint(i).x / TILE_SIZE); // x //y
+  //
+  // if (!house.isPointLegal(x, y)) // is that tile not a legal move?
+  // {
+  // return true; // the point is colliding with something
+  // }
+  // }
+  // }
+  // return false; // no point is colliding
+  // }
 
   class MainGameLoop extends AnimationTimer
   {
@@ -565,8 +565,10 @@ public class Game extends Application
 
       for (Zombie z : zombies) // tells zombies to figure out their next move
       {
-        z.determineNextMove();
+        z.determineNextMove(house);
       }
+
+      // zombies.get(0).determineNextMove(house);
 
       /* Moves the camera around the world */
 
@@ -585,7 +587,8 @@ public class Game extends Application
         // sets the boundary points for the nextMove
         playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
-        if (isCollision()) // tests if the next move will cause a collision
+        if (Hitbox.isCollision(house, playerHitbox)) // tests if the next move
+                                                     // will cause a collision
         {
           // Do nothing
           System.out.println("Back Wall");
@@ -607,7 +610,7 @@ public class Game extends Application
         nextX = playerXform.t.getTx() + (speed * sin);
         playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
-        if (isCollision())
+        if (Hitbox.isCollision(house, playerHitbox))
         {
           System.out.println("Front Wall");
         }
@@ -627,7 +630,7 @@ public class Game extends Application
         nextX = playerXform.t.getTx() - (speed * cos);
         playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
-        if (isCollision())
+        if (Hitbox.isCollision(house, playerHitbox))
         {
           System.out.println("Right Wall");
         }
@@ -646,7 +649,7 @@ public class Game extends Application
         nextX = playerXform.t.getTx() + (speed * cos);
         playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
-        if (isCollision())
+        if (Hitbox.isCollision(house, playerHitbox))
         {
           System.out.println("Left Wall");
         }

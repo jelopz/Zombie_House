@@ -1,6 +1,7 @@
 package CPU;
 
-
+import Hitbox.Hitbox;
+import RoomGenerator.RoomGenerator;
 import javafx.scene.Group;
 
 public class RandomWalk extends Zombie
@@ -13,7 +14,7 @@ public class RandomWalk extends Zombie
   }
 
   @Override
-  public void determineNextMove()
+  public void determineNextMove(RoomGenerator house)
   {
     int z = rand.nextInt(4) + 1;
 
@@ -22,25 +23,46 @@ public class RandomWalk extends Zombie
       case 1:
       {
         translation = model.getTranslateX() + 1;
-        model.setTranslateX(translation);
+        hitbox.updateBoundaryPoints(model.getTranslateZ(), translation);
+
+        // tests if the next move will cause a collision
+        if (!Hitbox.isCollision(house, hitbox))
+        {
+          model.setTranslateX(translation);
+        }
         break;
       }
       case 2:
       {
         translation = model.getTranslateZ() + 1;
-        model.setTranslateZ(translation);
+        hitbox.updateBoundaryPoints(translation, model.getTranslateX());
+
+        if (!Hitbox.isCollision(house, hitbox))
+        {
+          model.setTranslateZ(translation);
+        }
         break;
       }
       case 3:
       {
         translation = model.getTranslateX() - 1;
-        model.setTranslateX(translation);
+        hitbox.updateBoundaryPoints(model.getTranslateZ(), translation);
+
+        if (!Hitbox.isCollision(house, hitbox))
+        {
+          model.setTranslateX(translation);
+        }
         break;
       }
       default:
       {
         translation = model.getTranslateZ() - 1;
-        model.setTranslateZ(translation);
+        hitbox.updateBoundaryPoints(translation, model.getTranslateX());
+
+        if (!Hitbox.isCollision(house, hitbox))
+        {
+          model.setTranslateZ(translation);
+        }
         break;
       }
     }
