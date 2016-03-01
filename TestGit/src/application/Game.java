@@ -29,6 +29,7 @@ import java.awt.Robot;
 import java.util.ArrayList;
 
 import ZombieBuilder.ZombieBuilder;
+import CPU.LineWalk;
 import CPU.RandomWalk;
 import CPU.Zombie;
 import Hitbox.Hitbox;
@@ -256,7 +257,7 @@ public class Game extends Application
           Cylinder c = new Cylinder(TILE_SIZE / 4, WALL_HEIGHT);
           c.setMaterial(notPathable);
           Group zomb = new Group(c);
-          zombies.add(new RandomWalk(j, i, zomb));
+          zombies.add(new LineWalk(j, i, zomb));
 
           zomb.setTranslateX(i * TILE_SIZE);
           zomb.setTranslateZ(j * TILE_SIZE);
@@ -526,32 +527,7 @@ public class Game extends Application
     gameLoop.start();
 
   }
-
-  // /*
-  // * Takes a look at each point on the octogon and determines what tile it's
-  // on.
-  // * it then checks to see if that tile is a legal tile to be on.
-  // */
-  // private boolean isCollision()
-  // {
-  // if (collisions)
-  // {
-  // int x, y;
-  // for (int i = 0; i < 8; i++) // get what tile the point is on.
-  // {
-  //
-  // x = (int) (playerHitbox.getPoint(i).z / TILE_SIZE); // z //x
-  // y = (int) (playerHitbox.getPoint(i).x / TILE_SIZE); // x //y
-  //
-  // if (!house.isPointLegal(x, y)) // is that tile not a legal move?
-  // {
-  // return true; // the point is colliding with something
-  // }
-  // }
-  // }
-  // return false; // no point is colliding
-  // }
-
+  
   class MainGameLoop extends AnimationTimer
   {
 
@@ -587,13 +563,8 @@ public class Game extends Application
         // sets the boundary points for the nextMove
         playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
-        if (playerHitbox.isCollision(house)) // tests if the next move
-                                                     // will cause a collision
-        {
-          // Do nothing
-          System.out.println("Back Wall");
-        }
-        else
+        //tests if the next move will not cause a collision
+        if (!playerHitbox.isCollision(house))
         {
           // Update coordinates
           cameraXform.t.setX(cameraXform.t.getTx() - (speed * sin));
@@ -601,7 +572,7 @@ public class Game extends Application
 
           playerXform.t.setX(nextX);
           playerXform.t.setZ(nextZ);
-        }
+        } //else do nothing if there IS a collision
       }
 
       if (front)
@@ -610,11 +581,7 @@ public class Game extends Application
         nextX = playerXform.t.getTx() + (speed * sin);
         playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
-        if (playerHitbox.isCollision(house))
-        {
-          System.out.println("Front Wall");
-        }
-        else
+        if (!playerHitbox.isCollision(house))
         {
           cameraXform.t.setX(cameraXform.t.getTx() + (speed * sin));
           cameraXform.t.setZ(cameraXform.t.getTz() + (speed * cos));
@@ -624,17 +591,14 @@ public class Game extends Application
 
         }
       }
+      
       if (right)
       {
         nextZ = playerXform.t.getTz() + (speed * sin);
         nextX = playerXform.t.getTx() - (speed * cos);
         playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
-        if (playerHitbox.isCollision(house))
-        {
-          System.out.println("Right Wall");
-        }
-        else
+        if (!playerHitbox.isCollision(house))
         {
           cameraXform.t.setX(cameraXform.t.getTx() - (speed * cos));
           cameraXform.t.setZ(cameraXform.t.getTz() + (speed * sin));
@@ -643,17 +607,14 @@ public class Game extends Application
           playerXform.t.setZ(nextZ);
         }
       }
+      
       if (left)
       {
         nextZ = playerXform.t.getTz() - (speed * sin);
         nextX = playerXform.t.getTx() + (speed * cos);
         playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
-        if (playerHitbox.isCollision(house))
-        {
-          System.out.println("Left Wall");
-        }
-        else
+        if (!playerHitbox.isCollision(house))
         {
           cameraXform.t.setX(cameraXform.t.getTx() + (speed * cos));
           cameraXform.t.setZ(cameraXform.t.getTz() - (speed * sin));
@@ -661,7 +622,6 @@ public class Game extends Application
           playerXform.t.setX(nextX);
           playerXform.t.setZ(nextZ);
         }
-
       }
 
     }
