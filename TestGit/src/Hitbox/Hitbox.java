@@ -11,7 +11,7 @@ public class Hitbox
 {
   private Point[] points; //The 8 points on the octogon shaped hitbox
 
-  public Hitbox(Xform xform)
+  public Hitbox(Group xform)
   {
     points = new Point[8];
     generateHitbox(xform);
