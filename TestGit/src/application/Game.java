@@ -87,9 +87,9 @@ public class Game extends Application
 
   private final Xform playerXform = new Xform();
   private final Xform mapXform = new Xform();
+  private Hitbox playerHitbox;
 
   private ArrayList<Zombie> zombies; // List of Zombies
-  private Point startPointZ;
 
   private char[][] tiles;
   private int mapH = 36;
@@ -113,10 +113,6 @@ public class Game extends Application
   private double mouseOldY;
   private double mouseDeltaX;
   private double mouseDeltaY;
-
-  // private double[][] points = new double[8][2];
-  private Point[] playerCollisionPoints = new Point[8];
-  private Hitbox playerHitbox;
 
   private void buildCamera()
   {
@@ -264,10 +260,12 @@ public class Game extends Application
         tileXform.getChildren().add(tile);
       }
     }
+    
     if (collisions)// sets 8 points around the player for testing collisions
     {
       playerHitbox = new Hitbox(playerXform);
     }
+    
     world.getChildren().add(mapXform);
 
     // places playerXform on spawn point

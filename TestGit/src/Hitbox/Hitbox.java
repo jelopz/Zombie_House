@@ -2,6 +2,7 @@ package Hitbox;
 
 import application.Game;
 import application.Xform;
+import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -71,7 +72,7 @@ public class Hitbox
    * Passing in the appropriate xform is only necessary for creating the
    * graphical representation of the hitbox
    */
-  private void generateHitbox(Xform xform)
+  private void generateHitbox(Group xform)
   {
     double z, x;
 
