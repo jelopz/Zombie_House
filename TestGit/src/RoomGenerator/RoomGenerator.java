@@ -302,11 +302,11 @@ public class RoomGenerator
             {
               hasFoundLegalSpot = false;
             }
-            else if (startX + width == mapWidth)
+            else if (startX == 0 || startY == 0)
             {
               hasFoundLegalSpot = false;
             }
-            else if (startY + height == mapHeight)
+            else if (startX + width == mapWidth || startY + height == mapHeight)
             {
               hasFoundLegalSpot = false;
             }
