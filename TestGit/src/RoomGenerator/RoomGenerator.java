@@ -60,8 +60,6 @@ public class RoomGenerator
     makeHalls();
     makePlayerSpawnPoint();
     makeZombieSpawns();
-    printMap();
-    System.out.println("--");
   }
 
   public char[][] getMap()
@@ -119,7 +117,14 @@ public class RoomGenerator
         {
           if (rand.nextDouble() < .1)
           {
-            house[k][j] = 'Z';
+            if (rand.nextInt(2) == 0)
+            {
+              house[k][j] = 'R';
+            }
+            else
+            {
+              house[k][j] = 'L';
+            }
           }
         }
       }
@@ -297,7 +302,7 @@ public class RoomGenerator
             }
           }
         }
-        
+
         if (startX <= 0 || startY <= 0)
         {
           hasFoundLegalSpot = false;
@@ -364,6 +369,6 @@ public class RoomGenerator
 
   public static void main(String[] args)
   {
-//    RoomGenerator rg = new RoomGenerator(20, 20);
+    // RoomGenerator rg = new RoomGenerator(20, 20);
   }
 }

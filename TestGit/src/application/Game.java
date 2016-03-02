@@ -65,9 +65,9 @@ public class Game extends Application
   // tile
 
   public static final double WALL_HEIGHT = 64;
-  private static final double CAMERA_INITIAL_DISTANCE = 0;
+  private static final double CAMERA_INITIAL_DISTANCE = -1000;//0;
   private static final double CAMERA_INITIAL_X_ANGLE = 0;
-  private static final double CAMERA_INITIAL_Y_ANGLE = 0;
+  private static final double CAMERA_INITIAL_Y_ANGLE = 90;//0;
   private static final double CAMERA_NEAR_CLIP = 0.1;
   private static final double CAMERA_FAR_CLIP = 10000.0;
   private static final double MOUSE_SPEED = 0.1;
@@ -137,9 +137,9 @@ public class Game extends Application
 
   private void buildLight()
   {
-
     light.setTranslateZ(WALL_HEIGHT / 2);
-    if (collisions) light.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+    if (collisions)
+      light.setTranslateZ(CAMERA_INITIAL_DISTANCE);
     light.setColor(Color.WHITE);
     // add light to camera so they move together
     cameraXform.getChildren().add(light);
@@ -240,7 +240,7 @@ public class Game extends Application
           }
 
         }
-        else if (tiles[i][j] == 'Z')
+        else if (tiles[i][j] == 'R' || tiles[i][j] == 'L')
         {
           ceiling.setTranslateY(WALL_HEIGHT + .5);
           tileXform.getChildren().add(ceiling);
@@ -256,10 +256,18 @@ public class Game extends Application
 
           // Zombie model is a cylinder
           Cylinder c = new Cylinder(TILE_SIZE / 4, WALL_HEIGHT);
-          c.setMaterial(notPathable);
           Group zomb = new Group(c);
-          zombies.add(new RandomWalk(j, i, zomb));
 
+          if (tiles[i][j] == 'R')
+          {
+            c.setMaterial(notPathable);
+            zombies.add(new RandomWalk(j, i, zomb));
+          }
+          else //tiles[i][j] == 'L'
+          {
+            c.setMaterial(zombieSpawn);
+            zombies.add(new LineWalk(j, i, zomb));
+          }
           zomb.setTranslateX(i * TILE_SIZE);
           zomb.setTranslateZ(j * TILE_SIZE);
           zomb.setTranslateY(WALL_HEIGHT / 2);
@@ -447,7 +455,8 @@ public class Game extends Application
             running = true;
           }
         }
-        //pressing F12 resets the game with new Map, Zombies, and player location
+        // pressing F12 resets the game with new Map, Zombies, and player
+        // location
         if (event.getCode() == KeyCode.F12)
         {
           world.getChildren().clear();
@@ -458,7 +467,7 @@ public class Game extends Application
           tileXform.getChildren().clear();
           mapXform.getChildren().clear();
           root.getChildren().clear();
-          
+
           root.getChildren().add(world);
           world.getTransforms().add(new Scale(scaleVal, scaleVal, scaleVal));
           house = new RoomGenerator(mapW, mapH);
@@ -475,18 +484,25 @@ public class Game extends Application
         {
           speed = sprint;
         }
-        else speed = walk;
+        else
+          speed = walk;
 
-        if (event.getCode() == KeyCode.W) front = true;
-        if (event.getCode() == KeyCode.S) back = true;
-        if (event.getCode() == KeyCode.A) left = true;
-        if (event.getCode() == KeyCode.D) right = true;
+        if (event.getCode() == KeyCode.W)
+          front = true;
+        if (event.getCode() == KeyCode.S)
+          back = true;
+        if (event.getCode() == KeyCode.A)
+          left = true;
+        if (event.getCode() == KeyCode.D)
+          right = true;
 
         // hold and release mouse from center of screen by pressing c
         if (event.getCode() == KeyCode.R)
         {
-          if (holdMouse == true) holdMouse = false;
-          else holdMouse = true;
+          if (holdMouse == true)
+            holdMouse = false;
+          else
+            holdMouse = true;
         }
         if (event.getCode() == KeyCode.Z) // puts the player on the "ground"
         {
@@ -508,7 +524,6 @@ public class Game extends Application
     });
     scene.setOnKeyReleased(new EventHandler<KeyEvent>()
     {
-
       @Override
       public void handle(KeyEvent event)
       {
@@ -516,11 +531,16 @@ public class Game extends Application
         {
           speed = sprint;
         }
-        else speed = walk;
-        if (event.getCode() == KeyCode.W) front = false;
-        if (event.getCode() == KeyCode.S) back = false;
-        if (event.getCode() == KeyCode.A) left = false;
-        if (event.getCode() == KeyCode.D) right = false;
+        else
+          speed = walk;
+        if (event.getCode() == KeyCode.W)
+          front = false;
+        if (event.getCode() == KeyCode.S)
+          back = false;
+        if (event.getCode() == KeyCode.A)
+          left = false;
+        if (event.getCode() == KeyCode.D)
+          right = false;
       }
     });
   }
@@ -539,7 +559,8 @@ public class Game extends Application
     buildLight();
 
     Scene scene = new Scene(root, windowX, windowY, true);
-    Stop[] stops = new Stop[] { new Stop(0, Color.RED), new Stop(1, Color.ORANGE) };
+    Stop[] stops = new Stop[]
+    { new Stop(0, Color.RED), new Stop(1, Color.ORANGE) };
     LinearGradient lg = new LinearGradient(0, 1, 0, 0, true, CycleMethod.NO_CYCLE, stops);
     scene.setFill(lg);
     scene.setCamera(camera);
