@@ -27,8 +27,6 @@ public class RoomGenerator
                                         // map should be
   private final int MIN_ROOM_HEIGHT = 3;// arbitrary,
 
-  // private final int NUM_ZOMBIES = 5;
-
   private Room[] rooms; // array of all the rooms
   private Hall[] halls; // array of all the halls
   private char[][] house; // The map, house[y][x]
@@ -58,18 +56,8 @@ public class RoomGenerator
     cleanMap();
     makeRooms();
     makeHalls();
-    
-    for (int i = 0; i < 10; i++)
-    {
-      System.out.println(i);
-      System.out.println("startX: " + halls[i].getStartX() + "   getEndX: " + halls[i].getEndX() + " " + halls[i].isVertical());
-      System.out.println("startY: " + halls[i].getStartY() + "   getEndY: " + halls[i].getEndY() + " " + halls[i].isVertical());
-    }
-    
     makePlayerSpawnPoint();
     makeZombieSpawns();
-
-    printMap();
   }
 
   public char[][] getMap()

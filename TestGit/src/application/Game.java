@@ -65,9 +65,9 @@ public class Game extends Application
   // tile
 
   public static final double WALL_HEIGHT = 64;
-  private static final double CAMERA_INITIAL_DISTANCE = -1000;//0;
+  private static final double CAMERA_INITIAL_DISTANCE = 0;
   private static final double CAMERA_INITIAL_X_ANGLE = 0;
-  private static final double CAMERA_INITIAL_Y_ANGLE = 90;//0;
+  private static final double CAMERA_INITIAL_Y_ANGLE = 0;
   private static final double CAMERA_NEAR_CLIP = 0.1;
   private static final double CAMERA_FAR_CLIP = 10000.0;
   private static final double MOUSE_SPEED = 0.1;
