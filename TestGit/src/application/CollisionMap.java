@@ -77,7 +77,7 @@ public class CollisionMap
 //        270 - 315
 //        315 - 360
         
-        System.out.println((int) angle + "   " + (int) (anglePlus));
+//        System.out.println((int) angle + "   " + (int) (anglePlus));
         if (point[(int) angleMin] == true || point[(int) angle] == true /*|| point[(int) (anglePlus)] == true*/)
         {
           return true;

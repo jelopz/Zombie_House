@@ -96,6 +96,7 @@ public class Game extends Application
 
   private double windowX = 1024;
   private double windowY = 768;
+  
   private boolean esc = false;
   private boolean first = true;
   private boolean front = false;
@@ -136,7 +137,6 @@ public class Game extends Application
 
   private void buildLight()
   {
-
     light.setTranslateZ(WALL_HEIGHT / 2);
     if (collisions) light.setTranslateZ(CAMERA_INITIAL_DISTANCE);
     light.setColor(Color.WHITE);
@@ -147,11 +147,8 @@ public class Game extends Application
 
   private void drawMap()
   {
-    if (first) 
-    {
-    zombies = new ArrayList<>();
-    
-    }// Material for floors and ceilings//
+    if (first) zombies = new ArrayList<>();
+    // Material for floors and ceilings//
     PhongMaterial pathable = new PhongMaterial();
     pathable.setDiffuseColor(Color.WHITE);
     pathable.setSpecularColor(Color.ORANGE);
@@ -186,6 +183,7 @@ public class Game extends Application
     bricks.setDiffuseMap(new Image(getClass().getResource("img.png").toExternalForm()));
     bricks.setDiffuseColor(Color.WHITE);
     bricks.setSpecularPower(0);
+
 
     // loops through a 2d array, generates rectangles of wall and floor tiles//
     for (int i = 0; i < mapH; i++)
@@ -227,8 +225,8 @@ public class Game extends Application
           if (esc)
           {
             Cylinder player = new Cylinder(TILE_SIZE / 4, WALL_HEIGHT);
-            player.setTranslateX((cameraXform.t.getTx() / TILE_SIZE));
-            player.setTranslateZ((cameraXform.t.getTz() / TILE_SIZE));
+            player.setTranslateX(0);
+            player.setTranslateZ(0);
             player.setTranslateY(WALL_HEIGHT / 2);
             player.setMaterial(playerColor);
             playerXform.getChildren().add(player);
@@ -236,14 +234,13 @@ public class Game extends Application
           }
 
         }
-        else if (tiles[i][j] == 'Z')
+        else if (tiles[i][j] == 'R' || tiles[i][j] == 'L')
         {
           ceiling.setTranslateY(WALL_HEIGHT + .5);
           mapXform.getChildren().add(ceiling);
           // Just doing this for testing collisions
           tile.setTranslateY(0.5);
           tile.setMaterial(zombieSpawn);
-
           if (first)
           {
             // Code for making the zombie model
@@ -253,12 +250,19 @@ public class Game extends Application
             // world.getChildren().add(zomb);
 
             // Zombie model is a cylinder
-
             Cylinder c = new Cylinder(TILE_SIZE / 4, WALL_HEIGHT);
-            c.setMaterial(notPathable);
             Group zomb = new Group(c);
-            zombies.add(new RandomWalk(j, i, zomb));
 
+            if (tiles[i][j] == 'R')
+            {
+              c.setMaterial(notPathable);
+              zombies.add(new RandomWalk(j, i, zomb));
+            }
+            else // tiles[i][j] == 'L'
+            {
+              c.setMaterial(zombieSpawn);
+              zombies.add(new LineWalk(j, i, zomb));
+            }
             zomb.setTranslateX(i * TILE_SIZE);
             zomb.setTranslateZ(j * TILE_SIZE);
             zomb.setTranslateY(WALL_HEIGHT / 2);
@@ -280,6 +284,7 @@ public class Game extends Application
     {
       playerHitbox = new Hitbox(playerXform);
     }
+
     if (first)
     {
       world.getChildren().add(mapXform);
@@ -543,7 +548,6 @@ public class Game extends Application
     });
     scene.setOnKeyReleased(new EventHandler<KeyEvent>()
     {
-
       @Override
       public void handle(KeyEvent event)
       {
@@ -602,7 +606,6 @@ public class Game extends Application
       // temporarily changes the camera angle;
       if (running)
       {
-        // mapXform.setVisible(false);
         double cos = Math.cos(Math.toRadians(cameraXform.ry.getAngle()));
         double sin = Math.sin(Math.toRadians(cameraXform.ry.getAngle()));
 

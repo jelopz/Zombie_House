@@ -178,7 +178,7 @@ public class RoomGenerator
           // if its the first room in the array
           if (currentRoom.equals(rooms[0]))
           {
-            System.out.println(i);
+//            System.out.println(i);
             currentRoom.setIsConnected(true);
             targetRoom.setIsConnected(true);
           }
