@@ -456,10 +456,10 @@ public class Game extends Application
         else speed = walk;
 
         String s = event.getText();
-        if (s.equals("w")) front = true;
-        if (s.equals("s")) back = true;
-        if (s.equals("a")) left = true;
-        if (s.equals("d")) right = true;
+        if (event.getCode() == KeyCode.W) front = true;
+        if (event.getCode() == KeyCode.S) back = true;
+        if (event.getCode() == KeyCode.A) left = true;
+        if (event.getCode() == KeyCode.D) right = true;
 
         // hold and release mouse from center of screen by pressing c
         if (s.equals("r"))
