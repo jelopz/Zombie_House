@@ -57,6 +57,7 @@ public class RoomGenerator
     makeHalls();
     makePlayerSpawnPoint();
     makeZombieSpawns();
+//    printMap();
   }
 
   public char[][] getMap()
@@ -302,6 +303,14 @@ public class RoomGenerator
             {
               hasFoundLegalSpot = false;
             }
+            else if (startX == 0 || startY == 0)
+            {
+              hasFoundLegalSpot = false;
+            }
+            else if (startX + width == mapWidth || startY + height == mapHeight)
+            {
+              hasFoundLegalSpot = false;
+            }
           }
         }
       }
@@ -323,33 +332,33 @@ public class RoomGenerator
     }
   }
 
-//  private void printRooms() // debug
-//  {
-//    for (int i = 0; i < rooms.length; i++)
-//    {
-//      rooms[i].printCoordinates();
-//    }
-//  }
+  // private void printRooms() // debug
+  // {
+  // for (int i = 0; i < rooms.length; i++)
+  // {
+  // rooms[i].printCoordinates();
+  // }
+  // }
 
-//  private void printHalls() // debug
-//  {
-//    for (int i = 0; i < 10; i++)
-//    {
-//      halls[i].printCoordinates();
-//    }
-//  }
+  // private void printHalls() // debug
+  // {
+  // for (int i = 0; i < 10; i++)
+  // {
+  // halls[i].printCoordinates();
+  // }
+  // }
 
-//  private void printMap() // debug
-//  {
-//    for (int i = 0; i < mapHeight; i++)
-//    {
-//      for (int j = 0; j < mapWidth; j++)
-//      {
-//        System.out.print(house[i][j]);
-//      }
-//      System.out.println();
-//    }
-//  }
+  private void printMap() // debug
+  {
+    for (int i = 0; i < mapHeight; i++)
+    {
+      for (int j = 0; j < mapWidth; j++)
+      {
+        System.out.print(house[i][j]);
+      }
+      System.out.println();
+    }
+  }
 
   private boolean intersection(Room r1, Room r2)
   {
@@ -362,6 +371,6 @@ public class RoomGenerator
 
   public static void main(String[] args)
   {
-//    RoomGenerator rg = new RoomGenerator(20, 20);
+    // RoomGenerator rg = new RoomGenerator(20, 20);
   }
 }
