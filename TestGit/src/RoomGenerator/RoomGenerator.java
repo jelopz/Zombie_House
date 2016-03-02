@@ -56,14 +56,10 @@ public class RoomGenerator
     // Never reaches this many with only 5 rooms.
     rand = new Random();
     cleanMap();
-    System.out.println("starting rooms");
     makeRooms();
-    System.out.println("rooms done");
     makeHalls();
     makePlayerSpawnPoint();
     makeZombieSpawns();
-    printMap();
-    System.out.println("--");
   }
 
   public char[][] getMap()
@@ -169,6 +165,7 @@ public class RoomGenerator
     int targetX = 0;
     int targetY = 0;
     int hallCounter = 0; // keeps track of how many halls we have.
+    int i = 0;
 
     for (Room currentRoom : rooms)
     {
@@ -182,6 +179,7 @@ public class RoomGenerator
           // if its the first room in the array
           if (currentRoom.equals(rooms[0]))
           {
+            System.out.println(i++);
             currentRoom.setIsConnected(true);
             targetRoom.setIsConnected(true);
           }
@@ -287,7 +285,6 @@ public class RoomGenerator
 
     for (int i = 0; i < rooms.length; i++)
     {
-      System.out.println(i);
       while (!hasFoundLegalSpot)
       {
         hasFoundLegalSpot = true;
@@ -299,7 +296,6 @@ public class RoomGenerator
         if (i != 0)
         {
           r = new Room(startX, startY, width, height);
-          System.out.println(startX + " " + startY + " " + width + " " + height);
           for (int j = 0; j < i; j++)
           {
             if (intersection(r, rooms[j]))
@@ -311,12 +307,10 @@ public class RoomGenerator
 
         if (startX <= 0 || startY <= 0)
         {
-          System.out.println("hmm");
           hasFoundLegalSpot = false;
         }
         else if (startX + width >= mapWidth || startY + height >= mapHeight)
         {
-          System.out.println("Woops");
           hasFoundLegalSpot = false;
         }
       }
