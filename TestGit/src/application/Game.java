@@ -455,23 +455,22 @@ public class Game extends Application
         }
         else speed = walk;
 
-        String s = event.getText();
         if (event.getCode() == KeyCode.W) front = true;
         if (event.getCode() == KeyCode.S) back = true;
         if (event.getCode() == KeyCode.A) left = true;
         if (event.getCode() == KeyCode.D) right = true;
 
         // hold and release mouse from center of screen by pressing c
-        if (s.equals("r"))
+        if (event.getCode() == KeyCode.R)
         {
           if (holdMouse == true) holdMouse = false;
           else holdMouse = true;
         }
-        if (s.equals("z")) // puts the player on the "ground"
+        if (event.getCode() == KeyCode.Z) // puts the player on the "ground"
         {
           cameraXform2.t.setY(0);
         }
-        if (s.equals("x")) // turns on and off collision detection
+        if (event.getCode() == KeyCode.X) // turns on and off collision detection
         {
           if (collisions)
           {
@@ -495,11 +494,10 @@ public class Game extends Application
           speed = sprint;
         }
         else speed = walk;
-        String s = event.getText();
-        if (s.equals("w")) front = false;
-        if (s.equals("s")) back = false;
-        if (s.equals("a")) left = false;
-        if (s.equals("d")) right = false;
+        if (event.getCode() == KeyCode.W) front = false;
+        if (event.getCode() == KeyCode.S) back = false;
+        if (event.getCode() == KeyCode.A) left = false;
+        if (event.getCode() == KeyCode.D) right = false;
       }
     });
   }
