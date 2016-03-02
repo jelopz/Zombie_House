@@ -86,7 +86,7 @@ public class Game extends Application
   private final Xform cameraXform = new Xform();
   private final Xform cameraXform2 = new Xform();
   private final Xform cameraXform3 = new Xform();
-
+  private final Xform tileXform = new Xform();
   private final Xform playerXform = new Xform();
   private final Xform mapXform = new Xform();
   private Hitbox playerHitbox;
@@ -258,7 +258,7 @@ public class Game extends Application
           Cylinder c = new Cylinder(TILE_SIZE / 4, WALL_HEIGHT);
           c.setMaterial(notPathable);
           Group zomb = new Group(c);
-          zombies.add(new LineWalk(j, i, zomb));
+          zombies.add(new RandomWalk(j, i, zomb));
 
           zomb.setTranslateX(i * TILE_SIZE);
           zomb.setTranslateZ(j * TILE_SIZE);
@@ -436,7 +436,7 @@ public class Game extends Application
           if (running)
           {
             camera.setTranslateZ(-500);
-            cameraXform.rx.setAngle(90);
+            cameraXform.rx.setAngle(70);
             running = false;
           }
           else
@@ -546,6 +546,7 @@ public class Game extends Application
       // temporarily changes the camera angle;
       if (running)
       {
+        tileXform.setVisible(false);
         double cos = Math.cos(Math.toRadians(cameraXform.ry.getAngle()));
         double sin = Math.sin(Math.toRadians(cameraXform.ry.getAngle()));
 
