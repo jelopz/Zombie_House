@@ -20,6 +20,8 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Random;
 
+import application.Game;
+
 public class RoomGenerator
 {
   private final int MIN_ROOM_WIDTH = 4; // arbitrary,
@@ -56,6 +58,10 @@ public class RoomGenerator
     makePlayerSpawnPoint();
     makeZombieSpawns();
     makeEndPoint();
+    if(Game.debug)
+    {
+      printMap();
+    }
   }
 
   public char[][] getMap()
@@ -397,20 +403,20 @@ public class RoomGenerator
         if (startX <= 0 || startY <= 0)
         {
           i++;
-          System.out.println(i);
+//          System.out.println(i);
           if (i == 0 && isFirstRoom)
           {
-            System.out.println("wow");
+//            System.out.println("wow");
           }
           hasFoundLegalSpot = false;
         }
         else if (startX + width >= mapWidth || startY + height >= mapHeight)
         {
           i++;
-          System.out.println(i + "     ---2");
+//          System.out.println(i + "     ---2");
           if (i == 0 && isFirstRoom)
           {
-            System.out.println("wow2");
+//            System.out.println("wow2");
           }
           hasFoundLegalSpot = false;
         }
