@@ -28,15 +28,10 @@ public class RoomGenerator
                                         // map should be
   private final int MIN_ROOM_HEIGHT = 3;// arbitrary,
 
-  // private Room[] rooms; // array of all the rooms
-  // private Hall[] halls; // array of all the halls
-
+  // Arraylist of all rooms and halls
   private ArrayList<Room> rooms;
   private ArrayList<Hall> halls;
   private char[][] house; // The map, house[y][x]
-
-  // private int numRooms;
-  // private int numHalls;
 
   private int mapWidth;
   private int mapHeight;
@@ -52,12 +47,6 @@ public class RoomGenerator
 
     house = new char[h][w];
 
-    // numRooms = 5;
-    // rooms = new Room[numRooms]; // currently set up to have only 5 rooms
-    // halls = new Hall[40]; // 40 total halls: 20 vertical halls and 20
-    // // horizontal halls means 20 logical halls.
-    // // Never reaches this many with only 5 rooms.
-
     rooms = new ArrayList<>();
     halls = new ArrayList<>();
     rand = new Random();
@@ -67,7 +56,6 @@ public class RoomGenerator
     makePlayerSpawnPoint();
     makeZombieSpawns();
     makeEndPoint();
-    printMap();
   }
 
   public char[][] getMap()
@@ -146,7 +134,7 @@ public class RoomGenerator
       {
         for (int k = room.getStartY(); k < room.getEndY(); k++)
         {
-          if (rand.nextDouble() < .1)
+          if (rand.nextDouble() < .05)
           {
             if (rand.nextInt(2) == 0)
             {
@@ -164,14 +152,6 @@ public class RoomGenerator
 
   private Point chooseHallPoint(int hallIndex)
   {
-    // // the x and y coordinates relative to the room
-    // int xSpawn = rand.nextInt(rooms[hallIndex].getWidth());
-    // int ySpawn = rand.nextInt(rooms[hallIndex].getHeight());
-    //
-    // // the x and y coordinates relative to the whole map
-    // xSpawn = xSpawn + rooms[hallIndex].getStartX();
-    // ySpawn = ySpawn + rooms[hallIndex].getStartY();
-
     int xSpawn = 0;
     int ySpawn = 0;
     int startY, endY, startX, endX, distance;
@@ -260,7 +240,7 @@ public class RoomGenerator
     int startY = 0;
     int targetX = 0;
     int targetY = 0;
-//    numHalls = -1; // keeps track of how many halls we have.
+    // numHalls = -1; // keeps track of how many halls we have.
 
     for (Room currentRoom : rooms)
     {
@@ -286,7 +266,7 @@ public class RoomGenerator
           // unreachable rooms
           if (targetRoom.isConnected())
           {
-//            numHalls++;
+            // numHalls++;
             // current room found a valid path and is now connected
             // to the whole map
             currentRoom.setIsConnected(true);
@@ -304,16 +284,8 @@ public class RoomGenerator
             // halls,
             // a vertical one and a horizontal one.
 
-            // this makes a vertical hall
-            // halls[numHalls] = new Hall(startX, startY, targetX, targetY,
-            // true);
             halls.add(new Hall(startX, startY, targetX, targetY, true));
             halls.add(halls.get(halls.size() - 1).getNeighbor());
-            // numHalls++;
-
-            // adds the neighboring horizontal wall
-            // halls[numHalls] = halls[numHalls - 1].getNeighbor();
-            // addHallToMap(halls[numHalls]);
           }
           else
           {
@@ -327,8 +299,8 @@ public class RoomGenerator
         }
       }
     }
-    
-    for(int i = 0; i < halls.size(); i++)
+
+    for (int i = 0; i < halls.size(); i++)
     {
       addHallToMap(halls.get(i));
     }

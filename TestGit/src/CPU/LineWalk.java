@@ -1,6 +1,7 @@
 package CPU;
 
 import RoomGenerator.RoomGenerator;
+import application.Game;
 import javafx.scene.Group;
 
 public class LineWalk extends Zombie
@@ -25,10 +26,25 @@ public class LineWalk extends Zombie
 
       hitbox.updateBoundaryPoints(translationZ, translationX);
 
-      if (!hitbox.isCollision(house))
+      if (!hitbox.isWallCollision(house))
       {
-        model.setTranslateZ(translationZ);
-        model.setTranslateX(translationX);
+
+        for (Zombie z : Game.zombies)
+        {
+          if ((!z.equals(this)) && zombieCollision(z))
+          {
+            hasAngle = false;
+
+            model.setTranslateZ(translationZ - 2 * angleZ);
+            model.setTranslateX(translationX - 2 * angleX);
+          }
+        }
+
+        if (hasAngle)
+        {
+          model.setTranslateZ(translationZ);
+          model.setTranslateX(translationX);
+        }
       }
       else
       {

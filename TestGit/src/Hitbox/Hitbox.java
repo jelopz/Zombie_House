@@ -69,7 +69,7 @@ public class Hitbox
    * Takes a look at each point on the octogon and determines what tile it's on.
    * it then checks to see if that tile is a legal tile to be on.
    */
-  public boolean isCollision(RoomGenerator house)
+  public boolean isWallCollision(RoomGenerator house)
   {
     if (Game.collisions)
     {

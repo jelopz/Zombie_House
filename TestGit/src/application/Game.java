@@ -65,9 +65,9 @@ public class Game extends Application
   // tile
 
   public static final double WALL_HEIGHT = 64;
-  private static final double CAMERA_INITIAL_DISTANCE = 0;
+  private static final double CAMERA_INITIAL_DISTANCE = -1000;//0;
   private static final double CAMERA_INITIAL_X_ANGLE = 0;
-  private static final double CAMERA_INITIAL_Y_ANGLE = 0;
+  private static final double CAMERA_INITIAL_Y_ANGLE = 90;//0;
   private static final double CAMERA_NEAR_CLIP = 0.1;
   private static final double CAMERA_FAR_CLIP = 10000.0;
   private static final double MOUSE_SPEED = 0.1;
@@ -89,7 +89,7 @@ public class Game extends Application
   private final Xform mapXform = new Xform();
   private Hitbox playerHitbox;
 
-  private ArrayList<Zombie> zombies; // List of Zombies
+  public static ArrayList<Zombie> zombies; // List of Zombies
 
   private char[][] tiles;
   private int mapH = 36;
@@ -208,8 +208,8 @@ public class Game extends Application
         if (tiles[i][j] == 'O' || tiles[i][j] == 'H')// make a floor tile//
         {
 
-          ceiling.setTranslateY(WALL_HEIGHT + .5);
-          mapXform.getChildren().add(ceiling);
+//          ceiling.setTranslateY(WALL_HEIGHT + .5);
+//          mapXform.getChildren().add(ceiling);
 
           tile.setTranslateY(0.5);
           tile.setMaterial(bricks);
@@ -217,8 +217,8 @@ public class Game extends Application
         }
         else if (tiles[i][j] == 'E')
         {
-          ceiling.setTranslateY(WALL_HEIGHT + .5);
-          mapXform.getChildren().add(ceiling);
+//          ceiling.setTranslateY(WALL_HEIGHT + .5);
+//          mapXform.getChildren().add(ceiling);
 
           tile.setTranslateY(0.5);
           tile.setMaterial(pathable);
@@ -226,8 +226,8 @@ public class Game extends Application
         }
         else if (tiles[i][j] == 'P')
         {
-          ceiling.setTranslateY(WALL_HEIGHT + .5);
-          mapXform.getChildren().add(ceiling);
+//          ceiling.setTranslateY(WALL_HEIGHT + .5);
+//          mapXform.getChildren().add(ceiling);
 
           tile.setTranslateY(0.5);
           tile.setMaterial(spawnPoint);
@@ -247,8 +247,8 @@ public class Game extends Application
         }
         else if (tiles[i][j] == 'R' || tiles[i][j] == 'L')
         {
-          ceiling.setTranslateY(WALL_HEIGHT + .5);
-          mapXform.getChildren().add(ceiling);
+//          ceiling.setTranslateY(WALL_HEIGHT + .5);
+//          mapXform.getChildren().add(ceiling);
           // Just doing this for testing collisions
           tile.setTranslateY(0.5);
           tile.setMaterial(zombieSpawn);
@@ -667,7 +667,7 @@ public class Game extends Application
           playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
           // tests if the next move will not cause a collision
-          if (!playerHitbox.isCollision(house))
+          if (!playerHitbox.isWallCollision(house))
           {
             if (playerHitbox.hasReachedGoal(house))
             {
@@ -691,7 +691,7 @@ public class Game extends Application
           nextX = playerXform.t.getTx() + (speed * sin);
           playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
-          if (!playerHitbox.isCollision(house))
+          if (!playerHitbox.isWallCollision(house))
           {
             if (playerHitbox.hasReachedGoal(house))
             {
@@ -714,7 +714,7 @@ public class Game extends Application
           nextX = playerXform.t.getTx() - (speed * cos);
           playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
-          if (!playerHitbox.isCollision(house))
+          if (!playerHitbox.isWallCollision(house))
           {
             if (playerHitbox.hasReachedGoal(house))
             {
@@ -737,7 +737,7 @@ public class Game extends Application
           nextX = playerXform.t.getTx() + (speed * cos);
           playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
-          if (!playerHitbox.isCollision(house))
+          if (!playerHitbox.isWallCollision(house))
           {
             if (playerHitbox.hasReachedGoal(house))
             {
