@@ -97,7 +97,7 @@ public class Game extends Application
 
   private double windowX = 1024;
   private double windowY = 768;
-  
+
   private boolean esc = false;
   private boolean first = true;
   private boolean front = false;
@@ -139,7 +139,8 @@ public class Game extends Application
   private void buildLight()
   {
     light.setTranslateZ(WALL_HEIGHT / 2);
-    if (collisions) light.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+    if (collisions)
+      light.setTranslateZ(CAMERA_INITIAL_DISTANCE);
     light.setColor(Color.WHITE);
     // add light to camera so they move together
     cameraXform.getChildren().add(light);
@@ -148,7 +149,8 @@ public class Game extends Application
 
   private void drawMap()
   {
-    if (first) zombies = new ArrayList<>();
+    if (first)
+      zombies = new ArrayList<>();
     // Material for floors and ceilings//
     PhongMaterial pathable = new PhongMaterial();
     pathable.setDiffuseColor(Color.WHITE);
@@ -185,7 +187,6 @@ public class Game extends Application
     bricks.setDiffuseColor(Color.WHITE);
     bricks.setSpecularPower(0);
 
-
     // loops through a 2d array, generates rectangles of wall and floor tiles//
     for (int i = 0; i < mapH; i++)
     {
@@ -221,7 +222,7 @@ public class Game extends Application
 
           tile.setTranslateY(0.5);
           tile.setMaterial(pathable);
-          endPointTile = new Point(j,i);
+          endPointTile = new Point(j, i);
         }
         else if (tiles[i][j] == 'P')
         {
@@ -477,26 +478,7 @@ public class Game extends Application
         // location
         if (event.getCode() == KeyCode.F12)
         {
-          world.getChildren().clear();
-          playerXform.getChildren().clear();
-          cameraXform.getChildren().clear();
-          cameraXform2.getChildren().clear();
-          cameraXform3.getChildren().clear();
-          mapXform.getChildren().clear();
-          mapXform.getChildren().clear();
-          root.getChildren().clear();
-
-          esc = false;
-          first = true;
-          running = true;
-          root.getChildren().add(world);
-          world.getTransforms().add(new Scale(scaleVal, scaleVal, scaleVal));
-          house = new RoomGenerator(mapW, mapH);
-          tiles = house.getMap();
-
-          drawMap();
-          buildCamera();
-          buildLight();
+          makeNewMap();
         }
         // pressing F11 resets the game with same Map, Zombies, and player
         // location
@@ -525,18 +507,25 @@ public class Game extends Application
         {
           speed = sprint;
         }
-        else speed = walk;
+        else
+          speed = walk;
 
-        if (event.getCode() == KeyCode.W) front = true;
-        if (event.getCode() == KeyCode.S) back = true;
-        if (event.getCode() == KeyCode.A) left = true;
-        if (event.getCode() == KeyCode.D) right = true;
+        if (event.getCode() == KeyCode.W)
+          front = true;
+        if (event.getCode() == KeyCode.S)
+          back = true;
+        if (event.getCode() == KeyCode.A)
+          left = true;
+        if (event.getCode() == KeyCode.D)
+          right = true;
 
         // hold and release mouse from center of screen by pressing c
         if (event.getCode() == KeyCode.R)
         {
-          if (holdMouse == true) holdMouse = false;
-          else holdMouse = true;
+          if (holdMouse == true)
+            holdMouse = false;
+          else
+            holdMouse = true;
         }
         if (event.getCode() == KeyCode.Z) // puts the player on the "ground"
         {
@@ -565,13 +554,42 @@ public class Game extends Application
         {
           speed = sprint;
         }
-        else speed = walk;
-        if (event.getCode() == KeyCode.W) front = false;
-        if (event.getCode() == KeyCode.S) back = false;
-        if (event.getCode() == KeyCode.A) left = false;
-        if (event.getCode() == KeyCode.D) right = false;
+        else
+          speed = walk;
+        if (event.getCode() == KeyCode.W)
+          front = false;
+        if (event.getCode() == KeyCode.S)
+          back = false;
+        if (event.getCode() == KeyCode.A)
+          left = false;
+        if (event.getCode() == KeyCode.D)
+          right = false;
       }
     });
+  }
+
+  private void makeNewMap()
+  {
+    world.getChildren().clear();
+    playerXform.getChildren().clear();
+    cameraXform.getChildren().clear();
+    cameraXform2.getChildren().clear();
+    cameraXform3.getChildren().clear();
+    mapXform.getChildren().clear();
+    mapXform.getChildren().clear();
+    root.getChildren().clear();
+
+    esc = false;
+    first = true;
+    running = true;
+    root.getChildren().add(world);
+    world.getTransforms().add(new Scale(scaleVal, scaleVal, scaleVal));
+    house = new RoomGenerator(mapW, mapH);
+    tiles = house.getMap();
+
+    drawMap();
+    buildCamera();
+    buildLight();
   }
 
   @Override
@@ -588,7 +606,8 @@ public class Game extends Application
     buildLight();
 
     Scene scene = new Scene(root, windowX, windowY, true);
-    Stop[] stops = new Stop[] { new Stop(0, Color.RED), new Stop(1, Color.ORANGE) };
+    Stop[] stops = new Stop[]
+    { new Stop(0, Color.RED), new Stop(1, Color.ORANGE) };
     LinearGradient lg = new LinearGradient(0, 1, 0, 0, true, CycleMethod.NO_CYCLE, stops);
     scene.setFill(lg);
     scene.setCamera(camera);
@@ -650,12 +669,19 @@ public class Game extends Application
           // tests if the next move will not cause a collision
           if (!playerHitbox.isCollision(house))
           {
-            // Update coordinates
-            cameraXform.t.setX(cameraXform.t.getTx() - (speed * sin));
-            cameraXform.t.setZ(cameraXform.t.getTz() - (speed * cos));
+            if (playerHitbox.hasReachedGoal(house))
+            {
+              makeNewMap();
+            }
+            else
+            {
+              // Update coordinates
+              cameraXform.t.setX(cameraXform.t.getTx() - (speed * sin));
+              cameraXform.t.setZ(cameraXform.t.getTz() - (speed * cos));
 
-            playerXform.t.setX(nextX);
-            playerXform.t.setZ(nextZ);
+              playerXform.t.setX(nextX);
+              playerXform.t.setZ(nextZ);
+            }
           } // else do nothing if there IS a collision
         }
 
@@ -667,12 +693,18 @@ public class Game extends Application
 
           if (!playerHitbox.isCollision(house))
           {
-            cameraXform.t.setX(cameraXform.t.getTx() + (speed * sin));
-            cameraXform.t.setZ(cameraXform.t.getTz() + (speed * cos));
+            if (playerHitbox.hasReachedGoal(house))
+            {
+              makeNewMap();
+            }
+            else
+            {
+              cameraXform.t.setX(cameraXform.t.getTx() + (speed * sin));
+              cameraXform.t.setZ(cameraXform.t.getTz() + (speed * cos));
 
-            playerXform.t.setX(nextX);
-            playerXform.t.setZ(nextZ);
-
+              playerXform.t.setX(nextX);
+              playerXform.t.setZ(nextZ);
+            }
           }
         }
 
@@ -684,11 +716,18 @@ public class Game extends Application
 
           if (!playerHitbox.isCollision(house))
           {
-            cameraXform.t.setX(cameraXform.t.getTx() - (speed * cos));
-            cameraXform.t.setZ(cameraXform.t.getTz() + (speed * sin));
+            if (playerHitbox.hasReachedGoal(house))
+            {
+              makeNewMap();
+            }
+            else
+            {
+              cameraXform.t.setX(cameraXform.t.getTx() - (speed * cos));
+              cameraXform.t.setZ(cameraXform.t.getTz() + (speed * sin));
 
-            playerXform.t.setX(nextX);
-            playerXform.t.setZ(nextZ);
+              playerXform.t.setX(nextX);
+              playerXform.t.setZ(nextZ);
+            }
           }
         }
 
@@ -700,11 +739,18 @@ public class Game extends Application
 
           if (!playerHitbox.isCollision(house))
           {
-            cameraXform.t.setX(cameraXform.t.getTx() + (speed * cos));
-            cameraXform.t.setZ(cameraXform.t.getTz() - (speed * sin));
+            if (playerHitbox.hasReachedGoal(house))
+            {
+              makeNewMap();
+            }
+            else
+            {
+              cameraXform.t.setX(cameraXform.t.getTx() + (speed * cos));
+              cameraXform.t.setZ(cameraXform.t.getTz() - (speed * sin));
 
-            playerXform.t.setX(nextX);
-            playerXform.t.setZ(nextZ);
+              playerXform.t.setX(nextX);
+              playerXform.t.setZ(nextZ);
+            }
           }
         }
       }

@@ -89,6 +89,23 @@ public class Hitbox
     return false;
   }
 
+  public boolean hasReachedGoal(RoomGenerator house)
+  {
+    int x, y;
+    for (int i = 0; i < 8; i++) // get what tile the point is on.
+    {
+
+      x = (int) (points[i].z / Game.TILE_SIZE); // z //x
+      y = (int) (points[i].x / Game.TILE_SIZE); // x //y
+
+      if(house.isEndPoint(x, y))
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /*
    * Generates a set of 8 points in the shape of an octogon to create a hitbox
    * for the player. A valid move is defined as a location where none of these 8

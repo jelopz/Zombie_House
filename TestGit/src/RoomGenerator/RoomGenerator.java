@@ -60,6 +60,7 @@ public class RoomGenerator
     makePlayerSpawnPoint();
     makeZombieSpawns();
     makeEndPoint();
+    printMap();
   }
 
   public char[][] getMap()
@@ -87,7 +88,18 @@ public class RoomGenerator
   public boolean isPointLegal(int x, int y)
   {
     if (house[y][x] != '-')
+    {
       return true;
+    }
+    return false;
+  }
+
+  public boolean isEndPoint(int x, int y)
+  {
+    if (house[y][x] == 'E')
+    {
+      return true;
+    }
     return false;
   }
 
@@ -100,7 +112,7 @@ public class RoomGenerator
     int hallSpawn = rand.nextInt(numHalls + 1); // chooses which room to spawn
                                                 // in
     playerSpawnPoint = chooseHallPoint(hallSpawn); // chooses where to spawn
-                                                    // inside that room
+                                                   // inside that room
     //
     // rooms[roomSpawn].setPlayerSpawn(); // tells the room the player is
     // spawning
@@ -108,13 +120,13 @@ public class RoomGenerator
 
     house[playerSpawnPoint.y][playerSpawnPoint.x] = 'P';
   }
-  
+
   private void makeEndPoint()
   {
     int hallSpawn = rand.nextInt(numHalls + 1);
-    
+
     Point p = chooseHallPoint(hallSpawn);
-    
+
     house[p.y][p.x] = 'E';
   }
 
