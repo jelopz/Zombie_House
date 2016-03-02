@@ -56,10 +56,14 @@ public class RoomGenerator
     // Never reaches this many with only 5 rooms.
     rand = new Random();
     cleanMap();
+    System.out.println("starting rooms");
     makeRooms();
+    System.out.println("rooms done");
     makeHalls();
     makePlayerSpawnPoint();
     makeZombieSpawns();
+    printMap();
+    System.out.println("--");
   }
 
   public char[][] getMap()
@@ -283,17 +287,19 @@ public class RoomGenerator
 
     for (int i = 0; i < rooms.length; i++)
     {
+      System.out.println(i);
       while (!hasFoundLegalSpot)
       {
         hasFoundLegalSpot = true;
-        startX = rand.nextInt(13);
-        startY = rand.nextInt(16);
+        startX = rand.nextInt(mapWidth - MAX_ROOM_WIDTH) + 1;
+        startY = rand.nextInt(mapHeight - MAX_ROOM_WIDTH) + 1;
         width = rand.nextInt(MAX_ROOM_WIDTH - MIN_ROOM_WIDTH + 1) + MIN_ROOM_WIDTH;
         height = rand.nextInt(width - MIN_ROOM_HEIGHT) + MIN_ROOM_HEIGHT;
 
         if (i != 0)
         {
           r = new Room(startX, startY, width, height);
+          System.out.println(startX + " " + startY + " " + width + " " + height);
           for (int j = 0; j < i; j++)
           {
             if (intersection(r, rooms[j]))
@@ -305,10 +311,12 @@ public class RoomGenerator
 
         if (startX <= 0 || startY <= 0)
         {
+          System.out.println("hmm");
           hasFoundLegalSpot = false;
         }
         else if (startX + width >= mapWidth || startY + height >= mapHeight)
         {
+          System.out.println("Woops");
           hasFoundLegalSpot = false;
         }
       }
@@ -369,6 +377,6 @@ public class RoomGenerator
 
   public static void main(String[] args)
   {
-    // RoomGenerator rg = new RoomGenerator(20, 20);
+//    RoomGenerator rg = new RoomGenerator(36, 36);
   }
 }
