@@ -59,7 +59,7 @@ public class RoomGenerator
     makeHalls();
     makePlayerSpawnPoint();
     makeZombieSpawns();
-    printMap();
+    makeEndPoint();
   }
 
   public char[][] getMap()
@@ -99,7 +99,7 @@ public class RoomGenerator
   {
     int hallSpawn = rand.nextInt(numHalls + 1); // chooses which room to spawn
                                                 // in
-    playerSpawnPoint = chooseSpawnPoint(hallSpawn); // chooses where to spawn
+    playerSpawnPoint = chooseHallPoint(hallSpawn); // chooses where to spawn
                                                     // inside that room
     //
     // rooms[roomSpawn].setPlayerSpawn(); // tells the room the player is
@@ -107,6 +107,15 @@ public class RoomGenerator
     // // in it
 
     house[playerSpawnPoint.y][playerSpawnPoint.x] = 'P';
+  }
+  
+  private void makeEndPoint()
+  {
+    int hallSpawn = rand.nextInt(numHalls + 1);
+    
+    Point p = chooseHallPoint(hallSpawn);
+    
+    house[p.y][p.x] = 'E';
   }
 
   private void makeZombieSpawns()
@@ -133,7 +142,7 @@ public class RoomGenerator
     }
   }
 
-  private Point chooseSpawnPoint(int hallIndex)
+  private Point chooseHallPoint(int hallIndex)
   {
     // // the x and y coordinates relative to the room
     // int xSpawn = rand.nextInt(rooms[hallIndex].getWidth());
@@ -203,7 +212,7 @@ public class RoomGenerator
 
       if (i == 50)
       {
-        return chooseSpawnPoint(rand.nextInt(numHalls + 1));
+        return chooseHallPoint(rand.nextInt(numHalls + 1));
       }
     }
 

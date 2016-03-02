@@ -75,6 +75,7 @@ public class Game extends Application
   private static final double TRACK_SPEED = 0.3;
   // Our House
   private RoomGenerator house;
+  private Point endPointTile;
 
   private double scaleVal = 1;
   private final Group root = new Group();
@@ -212,6 +213,15 @@ public class Game extends Application
           tile.setTranslateY(0.5);
           tile.setMaterial(bricks);
 
+        }
+        else if (tiles[i][j] == 'E')
+        {
+          ceiling.setTranslateY(WALL_HEIGHT + .5);
+          mapXform.getChildren().add(ceiling);
+
+          tile.setTranslateY(0.5);
+          tile.setMaterial(pathable);
+          endPointTile = new Point(j,i);
         }
         else if (tiles[i][j] == 'P')
         {
