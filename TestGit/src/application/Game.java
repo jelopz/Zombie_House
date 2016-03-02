@@ -73,8 +73,6 @@ public class Game extends Application
   private static final double MOUSE_SPEED = 0.1;
   private static final double ROTATION_SPEED = 2.0;
   private static final double TRACK_SPEED = 0.3;
-  private static double cameraInitialX;
-  private static double cameraInitialZ;
   // Our House
   private RoomGenerator house;
 
@@ -86,7 +84,6 @@ public class Game extends Application
   private final Xform cameraXform = new Xform();
   private final Xform cameraXform2 = new Xform();
   private final Xform cameraXform3 = new Xform();
-  private final Xform tileXform = new Xform();
   private final Xform playerXform = new Xform();
   private final Xform mapXform = new Xform();
   private Hitbox playerHitbox;
@@ -99,6 +96,8 @@ public class Game extends Application
 
   private double windowX = 1024;
   private double windowY = 768;
+  private boolean esc = false;
+  private boolean first = true;
   private boolean front = false;
   private boolean back = false;
   private boolean left = false;
@@ -148,7 +147,7 @@ public class Game extends Application
 
   private void drawMap()
   {
-    zombies = new ArrayList<>();
+    if (first) zombies = new ArrayList<>();
     // Material for floors and ceilings//
     PhongMaterial pathable = new PhongMaterial();
     pathable.setDiffuseColor(Color.WHITE);
@@ -185,9 +184,6 @@ public class Game extends Application
     bricks.setDiffuseColor(Color.WHITE);
     bricks.setSpecularPower(0);
 
-    Xform tileXform = new Xform();
-    mapXform.getChildren().add(tileXform);
-
     // loops through a 2d array, generates rectangles of wall and floor tiles//
     for (int i = 0; i < mapH; i++)
     {
@@ -199,7 +195,7 @@ public class Game extends Application
         tile.setTranslateZ(j * TILE_SIZE);
         Box ceiling = new Box(TILE_SIZE, 1, TILE_SIZE);
         ceiling.setDrawMode(DrawMode.FILL);
-        if (collisions)
+        if (esc)
         {
           ceiling.setDrawMode(DrawMode.LINE);
         }
@@ -210,7 +206,7 @@ public class Game extends Application
         {
 
           ceiling.setTranslateY(WALL_HEIGHT + .5);
-          tileXform.getChildren().add(ceiling);
+          mapXform.getChildren().add(ceiling);
 
           tile.setTranslateY(0.5);
           tile.setMaterial(bricks);
@@ -219,52 +215,53 @@ public class Game extends Application
         else if (tiles[i][j] == 'P')
         {
           ceiling.setTranslateY(WALL_HEIGHT + .5);
-          tileXform.getChildren().add(ceiling);
+          mapXform.getChildren().add(ceiling);
 
           tile.setTranslateY(0.5);
           tile.setMaterial(spawnPoint);
 
-          cameraInitialX = (i * TILE_SIZE);
-          cameraInitialZ = (j * TILE_SIZE);
-
           // Just doing this for testing collisions
-          if (collisions)
+          if (esc)
           {
             Cylinder player = new Cylinder(TILE_SIZE / 4, WALL_HEIGHT);
-            player.setTranslateX(0);
-            player.setTranslateZ(0);
+            player.setTranslateX((cameraXform.t.getTx() / TILE_SIZE));
+            player.setTranslateZ((cameraXform.t.getTz() / TILE_SIZE));
             player.setTranslateY(WALL_HEIGHT / 2);
             player.setMaterial(playerColor);
             playerXform.getChildren().add(player);
-            world.getChildren().add(playerXform);
+            mapXform.getChildren().add(playerXform);
           }
 
         }
         else if (tiles[i][j] == 'Z')
         {
           ceiling.setTranslateY(WALL_HEIGHT + .5);
-          tileXform.getChildren().add(ceiling);
+          mapXform.getChildren().add(ceiling);
           // Just doing this for testing collisions
           tile.setTranslateY(0.5);
           tile.setMaterial(zombieSpawn);
 
-          // Code for making the zombie model
-          // Group zomb = ZombieBuilder.getZombie(i, j, TILE_SIZE);
-          //
-          // zombies.add(new RandomWalk(j, i, zomb));
-          // world.getChildren().add(zomb);
+          if (first)
+          {
+            // Code for making the zombie model
+            // Group zomb = ZombieBuilder.getZombie(i, j, TILE_SIZE);
+            //
+            // zombies.add(new RandomWalk(j, i, zomb));
+            // world.getChildren().add(zomb);
 
-          // Zombie model is a cylinder
-          Cylinder c = new Cylinder(TILE_SIZE / 4, WALL_HEIGHT);
-          c.setMaterial(notPathable);
-          Group zomb = new Group(c);
-          zombies.add(new RandomWalk(j, i, zomb));
+            // Zombie model is a cylinder
 
-          zomb.setTranslateX(i * TILE_SIZE);
-          zomb.setTranslateZ(j * TILE_SIZE);
-          zomb.setTranslateY(WALL_HEIGHT / 2);
+            Cylinder c = new Cylinder(TILE_SIZE / 4, WALL_HEIGHT);
+            c.setMaterial(notPathable);
+            Group zomb = new Group(c);
+            zombies.add(new RandomWalk(j, i, zomb));
 
-          world.getChildren().add(zomb);
+            zomb.setTranslateX(i * TILE_SIZE);
+            zomb.setTranslateZ(j * TILE_SIZE);
+            zomb.setTranslateY(WALL_HEIGHT / 2);
+
+            world.getChildren().add(zomb);
+          }
         }
         else// make a wall tile//
         {
@@ -272,7 +269,7 @@ public class Game extends Application
           tile.setTranslateY(WALL_HEIGHT / 2);
           tile.setMaterial(bricks);
         }
-        tileXform.getChildren().add(tile);
+        mapXform.getChildren().add(tile);
       }
     }
 
@@ -280,12 +277,16 @@ public class Game extends Application
     {
       playerHitbox = new Hitbox(playerXform);
     }
+    if (first)
+    {
+      world.getChildren().add(mapXform);
 
-    world.getChildren().add(mapXform);
+      // places playerXform on spawn point
 
-    // places playerXform on spawn point
-    playerXform.t.setZ(house.getPlayerSpawnPoint().x * TILE_SIZE);
-    playerXform.t.setX(house.getPlayerSpawnPoint().y * TILE_SIZE);
+      playerXform.t.setZ(house.getPlayerSpawnPoint().x * TILE_SIZE);
+      playerXform.t.setX(house.getPlayerSpawnPoint().y * TILE_SIZE);
+    }
+    first = false;
   }
 
   private void handleMouse(Scene scene, final Node root)
@@ -436,18 +437,26 @@ public class Game extends Application
         {
           if (running)
           {
-            camera.setTranslateZ(-500);
-            cameraXform.rx.setAngle(70);
+            esc = true;
+            mapXform.getChildren().clear();
+            playerXform.getChildren().clear();
+            drawMap();
+            camera.setTranslateZ(-250);
+            cameraXform.rx.setAngle(65);
             running = false;
           }
           else
           {
+            esc = false;
+            mapXform.getChildren().clear();
+            drawMap();
             camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
             cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
             running = true;
           }
         }
-        //pressing F12 resets the game with new Map, Zombies, and player location
+        // pressing F12 resets the game with new Map, Zombies, and player
+        // location
         if (event.getCode() == KeyCode.F12)
         {
           world.getChildren().clear();
@@ -455,15 +464,38 @@ public class Game extends Application
           cameraXform.getChildren().clear();
           cameraXform2.getChildren().clear();
           cameraXform3.getChildren().clear();
-          tileXform.getChildren().clear();
+          mapXform.getChildren().clear();
           mapXform.getChildren().clear();
           root.getChildren().clear();
-          
+
+          esc = false;
+          first = true;
+          running = true;
           root.getChildren().add(world);
           world.getTransforms().add(new Scale(scaleVal, scaleVal, scaleVal));
           house = new RoomGenerator(mapW, mapH);
           tiles = house.getMap();
 
+          drawMap();
+          buildCamera();
+          buildLight();
+        }
+        // pressing F11 resets the game with same Map, Zombies, and player
+        // location
+        if (event.getCode() == KeyCode.F11)
+        {
+          world.getChildren().clear();
+          playerXform.getChildren().clear();
+          cameraXform.getChildren().clear();
+          cameraXform2.getChildren().clear();
+          cameraXform3.getChildren().clear();
+          mapXform.getChildren().clear();
+          root.getChildren().clear();
+
+          root.getChildren().add(world);
+          esc = false;
+          first = true;
+          running = true;
           drawMap();
           buildCamera();
           buildLight();
@@ -567,7 +599,7 @@ public class Game extends Application
       // temporarily changes the camera angle;
       if (running)
       {
-        tileXform.setVisible(false);
+        // mapXform.setVisible(false);
         double cos = Math.cos(Math.toRadians(cameraXform.ry.getAngle()));
         double sin = Math.sin(Math.toRadians(cameraXform.ry.getAngle()));
 
