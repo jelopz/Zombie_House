@@ -27,11 +27,13 @@ public class RoomGenerator
                                         // map should be
   private final int MIN_ROOM_HEIGHT = 3;// arbitrary,
 
-  private final int NUM_ZOMBIES = 5;
+  // private final int NUM_ZOMBIES = 5;
 
   private Room[] rooms; // array of all the rooms
   private Hall[] halls; // array of all the halls
   private char[][] house; // The map, house[y][x]
+
+  private int numRooms;
 
   private int mapWidth;
   private int mapHeight;
@@ -47,7 +49,8 @@ public class RoomGenerator
 
     house = new char[h][w];
 
-    rooms = new Room[5]; // currently set up to have only 5 rooms
+    numRooms = 5;
+    rooms = new Room[numRooms]; // currently set up to have only 5 rooms
     halls = new Hall[40]; // 40 total halls: 20 vertical halls and 20
     // horizontal halls means 20 logical halls.
     // Never reaches this many with only 5 rooms.
@@ -57,7 +60,6 @@ public class RoomGenerator
     makeHalls();
     makePlayerSpawnPoint();
     makeZombieSpawns();
-//    printMap();
   }
 
   public char[][] getMap()
@@ -84,7 +86,6 @@ public class RoomGenerator
    */
   public boolean isPointLegal(int x, int y)
   {
-    
     if (house[y][x] != 'X')
       return true;
     return false;
@@ -108,29 +109,18 @@ public class RoomGenerator
 
   private void makeZombieSpawns()
   {
-    int roomSpawn;
-    boolean foundValidSpawn = false;
-    Point spawnPoint = null;
-
-    for (int i = 0; i < NUM_ZOMBIES; i++)
+    for (int i = 0; i < numRooms; i++)
     {
-      while (!foundValidSpawn)
+      for (int j = rooms[i].getStartX(); j < rooms[i].getEndX(); j++)
       {
-        roomSpawn = rand.nextInt(5); // Randomly choose one of the 5 rooms
-        if (!rooms[roomSpawn].getPlayerSpawn()) // if the player is not spawning
-                                                // in this room
+        for (int k = rooms[i].getStartY(); k < rooms[i].getEndY(); k++)
         {
-          spawnPoint = chooseSpawnPoint(roomSpawn);
-
-          if (house[spawnPoint.y][spawnPoint.x] == 'O') // if legal spawn point
+          if (rand.nextDouble() < .1)
           {
-            foundValidSpawn = true;
+            house[k][j] = 'Z';
           }
         }
       }
-
-      house[spawnPoint.y][spawnPoint.x] = 'Z';
-      foundValidSpawn = false;
     }
   }
 
@@ -371,6 +361,6 @@ public class RoomGenerator
 
   public static void main(String[] args)
   {
-    // RoomGenerator rg = new RoomGenerator(20, 20);
+//    RoomGenerator rg = new RoomGenerator(20, 20);
   }
 }
