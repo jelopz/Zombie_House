@@ -49,12 +49,12 @@ public class LineWalk extends Zombie
 
     if (rand.nextInt(1) == 0) // 50/50 chance of x being positive or negative
     {
-      System.out.println(0);
+//      System.out.println(0);
       angleZ = -1 * angleZ;
     }
     else
     {
-      System.out.println(1);
+//      System.out.println(1);
     }
 
     if (rand.nextInt(1) == 0) // 50/50 chance of y being positive or negative

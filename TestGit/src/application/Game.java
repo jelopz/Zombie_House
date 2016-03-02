@@ -43,6 +43,7 @@ import javafx.scene.PerspectiveCamera;
 import javafx.scene.PointLight;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -64,9 +65,9 @@ public class Game extends Application
   // tile
 
   public static final double WALL_HEIGHT = 64;
-  private static final double CAMERA_INITIAL_DISTANCE = -1000;
+  private static final double CAMERA_INITIAL_DISTANCE = 0;
   private static final double CAMERA_INITIAL_X_ANGLE = 0;
-  private static final double CAMERA_INITIAL_Y_ANGLE = 90;
+  private static final double CAMERA_INITIAL_Y_ANGLE = 0;
   private static final double CAMERA_NEAR_CLIP = 0.1;
   private static final double CAMERA_FAR_CLIP = 10000.0;
   private static final double MOUSE_SPEED = 0.1;
@@ -102,7 +103,8 @@ public class Game extends Application
   private boolean back = false;
   private boolean left = false;
   private boolean right = false;
-  public static boolean collisions = true; //made static for debugging
+  public static boolean collisions = true; // made static for debugging
+  private boolean running = true;
   private boolean holdMouse = true;
   private double sprint = 3;
   private double walk = 2;
@@ -137,8 +139,7 @@ public class Game extends Application
   {
 
     light.setTranslateZ(WALL_HEIGHT / 2);
-    if (collisions)
-      light.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+    if (collisions) light.setTranslateZ(CAMERA_INITIAL_DISTANCE);
     light.setColor(Color.WHITE);
     // add light to camera so they move together
     cameraXform.getChildren().add(light);
@@ -295,7 +296,10 @@ public class Game extends Application
       @Override
       public void handle(MouseEvent event)
       {
-        if (holdMouse)
+        // r switches holdMouse, esc switches running if either is false
+        // the mouse does not change the angle of the camera is not held in
+        // center of screen//
+        if (holdMouse && running)
         {
           Point p = MouseInfo.getPointerInfo().getLocation();
           int x = p.x;
@@ -426,6 +430,22 @@ public class Game extends Application
       public void handle(KeyEvent event)
       {
 
+        //pressing escape pauses the main game loop, frees the mouse and changes the camera angle
+        if (event.getCode() == KeyCode.ESCAPE)
+        {
+          if (running)
+          {
+            camera.setTranslateZ(-500);
+            cameraXform.rx.setAngle(90);
+            running = false;
+          }
+          else
+          {
+            camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+            cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+            running = true;
+          }
+        }
         if (event.isControlDown())// does nothing right now
         {
         }
@@ -433,26 +453,19 @@ public class Game extends Application
         {
           speed = sprint;
         }
-        else
-          speed = walk;
+        else speed = walk;
 
         String s = event.getText();
-        if (s.equals("w"))
-          front = true;
-        if (s.equals("s"))
-          back = true;
-        if (s.equals("a"))
-          left = true;
-        if (s.equals("d"))
-          right = true;
+        if (s.equals("w")) front = true;
+        if (s.equals("s")) back = true;
+        if (s.equals("a")) left = true;
+        if (s.equals("d")) right = true;
 
         // hold and release mouse from center of screen by pressing c
         if (s.equals("r"))
         {
-          if (holdMouse == true)
-            holdMouse = false;
-          else
-            holdMouse = true;
+          if (holdMouse == true) holdMouse = false;
+          else holdMouse = true;
         }
         if (s.equals("z")) // puts the player on the "ground"
         {
@@ -481,17 +494,12 @@ public class Game extends Application
         {
           speed = sprint;
         }
-        else
-          speed = walk;
+        else speed = walk;
         String s = event.getText();
-        if (s.equals("w"))
-          front = false;
-        if (s.equals("s"))
-          back = false;
-        if (s.equals("a"))
-          left = false;
-        if (s.equals("d"))
-          right = false;
+        if (s.equals("w")) front = false;
+        if (s.equals("s")) back = false;
+        if (s.equals("a")) left = false;
+        if (s.equals("d")) right = false;
       }
     });
   }
@@ -510,8 +518,7 @@ public class Game extends Application
     buildLight();
 
     Scene scene = new Scene(root, windowX, windowY, true);
-    Stop[] stops = new Stop[]
-    { new Stop(0, Color.RED), new Stop(1, Color.ORANGE) };
+    Stop[] stops = new Stop[] { new Stop(0, Color.RED), new Stop(1, Color.ORANGE) };
     LinearGradient lg = new LinearGradient(0, 1, 0, 0, true, CycleMethod.NO_CYCLE, stops);
     scene.setFill(lg);
     scene.setCamera(camera);
@@ -527,7 +534,7 @@ public class Game extends Application
     gameLoop.start();
 
   }
-  
+
   class MainGameLoop extends AnimationTimer
   {
 
@@ -535,95 +542,102 @@ public class Game extends Application
 
     public void handle(long now)
     {
-
-      double cos = Math.cos(Math.toRadians(cameraXform.ry.getAngle()));
-      double sin = Math.sin(Math.toRadians(cameraXform.ry.getAngle()));
-
-      for (Zombie z : zombies) // tells zombies to figure out their next move
+      // pressing esc key changes this boolean, effectively pauses the game and
+      // temporarily changes the camera angle;
+      if (running)
       {
-        z.determineNextMove(house);
-      }
+        double cos = Math.cos(Math.toRadians(cameraXform.ry.getAngle()));
+        double sin = Math.sin(Math.toRadians(cameraXform.ry.getAngle()));
 
-      // zombies.get(0).determineNextMove(house);
-
-      /* Moves the camera around the world */
-
-      // For each direction, before updating the player position, we take where
-      // the player would move, update the 8 collision detecting points to be in
-      // that position, and then test to see if either of those points are found
-      // ontop of a wall tile. If any of them are, the player does not move to
-      // that spot. Else, if none of them are, we update the players position to
-      // that position.
-
-      if (back)
-      {
-        nextZ = playerXform.t.getTz() - (speed * cos);
-        nextX = playerXform.t.getTx() - (speed * sin);
-
-        // sets the boundary points for the nextMove
-        playerHitbox.updateBoundaryPoints(nextZ, nextX);
-
-        //tests if the next move will not cause a collision
-        if (!playerHitbox.isCollision(house))
+        for (Zombie z : zombies) // tells zombies to figure out their next move
         {
-          // Update coordinates
-          cameraXform.t.setX(cameraXform.t.getTx() - (speed * sin));
-          cameraXform.t.setZ(cameraXform.t.getTz() - (speed * cos));
+          z.determineNextMove(house);
+        }
 
-          playerXform.t.setX(nextX);
-          playerXform.t.setZ(nextZ);
-        } //else do nothing if there IS a collision
-      }
+        // zombies.get(0).determineNextMove(house);
 
-      if (front)
-      {
-        nextZ = playerXform.t.getTz() + (speed * cos);
-        nextX = playerXform.t.getTx() + (speed * sin);
-        playerHitbox.updateBoundaryPoints(nextZ, nextX);
+        /* Moves the camera around the world */
 
-        if (!playerHitbox.isCollision(house))
+        // For each direction, before updating the player position, we take
+        // where
+        // the player would move, update the 8 collision detecting points to be
+        // in
+        // that position, and then test to see if either of those points are
+        // found
+        // ontop of a wall tile. If any of them are, the player does not move to
+        // that spot. Else, if none of them are, we update the players position
+        // to
+        // that position.
+
+        if (back)
         {
-          cameraXform.t.setX(cameraXform.t.getTx() + (speed * sin));
-          cameraXform.t.setZ(cameraXform.t.getTz() + (speed * cos));
+          nextZ = playerXform.t.getTz() - (speed * cos);
+          nextX = playerXform.t.getTx() - (speed * sin);
 
-          playerXform.t.setX(nextX);
-          playerXform.t.setZ(nextZ);
+          // sets the boundary points for the nextMove
+          playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
+          // tests if the next move will not cause a collision
+          if (!playerHitbox.isCollision(house))
+          {
+            // Update coordinates
+            cameraXform.t.setX(cameraXform.t.getTx() - (speed * sin));
+            cameraXform.t.setZ(cameraXform.t.getTz() - (speed * cos));
+
+            playerXform.t.setX(nextX);
+            playerXform.t.setZ(nextZ);
+          } // else do nothing if there IS a collision
+        }
+
+        if (front)
+        {
+          nextZ = playerXform.t.getTz() + (speed * cos);
+          nextX = playerXform.t.getTx() + (speed * sin);
+          playerHitbox.updateBoundaryPoints(nextZ, nextX);
+
+          if (!playerHitbox.isCollision(house))
+          {
+            cameraXform.t.setX(cameraXform.t.getTx() + (speed * sin));
+            cameraXform.t.setZ(cameraXform.t.getTz() + (speed * cos));
+
+            playerXform.t.setX(nextX);
+            playerXform.t.setZ(nextZ);
+
+          }
+        }
+
+        if (right)
+        {
+          nextZ = playerXform.t.getTz() + (speed * sin);
+          nextX = playerXform.t.getTx() - (speed * cos);
+          playerHitbox.updateBoundaryPoints(nextZ, nextX);
+
+          if (!playerHitbox.isCollision(house))
+          {
+            cameraXform.t.setX(cameraXform.t.getTx() - (speed * cos));
+            cameraXform.t.setZ(cameraXform.t.getTz() + (speed * sin));
+
+            playerXform.t.setX(nextX);
+            playerXform.t.setZ(nextZ);
+          }
+        }
+
+        if (left)
+        {
+          nextZ = playerXform.t.getTz() - (speed * sin);
+          nextX = playerXform.t.getTx() + (speed * cos);
+          playerHitbox.updateBoundaryPoints(nextZ, nextX);
+
+          if (!playerHitbox.isCollision(house))
+          {
+            cameraXform.t.setX(cameraXform.t.getTx() + (speed * cos));
+            cameraXform.t.setZ(cameraXform.t.getTz() - (speed * sin));
+
+            playerXform.t.setX(nextX);
+            playerXform.t.setZ(nextZ);
+          }
         }
       }
-      
-      if (right)
-      {
-        nextZ = playerXform.t.getTz() + (speed * sin);
-        nextX = playerXform.t.getTx() - (speed * cos);
-        playerHitbox.updateBoundaryPoints(nextZ, nextX);
-
-        if (!playerHitbox.isCollision(house))
-        {
-          cameraXform.t.setX(cameraXform.t.getTx() - (speed * cos));
-          cameraXform.t.setZ(cameraXform.t.getTz() + (speed * sin));
-
-          playerXform.t.setX(nextX);
-          playerXform.t.setZ(nextZ);
-        }
-      }
-      
-      if (left)
-      {
-        nextZ = playerXform.t.getTz() - (speed * sin);
-        nextX = playerXform.t.getTx() + (speed * cos);
-        playerHitbox.updateBoundaryPoints(nextZ, nextX);
-
-        if (!playerHitbox.isCollision(house))
-        {
-          cameraXform.t.setX(cameraXform.t.getTx() + (speed * cos));
-          cameraXform.t.setZ(cameraXform.t.getTz() - (speed * sin));
-
-          playerXform.t.setX(nextX);
-          playerXform.t.setZ(nextZ);
-        }
-      }
-
     }
   }
 

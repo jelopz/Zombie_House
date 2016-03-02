@@ -83,6 +83,7 @@ public class RoomGenerator
    */
   public boolean isPointLegal(int x, int y)
   {
+    
     if (house[y][x] != 'X')
       return true;
     return false;
