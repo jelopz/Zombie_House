@@ -21,7 +21,7 @@ public class Room
     startY = y;
     width = w;
     height = h;
-    endX = x + h;
+    endX = x + w;
     endY = y + h;
 
     isConnected = false;

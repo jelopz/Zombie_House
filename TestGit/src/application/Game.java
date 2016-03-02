@@ -147,8 +147,11 @@ public class Game extends Application
 
   private void drawMap()
   {
-    if (first) zombies = new ArrayList<>();
-    // Material for floors and ceilings//
+    if (first) 
+    {
+    zombies = new ArrayList<>();
+    
+    }// Material for floors and ceilings//
     PhongMaterial pathable = new PhongMaterial();
     pathable.setDiffuseColor(Color.WHITE);
     pathable.setSpecularColor(Color.ORANGE);
