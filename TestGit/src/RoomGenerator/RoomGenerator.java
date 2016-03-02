@@ -58,8 +58,18 @@ public class RoomGenerator
     cleanMap();
     makeRooms();
     makeHalls();
+    
+    for (int i = 0; i < 10; i++)
+    {
+      System.out.println(i);
+      System.out.println("startX: " + halls[i].getStartX() + "   getEndX: " + halls[i].getEndX() + " " + halls[i].isVertical());
+      System.out.println("startY: " + halls[i].getStartY() + "   getEndY: " + halls[i].getEndY() + " " + halls[i].isVertical());
+    }
+    
     makePlayerSpawnPoint();
     makeZombieSpawns();
+
+    printMap();
   }
 
   public char[][] getMap()
@@ -158,17 +168,18 @@ public class RoomGenerator
   private void makeHalls()
   {
     Room targetRoom;
-    boolean found = false;
+    boolean found;
 
     int startX = 0;
     int startY = 0;
     int targetX = 0;
     int targetY = 0;
-    int hallCounter = 0; // keeps track of how many halls we have.
+    int hallCounter = -1; // keeps track of how many halls we have.
     int i = 0;
 
     for (Room currentRoom : rooms)
     {
+      found = false;
       while (!found)
       {
         found = true;
@@ -179,7 +190,7 @@ public class RoomGenerator
           // if its the first room in the array
           if (currentRoom.equals(rooms[0]))
           {
-            System.out.println(i++);
+            System.out.println(i);
             currentRoom.setIsConnected(true);
             targetRoom.setIsConnected(true);
           }
@@ -189,6 +200,7 @@ public class RoomGenerator
           // unreachable rooms
           if (targetRoom.isConnected())
           {
+            hallCounter++;
             // current room found a valid path and is now connected
             // to the whole map
             currentRoom.setIsConnected(true);
@@ -214,7 +226,6 @@ public class RoomGenerator
             // adds the neighboring horizontal wall
             halls[hallCounter] = halls[hallCounter - 1].getNeighbor();
             addHallToMap(halls[hallCounter]);
-            hallCounter++;
           }
           else
           {
@@ -227,7 +238,6 @@ public class RoomGenerator
           found = false;
         }
       }
-      found = false;
     }
   }
 
@@ -257,7 +267,7 @@ public class RoomGenerator
     }
     else
     {
-      if (hall.getEndX() > hall.getStartY())
+      if (hall.getEndX() > hall.getStartX())
       {
         for (int i = hall.getStartX(); i <= hall.getEndX(); i++)
         {
@@ -371,6 +381,6 @@ public class RoomGenerator
 
   public static void main(String[] args)
   {
-//    RoomGenerator rg = new RoomGenerator(36, 36);
+    // RoomGenerator rg = new RoomGenerator(36, 36);
   }
 }
