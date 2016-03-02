@@ -32,6 +32,7 @@ public class RoomGenerator
   private char[][] house; // The map, house[y][x]
 
   private int numRooms;
+  private int numHalls;
 
   private int mapWidth;
   private int mapHeight;
@@ -58,6 +59,7 @@ public class RoomGenerator
     makeHalls();
     makePlayerSpawnPoint();
     makeZombieSpawns();
+    printMap();
   }
 
   public char[][] getMap()
@@ -84,7 +86,7 @@ public class RoomGenerator
    */
   public boolean isPointLegal(int x, int y)
   {
-    if (house[y][x] != 'X')
+    if (house[y][x] != '-')
       return true;
     return false;
   }
@@ -95,12 +97,14 @@ public class RoomGenerator
    */
   private void makePlayerSpawnPoint()
   {
-    int roomSpawn = rand.nextInt(5); // chooses which room to spawn in
-    playerSpawnPoint = chooseSpawnPoint(roomSpawn); // chooses where to spawn
+    int hallSpawn = rand.nextInt(numHalls + 1); // chooses which room to spawn
+                                                // in
+    playerSpawnPoint = chooseSpawnPoint(hallSpawn); // chooses where to spawn
                                                     // inside that room
-
-    rooms[roomSpawn].setPlayerSpawn(); // tells the room the player is spawning
-                                       // in it
+    //
+    // rooms[roomSpawn].setPlayerSpawn(); // tells the room the player is
+    // spawning
+    // // in it
 
     house[playerSpawnPoint.y][playerSpawnPoint.x] = 'P';
   }
@@ -129,15 +133,79 @@ public class RoomGenerator
     }
   }
 
-  private Point chooseSpawnPoint(int roomIndex)
+  private Point chooseSpawnPoint(int hallIndex)
   {
-    // the x and y coordinates relative to the room
-    int xSpawn = rand.nextInt(rooms[roomIndex].getWidth());
-    int ySpawn = rand.nextInt(rooms[roomIndex].getHeight());
+    // // the x and y coordinates relative to the room
+    // int xSpawn = rand.nextInt(rooms[hallIndex].getWidth());
+    // int ySpawn = rand.nextInt(rooms[hallIndex].getHeight());
+    //
+    // // the x and y coordinates relative to the whole map
+    // xSpawn = xSpawn + rooms[hallIndex].getStartX();
+    // ySpawn = ySpawn + rooms[hallIndex].getStartY();
 
-    // the x and y coordinates relative to the whole map
-    xSpawn = xSpawn + rooms[roomIndex].getStartX();
-    ySpawn = ySpawn + rooms[roomIndex].getStartY();
+    int xSpawn = 0;
+    int ySpawn = 0;
+    int startY, endY, startX, endX, distance;
+    boolean foundPoint = false;
+    int i = 0;
+
+    while (!foundPoint)
+    {
+      i++;
+      if (halls[hallIndex].isVertical())
+      {
+        startY = halls[hallIndex].getStartY();
+        endY = halls[hallIndex].getEndY();
+        xSpawn = halls[hallIndex].getStartX();
+        distance = Math.abs(startY - endY);
+
+        if (startY < endY)
+        {
+          ySpawn = rand.nextInt(distance + 1) + startY;
+          if (house[ySpawn][xSpawn] == 'H')
+          {
+            foundPoint = true;
+          }
+        }
+        else
+        {
+          ySpawn = rand.nextInt(distance + 1) + endY;
+          if (house[ySpawn][xSpawn] == 'H')
+          {
+            foundPoint = true;
+          }
+        }
+      }
+      else
+      {
+        startX = halls[hallIndex].getStartX();
+        endX = halls[hallIndex].getEndX();
+        ySpawn = halls[hallIndex].getStartY();
+        distance = Math.abs(startX - endX);
+
+        if (startX < endX)
+        {
+          xSpawn = rand.nextInt(distance + 1) + startX;
+          if (house[ySpawn][xSpawn] == 'H')
+          {
+            foundPoint = true;
+          }
+        }
+        else
+        {
+          xSpawn = rand.nextInt(distance + 1) + endX;
+          if (house[ySpawn][xSpawn] == 'H')
+          {
+            foundPoint = true;
+          }
+        }
+      }
+
+      if (i == 50)
+      {
+        return chooseSpawnPoint(rand.nextInt(numHalls + 1));
+      }
+    }
 
     return new Point(xSpawn, ySpawn);
   }
@@ -148,7 +216,7 @@ public class RoomGenerator
     {
       for (int j = 0; j < mapWidth; j++)
       {
-        house[i][j] = 'X';
+        house[i][j] = '-';
       }
     }
   }
@@ -162,8 +230,7 @@ public class RoomGenerator
     int startY = 0;
     int targetX = 0;
     int targetY = 0;
-    int hallCounter = -1; // keeps track of how many halls we have.
-    int i = 0;
+    numHalls = -1; // keeps track of how many halls we have.
 
     for (Room currentRoom : rooms)
     {
@@ -178,7 +245,7 @@ public class RoomGenerator
           // if its the first room in the array
           if (currentRoom.equals(rooms[0]))
           {
-//            System.out.println(i);
+            // System.out.println(i);
             currentRoom.setIsConnected(true);
             targetRoom.setIsConnected(true);
           }
@@ -188,7 +255,7 @@ public class RoomGenerator
           // unreachable rooms
           if (targetRoom.isConnected())
           {
-            hallCounter++;
+            numHalls++;
             // current room found a valid path and is now connected
             // to the whole map
             currentRoom.setIsConnected(true);
@@ -207,13 +274,13 @@ public class RoomGenerator
             // a vertical one and a horizontal one.
 
             // this makes a vertical hall
-            halls[hallCounter] = new Hall(startX, startY, targetX, targetY, true);
-            addHallToMap(halls[hallCounter]);
-            hallCounter++;
+            halls[numHalls] = new Hall(startX, startY, targetX, targetY, true);
+            addHallToMap(halls[numHalls]);
+            numHalls++;
 
             // adds the neighboring horizontal wall
-            halls[hallCounter] = halls[hallCounter - 1].getNeighbor();
-            addHallToMap(halls[hallCounter]);
+            halls[numHalls] = halls[numHalls - 1].getNeighbor();
+            addHallToMap(halls[numHalls]);
           }
           else
           {
@@ -242,14 +309,20 @@ public class RoomGenerator
       {
         for (int i = hall.getStartY(); i <= hall.getEndY(); i++)
         {
-          house[i][hall.getStartX()] = 'O';
+          if (house[i][hall.getStartX()] == '-')
+          {
+            house[i][hall.getStartX()] = 'H';
+          }
         }
       }
       else
       {
         for (int i = hall.getEndY(); i <= hall.getStartY(); i++)
         {
-          house[i][hall.getStartX()] = 'O';
+          if (house[i][hall.getStartX()] == '-')
+          {
+            house[i][hall.getStartX()] = 'H';
+          }
         }
       }
     }
@@ -259,14 +332,20 @@ public class RoomGenerator
       {
         for (int i = hall.getStartX(); i <= hall.getEndX(); i++)
         {
-          house[hall.getStartY()][i] = 'O';
+          if (house[hall.getStartY()][i] == '-')
+          {
+            house[hall.getStartY()][i] = 'H';
+          }
         }
       }
       else
       {
         for (int i = hall.getEndX(); i <= hall.getStartX(); i++)
         {
-          house[hall.getStartY()][i] = 'O';
+          if (house[hall.getStartY()][i] == '-')
+          {
+            house[hall.getStartY()][i] = 'H';
+          }
         }
       }
     }

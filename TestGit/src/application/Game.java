@@ -203,7 +203,7 @@ public class Game extends Application
         ceiling.setTranslateX(i * TILE_SIZE);
         ceiling.setTranslateZ(j * TILE_SIZE);
         ceiling.setMaterial(bricks);
-        if (tiles[i][j] == 'O')// make a floor tile//
+        if (tiles[i][j] == 'O' || tiles[i][j] == 'H')// make a floor tile//
         {
 
           ceiling.setTranslateY(WALL_HEIGHT + .5);

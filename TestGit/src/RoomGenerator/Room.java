@@ -13,7 +13,6 @@ public class Room
   private int centerY;
 
   private boolean isConnected;
-  private boolean playerSpawn;
 
   public Room(int x, int y, int w, int h)
   {
@@ -25,7 +24,6 @@ public class Room
     endY = y + h;
 
     isConnected = false;
-    playerSpawn = false;
 
     centerX = (startX + endX) / 2;
     centerY = (startY + endY) / 2;
@@ -91,14 +89,5 @@ public class Room
   {
     isConnected = b;
   }
-  
-  public void setPlayerSpawn()
-  {
-    playerSpawn = true;
-  }
-  
-  public boolean getPlayerSpawn()
-  {
-    return playerSpawn;
-  }
+
 }
