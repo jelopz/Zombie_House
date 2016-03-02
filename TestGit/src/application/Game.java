@@ -421,7 +421,7 @@ public class Game extends Application
     cameraXform.rx.setAngle(cameraXform.rx.getAngle() + mouseDeltaY * MOUSE_SPEED * modifier * ROTATION_SPEED);
   }
 
-  private void handleKeyboard(Scene scene, final Node root)
+  private void handleKeyboard(Scene scene, final Xform worldXform)
   {
 
     scene.setOnKeyPressed(new EventHandler<KeyEvent>()
@@ -430,7 +430,8 @@ public class Game extends Application
       public void handle(KeyEvent event)
       {
 
-        //pressing escape pauses the main game loop, frees the mouse and changes the camera angle
+        // pressing escape pauses the main game loop, frees the mouse and
+        // changes the camera angle
         if (event.getCode() == KeyCode.ESCAPE)
         {
           if (running)
@@ -445,6 +446,27 @@ public class Game extends Application
             cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
             running = true;
           }
+        }
+        //pressing F12 resets the game with new Map, Zombies, and player location
+        if (event.getCode() == KeyCode.F12)
+        {
+          world.getChildren().clear();
+          playerXform.getChildren().clear();
+          cameraXform.getChildren().clear();
+          cameraXform2.getChildren().clear();
+          cameraXform3.getChildren().clear();
+          tileXform.getChildren().clear();
+          mapXform.getChildren().clear();
+          root.getChildren().clear();
+          
+          root.getChildren().add(world);
+          world.getTransforms().add(new Scale(scaleVal, scaleVal, scaleVal));
+          house = new RoomGenerator(mapW, mapH);
+          tiles = house.getMap();
+
+          drawMap();
+          buildCamera();
+          buildLight();
         }
         if (event.isControlDown())// does nothing right now
         {
@@ -470,7 +492,8 @@ public class Game extends Application
         {
           cameraXform2.t.setY(0);
         }
-        if (event.getCode() == KeyCode.X) // turns on and off collision detection
+        if (event.getCode() == KeyCode.X) // turns on and off collision
+                                          // detection
         {
           if (collisions)
           {
