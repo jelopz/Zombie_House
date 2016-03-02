@@ -60,6 +60,8 @@ public class RoomGenerator
     makeHalls();
     makePlayerSpawnPoint();
     makeZombieSpawns();
+    printMap();
+    System.out.println("--");
   }
 
   public char[][] getMap()
@@ -293,15 +295,16 @@ public class RoomGenerator
             {
               hasFoundLegalSpot = false;
             }
-            else if (startX == 0 || startY == 0)
-            {
-              hasFoundLegalSpot = false;
-            }
-            else if (startX + width == mapWidth || startY + height == mapHeight)
-            {
-              hasFoundLegalSpot = false;
-            }
           }
+        }
+        
+        if (startX <= 0 || startY <= 0)
+        {
+          hasFoundLegalSpot = false;
+        }
+        else if (startX + width >= mapWidth || startY + height >= mapHeight)
+        {
+          hasFoundLegalSpot = false;
         }
       }
 
