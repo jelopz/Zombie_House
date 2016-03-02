@@ -257,7 +257,7 @@ public class Game extends Application
           Cylinder c = new Cylinder(TILE_SIZE / 4, WALL_HEIGHT);
           c.setMaterial(notPathable);
           Group zomb = new Group(c);
-          zombies.add(new LineWalk(j, i, zomb));
+          zombies.add(new RandomWalk(j, i, zomb));
 
           zomb.setTranslateX(i * TILE_SIZE);
           zomb.setTranslateZ(j * TILE_SIZE);
