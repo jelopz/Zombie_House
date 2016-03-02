@@ -15,7 +15,7 @@ public class Hitbox
   public Hitbox(Group xform)
   {
     points = new Point[8];
-    generateHitbox(xform);
+    generateHitbox(xform, Game.debug);
   }
 
   /*
@@ -98,7 +98,7 @@ public class Hitbox
       x = (int) (points[i].z / Game.TILE_SIZE); // z //x
       y = (int) (points[i].x / Game.TILE_SIZE); // x //y
 
-      if(house.isEndPoint(x, y))
+      if (house.isEndPoint(x, y))
       {
         return true;
       }
@@ -114,19 +114,28 @@ public class Hitbox
    * Passing in the appropriate xform is only necessary for creating the
    * graphical representation of the hitbox
    */
-  private void generateHitbox(Group xform)
+  private void generateHitbox(Group xform, boolean debug)
   {
-    double z, x;
+    double z = 0;
+    double x = 0;
+    PhongMaterial pathable = null;
 
-    PhongMaterial pathable = new PhongMaterial();
-    pathable.setDiffuseColor(Color.WHITE);
-    pathable.setSpecularColor(Color.ORANGE);
-
+    if (debug)
+    {
+      pathable = new PhongMaterial();
+      pathable.setDiffuseColor(Color.WHITE);
+      pathable.setSpecularColor(Color.ORANGE);
+    }
     for (int t = 0; t < 8; t++)
     {
-      Box newBox = new Box(1, 100, 1);
-      newBox.setMaterial(pathable);
-      newBox.setTranslateY(Game.WALL_HEIGHT / 2);
+      Box newBox = null;
+
+      if (debug)
+      {
+        newBox = new Box(1, 100, 1);
+        newBox.setMaterial(pathable);
+        newBox.setTranslateY(Game.WALL_HEIGHT / 2);
+      }
 
       if (t == 0)
       {
@@ -134,9 +143,6 @@ public class Hitbox
         z = (0 + Game.TILE_SIZE / 2) / 2;
 
         points[0] = new Point(z, x);
-
-        newBox.setTranslateX(x);
-        newBox.setTranslateZ(z);
       }
       if (t == 1)
       {
@@ -144,9 +150,6 @@ public class Hitbox
         z = (0 + Game.TILE_SIZE / 4) / 2;
 
         points[1] = new Point(z, x);
-
-        newBox.setTranslateX(x);
-        newBox.setTranslateZ(z);
       }
       if (t == 2)
       {
@@ -154,9 +157,6 @@ public class Hitbox
         z = (0 - Game.TILE_SIZE / 4) / 2;
 
         points[2] = new Point(z, x);
-
-        newBox.setTranslateX(x);
-        newBox.setTranslateZ(z);
       }
       if (t == 3)
       {
@@ -164,9 +164,6 @@ public class Hitbox
         z = (0 - Game.TILE_SIZE / 2) / 2;
 
         points[3] = new Point(z, x);
-
-        newBox.setTranslateX(x);
-        newBox.setTranslateZ(z);
       }
       if (t == 4)
       {
@@ -174,9 +171,6 @@ public class Hitbox
         z = (0 - Game.TILE_SIZE / 2) / 2;
 
         points[4] = new Point(z, x);
-
-        newBox.setTranslateX(x);
-        newBox.setTranslateZ(z);
       }
       if (t == 5)
       {
@@ -185,8 +179,6 @@ public class Hitbox
 
         points[5] = new Point(z, x);
 
-        newBox.setTranslateX(x);
-        newBox.setTranslateZ(z);
       }
       if (t == 6)
       {
@@ -195,8 +187,6 @@ public class Hitbox
 
         points[6] = new Point(z, x);
 
-        newBox.setTranslateX(x);
-        newBox.setTranslateZ(z);
       }
       if (t == 7)
       {
@@ -204,11 +194,13 @@ public class Hitbox
         z = (0 + Game.TILE_SIZE / 2) / 2;
 
         points[7] = new Point(z, x);
-
+      }
+      if (debug)
+      {
         newBox.setTranslateX(x);
         newBox.setTranslateZ(z);
+        xform.getChildren().add(newBox);
       }
-      xform.getChildren().add(newBox);
     }
   }
 }

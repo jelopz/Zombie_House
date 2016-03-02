@@ -60,14 +60,15 @@ import javafx.stage.Stage;
 
 public class Game extends Application
 {
+  public static boolean debug = false;
 
   public static final double TILE_SIZE = 56; // number of subdivisions in
   // tile
 
   public static final double WALL_HEIGHT = 64;
-  private static final double CAMERA_INITIAL_DISTANCE = -1000;//0;
+  private static final double CAMERA_INITIAL_DISTANCE = 0;
   private static final double CAMERA_INITIAL_X_ANGLE = 0;
-  private static final double CAMERA_INITIAL_Y_ANGLE = 90;//0;
+  private static final double CAMERA_INITIAL_Y_ANGLE = 0;
   private static final double CAMERA_NEAR_CLIP = 0.1;
   private static final double CAMERA_FAR_CLIP = 10000.0;
   private static final double MOUSE_SPEED = 0.1;
@@ -128,8 +129,16 @@ public class Game extends Application
 
     camera.setNearClip(CAMERA_NEAR_CLIP);
     camera.setFarClip(CAMERA_FAR_CLIP);
-    camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
-    cameraXform.ry.setAngle(CAMERA_INITIAL_Y_ANGLE);
+    if (debug)
+    {
+      camera.setTranslateZ(-1000);
+      cameraXform.ry.setAngle(90);
+    }
+    else
+    {
+      camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+      cameraXform.ry.setAngle(CAMERA_INITIAL_Y_ANGLE);
+    }
     cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
     cameraXform.t.setZ(house.getPlayerSpawnPoint().x * TILE_SIZE);
     cameraXform.t.setX(house.getPlayerSpawnPoint().y * TILE_SIZE);
@@ -140,7 +149,16 @@ public class Game extends Application
   {
     light.setTranslateZ(WALL_HEIGHT / 2);
     if (collisions)
-      light.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+    {
+      if (debug)
+      {
+        light.setTranslateZ(-1000);
+      }
+      else
+      {
+        light.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+      }
+    }
     light.setColor(Color.WHITE);
     // add light to camera so they move together
     cameraXform.getChildren().add(light);
@@ -202,14 +220,19 @@ public class Game extends Application
         {
           ceiling.setDrawMode(DrawMode.LINE);
         }
-        ceiling.setTranslateX(i * TILE_SIZE);
-        ceiling.setTranslateZ(j * TILE_SIZE);
-        ceiling.setMaterial(bricks);
+        if (!debug)
+        {
+          ceiling.setTranslateX(i * TILE_SIZE);
+          ceiling.setTranslateZ(j * TILE_SIZE);
+          ceiling.setMaterial(bricks);
+        }
         if (tiles[i][j] == 'O' || tiles[i][j] == 'H')// make a floor tile//
         {
-
-//          ceiling.setTranslateY(WALL_HEIGHT + .5);
-//          mapXform.getChildren().add(ceiling);
+          if (!debug)
+          {
+            ceiling.setTranslateY(WALL_HEIGHT + .5);
+            mapXform.getChildren().add(ceiling);
+          }
 
           tile.setTranslateY(0.5);
           tile.setMaterial(bricks);
@@ -217,8 +240,11 @@ public class Game extends Application
         }
         else if (tiles[i][j] == 'E')
         {
-//          ceiling.setTranslateY(WALL_HEIGHT + .5);
-//          mapXform.getChildren().add(ceiling);
+          if (!debug)
+          {
+            ceiling.setTranslateY(WALL_HEIGHT + .5);
+            mapXform.getChildren().add(ceiling);
+          }
 
           tile.setTranslateY(0.5);
           tile.setMaterial(pathable);
@@ -226,8 +252,11 @@ public class Game extends Application
         }
         else if (tiles[i][j] == 'P')
         {
-//          ceiling.setTranslateY(WALL_HEIGHT + .5);
-//          mapXform.getChildren().add(ceiling);
+          if (!debug)
+          {
+            ceiling.setTranslateY(WALL_HEIGHT + .5);
+            mapXform.getChildren().add(ceiling);
+          }
 
           tile.setTranslateY(0.5);
           tile.setMaterial(spawnPoint);
@@ -247,8 +276,12 @@ public class Game extends Application
         }
         else if (tiles[i][j] == 'R' || tiles[i][j] == 'L')
         {
-//          ceiling.setTranslateY(WALL_HEIGHT + .5);
-//          mapXform.getChildren().add(ceiling);
+          if (!debug)
+          {
+            ceiling.setTranslateY(WALL_HEIGHT + .5);
+            mapXform.getChildren().add(ceiling);
+          }
+
           // Just doing this for testing collisions
           tile.setTranslateY(0.5);
           tile.setMaterial(zombieSpawn);
