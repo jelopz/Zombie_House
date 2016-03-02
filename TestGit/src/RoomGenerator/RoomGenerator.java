@@ -57,7 +57,7 @@ public class RoomGenerator
     makeHalls();
     makePlayerSpawnPoint();
     makeZombieSpawns();
-    printMap();
+//    printMap();
   }
 
   public char[][] getMap()
