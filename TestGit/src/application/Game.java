@@ -101,8 +101,8 @@ public class Game extends Application
   public static ArrayList<Zombie> zombies; // List of Zombies
 
   private char[][] tiles;
-  private int mapH = 36;
-  private int mapW = 36;
+  private int mapH = 51;
+  private int mapW = 51;
 
   private double windowX = 1024;
   private double windowY = 768;
