@@ -22,10 +22,15 @@
 
 package application;
 
+import java.applet.Applet;
+import java.applet.AudioClip;
 import java.awt.AWTException;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Robot;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import ZombieBuilder.ZombieBuilder;
@@ -34,6 +39,7 @@ import CPU.RandomWalk;
 import CPU.Zombie;
 import Hitbox.Hitbox;
 import RoomGenerator.RoomGenerator;
+import Sound.Clip;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -46,6 +52,8 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -118,6 +126,11 @@ public class Game extends Application
   private double mouseOldY;
   private double mouseDeltaX;
   private double mouseDeltaY;
+
+  private Clip walkClip;
+  private Clip runClip;
+
+  // private URL url = new URL("step.wav");
 
   private void buildCamera()
   {
@@ -544,13 +557,21 @@ public class Game extends Application
           speed = walk;
 
         if (event.getCode() == KeyCode.W)
+        {
           front = true;
+        }
         if (event.getCode() == KeyCode.S)
+        {
           back = true;
+        }
         if (event.getCode() == KeyCode.A)
+        {
           left = true;
+        }
         if (event.getCode() == KeyCode.D)
+        {
           right = true;
+        }
 
         // hold and release mouse from center of screen by pressing c
         if (event.getCode() == KeyCode.R)
@@ -588,17 +609,42 @@ public class Game extends Application
           speed = sprint;
         }
         else
+        {
           speed = walk;
+        }
         if (event.getCode() == KeyCode.W)
+        {
           front = false;
+        }
         if (event.getCode() == KeyCode.S)
+        {
           back = false;
+        }
         if (event.getCode() == KeyCode.A)
+        {
           left = false;
+        }
         if (event.getCode() == KeyCode.D)
+        {
           right = false;
+        }
+
+        walkClip.stopLoop();
       }
     });
+  }
+
+  private void makeSoundClips()
+  {
+    try
+    {
+      walkClip = new Clip(new URL("file:walkClip.wav"));
+      runClip = new Clip(new URL("file:runClip.wav"));
+    }
+    catch (MalformedURLException e)
+    {
+      e.printStackTrace();
+    }
   }
 
   private void makeNewMap()
@@ -637,6 +683,8 @@ public class Game extends Application
     drawMap();
     buildCamera();
     buildLight();
+
+    makeSoundClips();
 
     Scene scene = new Scene(root, windowX, windowY, true);
     Stop[] stops = new Stop[]
@@ -708,6 +756,11 @@ public class Game extends Application
             }
             else
             {
+              if (!walkClip.isLooped())
+              {
+                walkClip.setLoop();
+              }
+
               // Update coordinates
               cameraXform.t.setX(cameraXform.t.getTx() - (speed * sin));
               cameraXform.t.setZ(cameraXform.t.getTz() - (speed * cos));
@@ -732,6 +785,11 @@ public class Game extends Application
             }
             else
             {
+              if (!walkClip.isLooped())
+              {
+                walkClip.setLoop();
+              }
+
               cameraXform.t.setX(cameraXform.t.getTx() + (speed * sin));
               cameraXform.t.setZ(cameraXform.t.getTz() + (speed * cos));
 
@@ -755,6 +813,11 @@ public class Game extends Application
             }
             else
             {
+              if (!walkClip.isLooped())
+              {
+                walkClip.setLoop();
+              }
+
               cameraXform.t.setX(cameraXform.t.getTx() - (speed * cos));
               cameraXform.t.setZ(cameraXform.t.getTz() + (speed * sin));
 
@@ -778,6 +841,11 @@ public class Game extends Application
             }
             else
             {
+              if (!walkClip.isLooped())
+              {
+                walkClip.setLoop();
+              }
+
               cameraXform.t.setX(cameraXform.t.getTx() + (speed * cos));
               cameraXform.t.setZ(cameraXform.t.getTz() - (speed * sin));
 
