@@ -68,7 +68,7 @@ import javafx.stage.Stage;
 
 public class Game extends Application
 {
-  public static boolean debug = false;
+  public static boolean debug = true;
 
   public static final double TILE_SIZE = 56; // number of subdivisions in
   // tile
@@ -218,6 +218,20 @@ public class Game extends Application
     bricks.setDiffuseColor(Color.WHITE);
     bricks.setSpecularPower(0);
 
+    PhongMaterial blueBricks = new PhongMaterial();
+    blueBricks.setDiffuseMap(new Image(getClass().getResource("bluetile.png").toExternalForm()));
+    blueBricks.setSpecularPower(0);
+
+    PhongMaterial greenBricks = new PhongMaterial();
+    greenBricks.setDiffuseMap(new Image(getClass().getResource("greentile.png").toExternalForm()));
+    greenBricks.setDiffuseColor(Color.WHITE);
+    greenBricks.setSpecularPower(0);
+
+    PhongMaterial yellowBricks = new PhongMaterial();
+    yellowBricks.setDiffuseMap(new Image(getClass().getResource("yellowtile.png").toExternalForm()));
+    yellowBricks.setDiffuseColor(Color.WHITE);
+    yellowBricks.setSpecularPower(0);
+
     // loops through a 2d array, generates rectangles of wall and floor tiles//
     for (int i = 0; i < mapH; i++)
     {
@@ -248,8 +262,24 @@ public class Game extends Application
           }
 
           tile.setTranslateY(0.5);
-          tile.setMaterial(bricks);
 
+          if (j < mapW/2 && i < mapH/2)
+          {
+            tile.setMaterial(bricks);
+          }
+          else if (j < mapW/2 && i > mapH/2)
+          {
+            tile.setMaterial(yellowBricks);
+          }
+          else if (j > mapW/2 && i > mapH/2)
+          {
+            tile.setMaterial(greenBricks);
+          }
+          else if (j > mapW/2 && i < mapH/2)
+          {
+            tile.setMaterial(blueBricks);
+          }
+          
         }
         else if (tiles[i][j] == 'E')
         {
