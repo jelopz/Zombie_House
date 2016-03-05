@@ -196,8 +196,8 @@ public class MapGen
              {
              zombies.add(new LineWalk(j, i, zomb));
              }
-             zomb.setTranslateX(i - TILE_SIZE / 2);
-             zomb.setTranslateZ(j - TILE_SIZE / 2);
+             zomb.setTranslateX(i* TILE_SIZE);
+             zomb.setTranslateZ(j* TILE_SIZE);
              zomb.setTranslateY(.5);
 
 //             //Zombie model is a cylinder
