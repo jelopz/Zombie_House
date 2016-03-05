@@ -19,6 +19,7 @@ public class RandomWalk extends Zombie
 	public void determineNextMove(HouseBuilder house)
 	{
 		findNextAngle(house);
+		isStuck = false;
 	}
 	
 	private void findNextAngle(HouseBuilder house) {
@@ -38,63 +39,6 @@ public class RandomWalk extends Zombie
 		}
 	}
 
-  
-//  @Override
-//  public void determineNextMove(HouseBuilder house)
-//  {
-//    int z = rand.nextInt(4) + 1;
-//
-//    switch (z) // number 1 through 4
-//    {
-//      case 1:
-//      {
-//        translation = model.getTranslateX() + 1;
-//        hitbox.updateBoundaryPoints(model.getTranslateZ(), translation);
-//
-//        // tests if the next move will cause a collision
-////        if (!Hitbox.isCollision(house, hitbox))
-//        if(!hitbox.isWallCollision(house))
-//        {
-//          model.setTranslateX(translation);
-//        }
-//        break;
-//      }
-//      case 2:
-//      {
-//        translation = model.getTranslateZ() + 1;
-//        hitbox.updateBoundaryPoints(translation, model.getTranslateX());
-//
-//        if(!hitbox.isWallCollision(house))
-//        {
-//          model.setTranslateZ(translation);
-//        }
-//        break;
-//      }
-//      case 3:
-//      {
-//        translation = model.getTranslateX() - 1;
-//        hitbox.updateBoundaryPoints(model.getTranslateZ(), translation);
-//
-//        if(!hitbox.isWallCollision(house))
-//        {
-//          model.setTranslateX(translation);
-//        }
-//        break;
-//      }
-//      default:
-//      {
-//        translation = model.getTranslateZ() - 1;
-//        hitbox.updateBoundaryPoints(translation, model.getTranslateX());
-//
-//        if(!hitbox.isWallCollision(house))
-//        {
-//          model.setTranslateZ(translation);
-//        }
-//        break;
-//      }
-//    }
-//  }
-
 	public void move(HouseBuilder house) {
 		translationZ = model.getTranslateZ() + angleZ;
 		translationX = model.getTranslateX() + angleX;
@@ -103,9 +47,21 @@ public class RandomWalk extends Zombie
 
 		if (!hitbox.isWallCollision(house)) {
 			
+	        for (Zombie z : Game.zombies)
+	        {
+	          if ((!z.equals(this)) && zombieCollision(z))
+	          {
+	            isStuck = true;
+	            model.setTranslateZ(translationZ - 2 * angleZ);
+	            model.setTranslateX(translationX - 2 * angleX);
+	          }
+	        }
+			
+	        if(!isStuck)
+	        {
 	          model.setTranslateZ(translationZ);
 	          model.setTranslateX(translationX);
-
+	        }
 //			for (Zombie z : Game.zombies) {
 //				if ((!z.equals(this)) && zombieCollision(z)) {
 //					model.setTranslateZ(translationZ - 2 * angleZ);

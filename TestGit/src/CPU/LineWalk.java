@@ -19,7 +19,7 @@ public class LineWalk extends Zombie
   @Override
   public void determineNextMove(HouseBuilder house)
   {
-    if (!hasAngle) //is currently walking do nothing
+    if (!hasAngle) //has nowhere to go
     {
       findNextAngle(house);
     }
@@ -42,10 +42,9 @@ public class LineWalk extends Zombie
     }
 
     hasAngle = true;
-    determineNextMove(house);
   }
 
-	public void move(HouseBuilder house) {
+	public void move(HouseBuilder house) { //move based on current heading
       translationZ = model.getTranslateZ() + angleZ;
       translationX = model.getTranslateX() + angleX;
 
