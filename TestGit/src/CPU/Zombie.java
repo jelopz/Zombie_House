@@ -42,5 +42,7 @@ public abstract class Zombie
   }
 
   abstract public void determineNextMove(HouseBuilder house);
+  
+  abstract public void move(HouseBuilder house);
 
 }

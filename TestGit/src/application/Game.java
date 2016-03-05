@@ -677,6 +677,8 @@ public class Game extends Application
 
   class MainGameLoop extends AnimationTimer
   {
+	  
+	  private long last = 0;
 
     public void handle(long now)
     {
@@ -687,11 +689,20 @@ public class Game extends Application
 
         walkThread = new Worker();
         walkThread.start();
-        for (Zombie z : zombies) // tells zombies to figure out their next move
-        {
-          z.determineNextMove(house);
-        }
-
+				if ((System.currentTimeMillis() - last) > 2000) {
+					System.out.println(last);
+					for (Zombie z : zombies) // tells zombies to figure out
+												// their next move
+					{
+						z.determineNextMove(house);
+					}
+					last = System.currentTimeMillis();
+				}
+				
+		for(Zombie z : zombies)
+		{
+			z.move(house);
+		}
       }
     }
   }
