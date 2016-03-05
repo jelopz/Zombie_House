@@ -28,7 +28,6 @@ import java.awt.AWTException;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Robot;
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -42,18 +41,21 @@ import RoomGenerator.RoomGenerator;
 import Sound.Clip;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.geometry.NodeOrientation;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.PointLight;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
+import javafx.scene.input.PickResult;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -62,13 +64,14 @@ import javafx.scene.paint.Stop;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.DrawMode;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 public class Game extends Application
 {
-  public static boolean debug = false;
+  public static boolean debug = true;
 
   public static final double TILE_SIZE = 56; // number of subdivisions in
   // tile
@@ -86,11 +89,13 @@ public class Game extends Application
   private RoomGenerator house;
   private Point endPointTile;
 
+  private Scene theScene;
   private double scaleVal = 1;
   private final Group root = new Group();
   private final Xform world = new Xform();
   private final PerspectiveCamera camera = new PerspectiveCamera(true);
   private final PointLight light = new PointLight(Color.WHITE);
+  Xform labelXform = new Xform();
   private final Xform cameraXform = new Xform();
   private final Xform cameraXform2 = new Xform();
   private final Xform cameraXform3 = new Xform();
@@ -101,8 +106,8 @@ public class Game extends Application
   public static ArrayList<Zombie> zombies; // List of Zombies
 
   private char[][] tiles;
-  private int mapH = 36;
-  private int mapW = 36;
+  private int mapH = 51;
+  private int mapW = 51;
 
   private double windowX = 1024;
   private double windowY = 768;
@@ -134,6 +139,7 @@ public class Game extends Application
 
   private void buildCamera()
   {
+
     root.getChildren().add(cameraXform);
     cameraXform.getChildren().add(cameraXform2);
     cameraXform2.getChildren().add(cameraXform3);
@@ -158,6 +164,33 @@ public class Game extends Application
     cameraXform.setTranslateY(WALL_HEIGHT / 2);
   }
 
+  private void buildMenu()
+  {
+    Text l1 = new Text("Retry");
+    // Label l1 = new Label("Retry");
+    l1.setScaleX(5);
+    l1.setScaleY(5);
+    l1.setTranslateY(-60);
+    l1.setFill(Color.WHITE);
+    Text l2 = new Text("New Map");
+    l2.setScaleX(5);
+    l2.setScaleY(5);
+    l2.setFill(Color.WHITE);
+    Text l3 = new Text("Quit");
+    l3.setScaleX(5);
+    l3.setScaleY(5);
+    l3.setTranslateY(55);
+    l3.setFill(Color.WHITE);
+    labelXform.setVisible(false);
+    labelXform.getChildren().addAll(l1, l2, l3);
+    labelXform.setRotateZ(180);
+    labelXform.t.setZ(-WALL_HEIGHT / 2 - 5);
+    labelXform.t.setX(25);
+    labelXform.setPickOnBounds(true);
+    cameraXform.getChildren().add(labelXform);
+
+  }
+
   private void buildLight()
   {
     light.setTranslateZ(WALL_HEIGHT / 2);
@@ -180,8 +213,8 @@ public class Game extends Application
 
   private void drawMap()
   {
-    if (first)
-      zombies = new ArrayList<>();
+
+    if (first) zombies = new ArrayList<>();
     // Material for floors and ceilings//
     PhongMaterial pathable = new PhongMaterial();
     pathable.setDiffuseColor(Color.WHITE);
@@ -218,6 +251,20 @@ public class Game extends Application
     bricks.setDiffuseColor(Color.WHITE);
     bricks.setSpecularPower(0);
 
+    PhongMaterial blueBricks = new PhongMaterial();
+    blueBricks.setDiffuseMap(new Image(getClass().getResource("bluetile.png").toExternalForm()));
+    blueBricks.setSpecularPower(0);
+
+    PhongMaterial greenBricks = new PhongMaterial();
+    greenBricks.setDiffuseMap(new Image(getClass().getResource("greentile.png").toExternalForm()));
+    greenBricks.setDiffuseColor(Color.WHITE);
+    greenBricks.setSpecularPower(0);
+
+    PhongMaterial yellowBricks = new PhongMaterial();
+    yellowBricks.setDiffuseMap(new Image(getClass().getResource("yellowtile.png").toExternalForm()));
+    yellowBricks.setDiffuseColor(Color.WHITE);
+    yellowBricks.setSpecularPower(0);
+
     // loops through a 2d array, generates rectangles of wall and floor tiles//
     for (int i = 0; i < mapH; i++)
     {
@@ -248,8 +295,24 @@ public class Game extends Application
           }
 
           tile.setTranslateY(0.5);
-          tile.setMaterial(bricks);
 
+          if (j < mapW/2 && i < mapH/2)
+          {
+            tile.setMaterial(bricks);
+          }
+          else if (j < mapW/2 && i > mapH/2)
+          {
+            tile.setMaterial(yellowBricks);
+          }
+          else if (j > mapW/2 && i > mapH/2)
+          {
+            tile.setMaterial(greenBricks);
+          }
+          else if (j > mapW/2 && i < mapH/2)
+          {
+            tile.setMaterial(blueBricks);
+          }
+          
         }
         else if (tiles[i][j] == 'E')
         {
@@ -301,28 +364,37 @@ public class Game extends Application
           if (first)
           {
             // Code for making the zombie model
-            // Group zomb = ZombieBuilder.getZombie(i, j, TILE_SIZE);
-            //
-            // zombies.add(new RandomWalk(j, i, zomb));
-            // world.getChildren().add(zomb);
-
-            // Zombie model is a cylinder
-            Cylinder c = new Cylinder(TILE_SIZE / 4, WALL_HEIGHT);
-            Group zomb = new Group(c);
+            Group zomb = ZombieBuilder.getZombie(i, j, TILE_SIZE);
 
             if (tiles[i][j] == 'R')
             {
-              c.setMaterial(notPathable);
               zombies.add(new RandomWalk(j, i, zomb));
             }
             else // tiles[i][j] == 'L'
             {
-              c.setMaterial(zombieSpawn);
               zombies.add(new LineWalk(j, i, zomb));
             }
-            zomb.setTranslateX(i * TILE_SIZE);
-            zomb.setTranslateZ(j * TILE_SIZE);
-            zomb.setTranslateY(WALL_HEIGHT / 2);
+            zomb.setTranslateX(i - TILE_SIZE / 2);
+            zomb.setTranslateZ(j - TILE_SIZE / 2);
+            zomb.setTranslateY(.5);
+
+            // // Zombie model is a cylinder
+            // Cylinder c = new Cylinder(TILE_SIZE / 4, WALL_HEIGHT);
+            // Group zomb = new Group(c);
+            //
+            // if (tiles[i][j] == 'R')
+            // {
+            // c.setMaterial(notPathable);
+            // zombies.add(new RandomWalk(j, i, zomb));
+            // }
+            // else // tiles[i][j] == 'L'
+            // {
+            // c.setMaterial(zombieSpawn);
+            // zombies.add(new LineWalk(j, i, zomb));
+            // }
+            // zomb.setTranslateX(i*TILE_SIZE);
+            // zomb.setTranslateZ(j*TILE_SIZE);
+            // zomb.setTranslateY(WALL_HEIGHT/2);
 
             world.getChildren().add(zomb);
           }
@@ -352,6 +424,7 @@ public class Game extends Application
       playerXform.t.setX(house.getPlayerSpawnPoint().y * TILE_SIZE);
     }
     first = false;
+    mapXform.setVisible(true);
   }
 
   private void handleMouse(Scene scene, final Node root)
@@ -408,8 +481,28 @@ public class Game extends Application
         }
       }
     });
+    scene.setOnMouseClicked((event) ->
+    {
+      PickResult res = event.getPickResult();
+      if (labelXform.getChildren().get(0) == res.getIntersectedNode())
+      {
+        resetMap();
+        if (debug) System.out.println("Retry");
+      }
+      else if (labelXform.getChildren().get(1) == res.getIntersectedNode())
+      {
+        makeNewMap();
+        if (debug) System.out.println("Start Over");
+      }
+      else if (labelXform.getChildren().get(2) == res.getIntersectedNode())
+      {
+        if (debug) System.out.println("Quit");
+        System.exit(0);
+      }
+    });
     scene.setOnMousePressed(new EventHandler<MouseEvent>()
     {
+
       @Override
       public void handle(MouseEvent me)
       {
@@ -502,16 +595,18 @@ public class Game extends Application
         {
           if (running)
           {
+            labelXform.setVisible(true);
             esc = true;
             mapXform.getChildren().clear();
             playerXform.getChildren().clear();
             drawMap();
-            camera.setTranslateZ(-250);
-            cameraXform.rx.setAngle(65);
+            camera.setTranslateZ(-500);
+            cameraXform.rx.setAngle(90);
             running = false;
           }
           else
           {
+            labelXform.setVisible(false);
             esc = false;
             mapXform.getChildren().clear();
             drawMap();
@@ -530,21 +625,7 @@ public class Game extends Application
         // location
         if (event.getCode() == KeyCode.F11)
         {
-          world.getChildren().clear();
-          playerXform.getChildren().clear();
-          cameraXform.getChildren().clear();
-          cameraXform2.getChildren().clear();
-          cameraXform3.getChildren().clear();
-          mapXform.getChildren().clear();
-          root.getChildren().clear();
-
-          root.getChildren().add(world);
-          esc = false;
-          first = true;
-          running = true;
-          drawMap();
-          buildCamera();
-          buildLight();
+          resetMap();
         }
         if (event.isControlDown())// does nothing right now
         {
@@ -553,8 +634,7 @@ public class Game extends Application
         {
           speed = sprint;
         }
-        else
-          speed = walk;
+        else speed = walk;
 
         if (event.getCode() == KeyCode.W)
         {
@@ -576,10 +656,8 @@ public class Game extends Application
         // hold and release mouse from center of screen by pressing c
         if (event.getCode() == KeyCode.R)
         {
-          if (holdMouse == true)
-            holdMouse = false;
-          else
-            holdMouse = true;
+          if (holdMouse == true) holdMouse = false;
+          else holdMouse = true;
         }
         if (event.getCode() == KeyCode.Z) // puts the player on the "ground"
         {
@@ -647,8 +725,30 @@ public class Game extends Application
     }
   }
 
+  private void resetMap()
+  {
+    labelXform.getChildren().clear();
+    world.getChildren().clear();
+    playerXform.getChildren().clear();
+    cameraXform.getChildren().clear();
+    cameraXform2.getChildren().clear();
+    cameraXform3.getChildren().clear();
+    mapXform.getChildren().clear();
+    root.getChildren().clear();
+
+    root.getChildren().add(world);
+    esc = false;
+    first = true;
+    running = true;
+    drawMap();
+    buildCamera();
+    buildLight();
+    buildMenu();
+  }
+
   private void makeNewMap()
   {
+    labelXform.getChildren().clear();
     world.getChildren().clear();
     playerXform.getChildren().clear();
     cameraXform.getChildren().clear();
@@ -669,6 +769,7 @@ public class Game extends Application
     drawMap();
     buildCamera();
     buildLight();
+    buildMenu();
   }
 
   @Override
@@ -683,21 +784,20 @@ public class Game extends Application
     drawMap();
     buildCamera();
     buildLight();
-
+    buildMenu();
     makeSoundClips();
 
-    Scene scene = new Scene(root, windowX, windowY, true);
-    Stop[] stops = new Stop[]
-    { new Stop(0, Color.RED), new Stop(1, Color.ORANGE) };
+    theScene = new Scene(root, windowX, windowY, true);
+    Stop[] stops = new Stop[] { new Stop(0, Color.RED), new Stop(1, Color.ORANGE) };
     LinearGradient lg = new LinearGradient(0, 1, 0, 0, true, CycleMethod.NO_CYCLE, stops);
-    scene.setFill(lg);
-    scene.setCamera(camera);
+    theScene.setFill(lg);
+    theScene.setCamera(camera);
 
-    handleMouse(scene, world);
-    handleKeyboard(scene, world);
+    handleMouse(theScene, world);
+    handleKeyboard(theScene, world);
 
     primaryStage.setTitle("Zombie House");
-    primaryStage.setScene(scene);
+    primaryStage.setScene(theScene);
     primaryStage.show();
 
     AnimationTimer gameLoop = new MainGameLoop();
