@@ -13,6 +13,7 @@ public abstract class Zombie
   protected Group model;
   protected static Random rand;
   protected Hitbox hitbox;
+  protected boolean isStuck;
   private double radius;
 
   public Zombie(int x, int y, Group m)
@@ -22,6 +23,7 @@ public abstract class Zombie
     rand = new Random();
     hitbox = new Hitbox(model);
     radius = Game.TILE_SIZE / 4;
+    isStuck = false;
   }
   
   public boolean zombieCollision(Zombie z)
@@ -42,5 +44,7 @@ public abstract class Zombie
   }
 
   abstract public void determineNextMove(HouseBuilder house);
+  
+  abstract public void move(HouseBuilder house);
 
 }

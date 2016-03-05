@@ -299,8 +299,15 @@ public class Game extends Application
       {
         System.out.println("Retry");
         resetMap();
-        camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
-        cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+        if(debug)
+        {
+            camera.setTranslateZ(-1000);
+        }
+        else
+        {      
+          camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+          cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+        }
         running = true;
 
       }
@@ -309,8 +316,15 @@ public class Game extends Application
         System.out.println("New Map");
         makeNewMap();
         pauseXform.setVisible(false);
-        camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
-        cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+        if(debug)
+        {
+            camera.setTranslateZ(-1000);
+        }
+        else
+        {      
+          camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+          cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+        }
         running = true;
 
       }
@@ -324,8 +338,15 @@ public class Game extends Application
       {
         System.out.println("Start Game");
         makeNewMap();
-        camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
-        cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+        if(debug)
+        {
+            camera.setTranslateZ(-1000);
+        }
+        else
+        {      
+          camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+          cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+        }
       }
       else if (startXform.getChildren().get(1) == res.getIntersectedNode())
       {
@@ -676,6 +697,8 @@ public class Game extends Application
 
   class MainGameLoop extends AnimationTimer
   {
+	  
+	  private long last = 0;
 
     public void handle(long now)
     {
@@ -686,11 +709,20 @@ public class Game extends Application
 
         walkThread = new Worker();
         walkThread.start();
-        for (Zombie z : zombies) // tells zombies to figure out their next move
-        {
-          z.determineNextMove(house);
-        }
+				if ((System.currentTimeMillis() - last) > 2000) {
 
+					for (Zombie z : zombies) // tells zombies to figure out
+												// their next move
+					{
+						z.determineNextMove(house);
+					}
+					last = System.currentTimeMillis();
+				}
+				
+		for(Zombie z : zombies)
+		{
+			z.move(house);
+		}
       }
     }
   }
