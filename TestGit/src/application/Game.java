@@ -22,8 +22,6 @@
 
 package application;
 
-import java.applet.Applet;
-import java.applet.AudioClip;
 import java.awt.AWTException;
 import java.awt.MouseInfo;
 import java.awt.Point;
@@ -32,9 +30,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import ZombieBuilder.ZombieBuilder;
-import CPU.LineWalk;
-import CPU.RandomWalk;
 import CPU.Zombie;
 import Hitbox.Hitbox;
 import RoomGenerator.HouseBuilder;
@@ -42,17 +37,12 @@ import Sound.Clip;
 import Utilities.MapGen;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.geometry.NodeOrientation;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.PointLight;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.effect.BlendMode;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -60,11 +50,7 @@ import javafx.scene.input.PickResult;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.PhongMaterial;
 import javafx.scene.paint.Stop;
-import javafx.scene.shape.Box;
-import javafx.scene.shape.Cylinder;
-import javafx.scene.shape.DrawMode;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
@@ -86,32 +72,50 @@ public class Game extends Application
   private static final double MOUSE_SPEED = 0.1;
   private static final double ROTATION_SPEED = 2.0;
   private static final double TRACK_SPEED = 0.3;
-  private static final MapGen MG = new MapGen();
-  // Our House
-  private HouseBuilder house;
 
-  private Scene theScene;
   private double scaleVal = 1;
+  private double sprint = 3;
+  private double walk = 2;
+  private double speed = 1;
+  private double windowX = 1024;
+  private double windowY = 768;
+  private double mousePosX;
+  private double mousePosY;
+  private double mouseOldX;
+  private double mouseOldY;
+  private double mouseDeltaX;
+  private double mouseDeltaY;
+
   private final Group root = new Group();
+
   private final Xform world = new Xform();
-  private final PerspectiveCamera camera = new PerspectiveCamera(true);
-  private final PointLight light = new PointLight(Color.WHITE);
-  Xform labelXform = new Xform();
+  private final Xform labelXform = new Xform();
   private final Xform cameraXform = new Xform();
   private final Xform cameraXform2 = new Xform();
   private final Xform cameraXform3 = new Xform();
   private final Xform playerXform = new Xform();
   private final Xform mapXform = new Xform();
-  private Hitbox playerHitbox;
+
+  private final PerspectiveCamera camera = new PerspectiveCamera(true);
+
+  private final PointLight light = new PointLight(Color.WHITE);
 
   public static ArrayList<Zombie> zombies; // List of Zombies
 
+  private static final MapGen MG = new MapGen();
+
+  private HouseBuilder house; // Our House
+
+  private Scene theScene;
+
+  private Worker walkThread;
+
+  private Hitbox playerHitbox;
+
   private char[][] tiles;
+
   private int mapH = 51;
   private int mapW = 41;
-
-  private double windowX = 1024;
-  private double windowY = 768;
 
   private boolean esc = false;
   private boolean first = true;
@@ -119,19 +123,9 @@ public class Game extends Application
   private boolean back = false;
   private boolean left = false;
   private boolean right = false;
-  public static boolean collisions = true; // made static for debugging
   private boolean running = true;
   private boolean holdMouse = true;
-  private double sprint = 3;
-  private double walk = 2;
-  private double speed = 1;
-
-  private double mousePosX;
-  private double mousePosY;
-  private double mouseOldX;
-  private double mouseOldY;
-  private double mouseDeltaX;
-  private double mouseDeltaY;
+  public static boolean collisions = true; // made static for debugging
 
   private Clip walkClip;
   private Clip runClip;
@@ -211,8 +205,6 @@ public class Game extends Application
     cameraXform.getChildren().add(light);
 
   }
-
-  
 
   private void handleMouse(Scene scene, final Node root)
   {
@@ -612,148 +604,157 @@ public class Game extends Application
   class MainGameLoop extends AnimationTimer
   {
 
-    double nextX, nextZ;
-
     public void handle(long now)
     {
       // pressing esc key changes this boolean, effectively pauses the game and
       // temporarily changes the camera angle;
       if (running)
       {
-        double cos = Math.cos(Math.toRadians(cameraXform.ry.getAngle()));
-        double sin = Math.sin(Math.toRadians(cameraXform.ry.getAngle()));
 
+        walkThread = new Worker();
+        walkThread.start();
         for (Zombie z : zombies) // tells zombies to figure out their next move
         {
           z.determineNextMove(house);
         }
 
-        /* Moves the camera around the world */
+      }
+    }
+  }
 
-        // For each direction, before updating the player position, we take
-        // where
-        // the player would move, update the 8 collision detecting points to be
-        // in
-        // that position, and then test to see if either of those points are
-        // found
-        // ontop of a wall tile. If any of them are, the player does not move to
-        // that spot. Else, if none of them are, we update the players position
-        // to
-        // that position.
+  public class Worker extends Thread
+  {
+    double nextX, nextZ;
 
-        if (back)
+    public void run()
+    {
+      double cos = Math.cos(Math.toRadians(cameraXform.ry.getAngle()));
+      double sin = Math.sin(Math.toRadians(cameraXform.ry.getAngle()));
+      /* Moves the camera around the world */
+
+      // For each direction, before updating the player position, we take
+      // where
+      // the player would move, update the 8 collision detecting points to be
+      // in
+      // that position, and then test to see if either of those points are
+      // found
+      // ontop of a wall tile. If any of them are, the player does not move to
+      // that spot. Else, if none of them are, we update the players position
+      // to
+      // that position.
+
+      if (back)
+      {
+        nextZ = playerXform.t.getTz() - (speed * cos);
+        nextX = playerXform.t.getTx() - (speed * sin);
+
+        // sets the boundary points for the nextMove
+        playerHitbox.updateBoundaryPoints(nextZ, nextX);
+
+        // tests if the next move will not cause a collision
+        if (!playerHitbox.isWallCollision(house))
         {
-          nextZ = playerXform.t.getTz() - (speed * cos);
-          nextX = playerXform.t.getTx() - (speed * sin);
-
-          // sets the boundary points for the nextMove
-          playerHitbox.updateBoundaryPoints(nextZ, nextX);
-
-          // tests if the next move will not cause a collision
-          if (!playerHitbox.isWallCollision(house))
+          if (playerHitbox.hasReachedGoal(house))
           {
-            if (playerHitbox.hasReachedGoal(house))
+            makeNewMap();
+          }
+          else
+          {
+            if (!walkClip.isLooped())
             {
-              makeNewMap();
+              walkClip.setLoop();
             }
-            else
-            {
-              if (!walkClip.isLooped())
-              {
-                walkClip.setLoop();
-              }
 
-              // Update coordinates
-              cameraXform.t.setX(cameraXform.t.getTx() - (speed * sin));
-              cameraXform.t.setZ(cameraXform.t.getTz() - (speed * cos));
+            // Update coordinates
+            cameraXform.t.setX(cameraXform.t.getTx() - (speed * sin));
+            cameraXform.t.setZ(cameraXform.t.getTz() - (speed * cos));
 
-              playerXform.t.setX(nextX);
-              playerXform.t.setZ(nextZ);
-            }
-          } // else do nothing if there IS a collision
-        }
+            playerXform.t.setX(nextX);
+            playerXform.t.setZ(nextZ);
+          }
+        } // else do nothing if there IS a collision
+      }
 
-        if (front)
+      if (front)
+      {
+        nextZ = playerXform.t.getTz() + (speed * cos);
+        nextX = playerXform.t.getTx() + (speed * sin);
+        playerHitbox.updateBoundaryPoints(nextZ, nextX);
+
+        if (!playerHitbox.isWallCollision(house))
         {
-          nextZ = playerXform.t.getTz() + (speed * cos);
-          nextX = playerXform.t.getTx() + (speed * sin);
-          playerHitbox.updateBoundaryPoints(nextZ, nextX);
-
-          if (!playerHitbox.isWallCollision(house))
+          if (playerHitbox.hasReachedGoal(house))
           {
-            if (playerHitbox.hasReachedGoal(house))
+            makeNewMap();
+          }
+          else
+          {
+            if (!walkClip.isLooped())
             {
-              makeNewMap();
+              walkClip.setLoop();
             }
-            else
-            {
-              if (!walkClip.isLooped())
-              {
-                walkClip.setLoop();
-              }
 
-              cameraXform.t.setX(cameraXform.t.getTx() + (speed * sin));
-              cameraXform.t.setZ(cameraXform.t.getTz() + (speed * cos));
+            cameraXform.t.setX(cameraXform.t.getTx() + (speed * sin));
+            cameraXform.t.setZ(cameraXform.t.getTz() + (speed * cos));
 
-              playerXform.t.setX(nextX);
-              playerXform.t.setZ(nextZ);
-            }
+            playerXform.t.setX(nextX);
+            playerXform.t.setZ(nextZ);
           }
         }
+      }
 
-        if (right)
+      if (right)
+      {
+        nextZ = playerXform.t.getTz() + (speed * sin);
+        nextX = playerXform.t.getTx() - (speed * cos);
+        playerHitbox.updateBoundaryPoints(nextZ, nextX);
+
+        if (!playerHitbox.isWallCollision(house))
         {
-          nextZ = playerXform.t.getTz() + (speed * sin);
-          nextX = playerXform.t.getTx() - (speed * cos);
-          playerHitbox.updateBoundaryPoints(nextZ, nextX);
-
-          if (!playerHitbox.isWallCollision(house))
+          if (playerHitbox.hasReachedGoal(house))
           {
-            if (playerHitbox.hasReachedGoal(house))
+            makeNewMap();
+          }
+          else
+          {
+            if (!walkClip.isLooped())
             {
-              makeNewMap();
+              walkClip.setLoop();
             }
-            else
-            {
-              if (!walkClip.isLooped())
-              {
-                walkClip.setLoop();
-              }
 
-              cameraXform.t.setX(cameraXform.t.getTx() - (speed * cos));
-              cameraXform.t.setZ(cameraXform.t.getTz() + (speed * sin));
+            cameraXform.t.setX(cameraXform.t.getTx() - (speed * cos));
+            cameraXform.t.setZ(cameraXform.t.getTz() + (speed * sin));
 
-              playerXform.t.setX(nextX);
-              playerXform.t.setZ(nextZ);
-            }
+            playerXform.t.setX(nextX);
+            playerXform.t.setZ(nextZ);
           }
         }
+      }
 
-        if (left)
+      if (left)
+      {
+        nextZ = playerXform.t.getTz() - (speed * sin);
+        nextX = playerXform.t.getTx() + (speed * cos);
+        playerHitbox.updateBoundaryPoints(nextZ, nextX);
+
+        if (!playerHitbox.isWallCollision(house))
         {
-          nextZ = playerXform.t.getTz() - (speed * sin);
-          nextX = playerXform.t.getTx() + (speed * cos);
-          playerHitbox.updateBoundaryPoints(nextZ, nextX);
-
-          if (!playerHitbox.isWallCollision(house))
+          if (playerHitbox.hasReachedGoal(house))
           {
-            if (playerHitbox.hasReachedGoal(house))
+            makeNewMap();
+          }
+          else
+          {
+            if (!walkClip.isLooped())
             {
-              makeNewMap();
+              walkClip.setLoop();
             }
-            else
-            {
-              if (!walkClip.isLooped())
-              {
-                walkClip.setLoop();
-              }
 
-              cameraXform.t.setX(cameraXform.t.getTx() + (speed * cos));
-              cameraXform.t.setZ(cameraXform.t.getTz() - (speed * sin));
+            cameraXform.t.setX(cameraXform.t.getTx() + (speed * cos));
+            cameraXform.t.setZ(cameraXform.t.getTz() - (speed * sin));
 
-              playerXform.t.setX(nextX);
-              playerXform.t.setZ(nextZ);
-            }
+            playerXform.t.setX(nextX);
+            playerXform.t.setZ(nextZ);
           }
         }
       }

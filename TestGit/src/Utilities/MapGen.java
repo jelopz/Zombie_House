@@ -1,3 +1,12 @@
+/*MapGen
+ * Handles the drawing resetting and general initialization of the 
+ * visual elements of the game
+ * 
+ * Methods: 
+ *  drawMap
+ *    -generates all the tiles and models 
+ *    -places all elements into 3d space*/
+
 package Utilities;
 
 import java.util.ArrayList;
@@ -5,7 +14,6 @@ import java.util.ArrayList;
 import CPU.LineWalk;
 import CPU.RandomWalk;
 import CPU.Zombie;
-import Hitbox.Hitbox;
 import RoomGenerator.HouseBuilder;
 import application.Xform;
 import javafx.scene.Group;
