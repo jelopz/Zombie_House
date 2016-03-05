@@ -1,33 +1,14 @@
-/*
- * When RoomGenerator gets called, it creates a char[][] house where 'O'
- * denotes a walkable field and 'X' denotes a wall. 
- * 
- * Call RoomGenerator(width,height) to denote the width and height of the map
- * in tiles. Then, call RoomGenerator.getMap() to return the char[][] house map when done.
- * 
- * Currently the halls are working better than previous version. Program isn't liable
- * to crash anymore (as far as I can tell). 20x20 is probably the smallest map to go with,
- * though.
- * 
- * Rooms are not guaranteed to be connecting.
- * 
- * Still only makes 5 rooms. Subject to change.
- */
-
 package RoomGenerator;
 
 import java.awt.Point;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class HouseBuilder
 {
-  private final int MIN_ROOM_WIDTH = 4; // arbitrary,
-  private final int MAX_ROOM_WIDTH = 6; // arbitrary, will change once we have a
-                                        // better understanding of how big the
-                                        // map should be
-  private final int MIN_ROOM_HEIGHT = 3;// arbitrary,
+  private final int MIN_ROOM_WIDTH = 6;
+  private final int MIN_ROOM_HEIGHT = 6;
+  private final int HALL_WIDTH = 3;
 
   // Arraylist of each quadrants rooms and halls
 
@@ -53,9 +34,10 @@ public class HouseBuilder
     cleanMap();
     markQuadrants();
 
-    for (int i = 3; i < 4; i++)
+    for (int i = 0; i < 4; i++)
     {
       partitionMap(i);
+      makeWalls(i);
     }
 
     if (true)
@@ -64,28 +46,68 @@ public class HouseBuilder
     }
   }
 
+  private void makeWalls(int quadrant)
+  {
+    for (int i = 0; i < mapHeight; i++)
+    {
+      for (int j = 0; j < mapWidth; j++)
+      {
+        if ((house[i][j] == 'H') && (house[i][j - 1] == '-'))
+        {
+          house[i][j - 1] = 'X';
+        }
+        else if ((house[i][j] == 'H') && (house[i][j + 1] == '-'))
+        {
+          house[i][j + 1] = 'X';
+        }
+
+        if ((house[i][j] == 'H') && (house[i - 1][j] == '-'))
+        {
+          house[i - 1][j] = 'X';
+        }
+        else if ((house[i][j] == 'H') && (house[i + 1][j] == '-'))
+        {
+          house[i + 1][j] = 'X';
+        }
+      }
+    }
+  }
+
   private void partitionMap(int quadrant)
   {
     int startX = 0;
     int startY = 0;
-    int width = 25;
-    int height = 25;
-    boolean horizontalHall = true;
+    int width = mapWidth / 2 - 1;
+    int height = mapHeight / 2 - 1;
 
-    if (quadrant == 3)
+    if (quadrant == 0)
     {
-      startX = 26;
-      startY = 26;
+      startX = mapWidth / 2 + 1;
+      startY += 1;
     }
-    RoomCluster initial, c1, c2;
+    if (quadrant == 1)
+    {
+      startX += 1;
+      startY += 1;
+    }
+    if (quadrant == 2)
+    {
+      startX += 1;
+      startY = mapHeight / 2 + 1;
+    }
+    else if (quadrant == 3)
+    {
+      startX = mapWidth / 2 + 1;
+      startY = mapHeight / 2 + 1;
+    }
+
+    RoomCluster current;
     cluster.add(new RoomCluster(startX, startY, width, height, true));
 
-    int z = 0;
     while (!cluster.isEmpty())
     {
-      initial = cluster.remove(0);
-      makeHall(initial, initial.giveHorizontalWall);
-      horizontalHall = !horizontalHall;
+      current = cluster.remove(0);
+      makeHall(current, current.giveHorizontalWall);
     }
   }
 
@@ -95,20 +117,20 @@ public class HouseBuilder
     {
       int r;
 
-      if (c.width - 9 <= 0)
+      if (c.width <= (MIN_ROOM_WIDTH * 2) + 3)
       {
         return;
       }
       else
       {
-        r = rand.nextInt(c.width - 9) + c.x + 3;
+        r = rand.nextInt(c.width - (2 * MIN_ROOM_WIDTH + HALL_WIDTH)) + c.x + MIN_ROOM_WIDTH;
         System.out.println();
       }
-      
+
       int c1Width = Math.abs(c.x - r);
       int c2Width = c.width - c1Width - 3;
 
-      if (c1Width > 3 && c2Width > 3)
+      if (c1Width > MIN_ROOM_WIDTH && c2Width > MIN_ROOM_WIDTH)
       {
         cluster.add(new RoomCluster(c.x, c.y, c1Width, c.height, !h));
         cluster.add(new RoomCluster(r + 3, c.y, c2Width, c.height, !h));
@@ -126,20 +148,19 @@ public class HouseBuilder
     {
       int r;
 
-      if (c.height - 9 <= 0)
+      if (c.height < (MIN_ROOM_HEIGHT * 2) + 3)
       {
         return;
       }
       else
       {
-        
-        r = rand.nextInt(c.height - 9) + c.y + 3;
+        r = rand.nextInt(c.height - (2 * MIN_ROOM_HEIGHT + HALL_WIDTH)) + c.y + MIN_ROOM_HEIGHT;
         System.out.println(r);
       }
       int c1Height = Math.abs(c.y - r);
       int c2Height = c.height - c1Height - 3;
 
-      if (c1Height > 3 && c2Height > 3)
+      if (c1Height > MIN_ROOM_WIDTH && c2Height > MIN_ROOM_WIDTH)
       {
         cluster.add(new RoomCluster(c.x, c.y, c.width, c1Height, !h));
         cluster.add(new RoomCluster(c.x, r + 3, c.width, c2Height, !h));
@@ -168,14 +189,6 @@ public class HouseBuilder
   /*
    * Checks to see if a location is a legal spot to be on.
    * 
-   * I think this will be very useful for collision testing. Essentially, you
-   * pass the (players position)/tile_size to get the players location
-   * represented on the 2D array. If the players position does not equal 'X', a
-   * wall, then the position is valid.
-   * 
-   * There's still a little bit more thinking to go into it but I think this is
-   * the route that I was planning to use in conjunction with the Zombie AI and
-   * I feel this will also
    */
   public boolean isPointLegal(int x, int y)
   {
@@ -197,12 +210,19 @@ public class HouseBuilder
 
   private void markQuadrants()
   {
+
+    for (int i = 0; i < mapHeight; i++)
+    {
+      house[i][mapWidth / 2] = 'X';
+      house[i][0] = 'X';
+      house[i][mapWidth-1] = 'X';
+    }
+
     for (int i = 0; i < mapWidth; i++)
     {
-      house[i][25] = 'X';
-      house[25][i] = 'X';
+      house[mapHeight / 2][i] = 'X';
       house[0][i] = 'X';
-      house[i][0] = 'X';
+      house[mapHeight-1][i] = 'X';
     }
   }
 
@@ -231,6 +251,6 @@ public class HouseBuilder
 
   public static void main(String[] args)
   {
-    HouseBuilder rg = new HouseBuilder(51, 51);
+    HouseBuilder rg = new HouseBuilder(51, 41);
   }
 }
