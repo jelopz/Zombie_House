@@ -30,9 +30,12 @@ public class RoomGenerator
                                         // map should be
   private final int MIN_ROOM_HEIGHT = 3;// arbitrary,
 
-  // Arraylist of all rooms and halls
-  private ArrayList<Room> rooms;
-  private ArrayList<Hall> halls;
+  // Arraylist of each quadrants rooms and halls
+
+  private ArrayList<ArrayList<Room>> rooms;
+
+  private ArrayList<ArrayList<Hall>> halls;
+
   private char[][] house; // The map, house[y][x]
 
   private int mapWidth;
@@ -51,14 +54,26 @@ public class RoomGenerator
 
     rooms = new ArrayList<>();
     halls = new ArrayList<>();
+
+    for (int i = 0; i < 4; i++)
+    {
+      rooms.add(new ArrayList<>());
+      halls.add(new ArrayList<>());
+    }
+
     rand = new Random();
     cleanMap();
-    makeRooms();
-    makeHalls();
+    markQuadrants();
+    for (int i = 0; i < 4; i++)
+    {
+      makeRooms(i);
+      makeHalls(i);
+      makeZombieSpawns(i);
+    }
+
     makePlayerSpawnPoint();
-    makeZombieSpawns();
     makeEndPoint();
-    if(Game.debug)
+    if (Game.debug)
     {
       printMap();
     }
@@ -104,16 +119,26 @@ public class RoomGenerator
     return false;
   }
 
+  private void markQuadrants()
+  {
+    for (int i = 0; i < mapWidth; i++)
+    {
+      house[i][25] = 'X';
+      house[25][i] = 'X';
+    }
+  }
+
   /*
    * Randomly chooses one of the 5 rooms and randomly chooses a spot in the room
    * to mark the player's spawn point on the map as a 'P'.
    */
   private void makePlayerSpawnPoint()
   {
-    int hallSpawn = rand.nextInt(halls.size()); // chooses which room to spawn
-                                                // in
-    playerSpawnPoint = chooseHallPoint(hallSpawn); // chooses where to spawn
-                                                   // inside that room
+    ArrayList<Hall> h = halls.get(rand.nextInt(4));
+    int hallSpawn = rand.nextInt(h.size());
+
+    playerSpawnPoint = chooseHallPoint(h, hallSpawn); // chooses where to spawn
+    // inside that room
     //
     // rooms[roomSpawn].setPlayerSpawn(); // tells the room the player is
     // spawning
@@ -124,18 +149,19 @@ public class RoomGenerator
 
   private void makeEndPoint()
   {
-    int hallSpawn = rand.nextInt(halls.size());
+    ArrayList<Hall> h = halls.get(rand.nextInt(4));
+    int hallSpawn = rand.nextInt(h.size());
 
-    Point p = chooseHallPoint(hallSpawn);
+    Point p = chooseHallPoint(h, hallSpawn);
 
     house[p.y][p.x] = 'E';
   }
 
-  private void makeZombieSpawns()
+  private void makeZombieSpawns(int quadrant)
   {
-    for (int i = 0; i < rooms.size(); i++)
+    for (int i = 0; i < rooms.get(quadrant).size(); i++)
     {
-      Room room = rooms.get(i);
+      Room room = rooms.get(quadrant).get(i);
       for (int j = room.getStartX(); j < room.getEndX(); j++)
       {
         for (int k = room.getStartY(); k < room.getEndY(); k++)
@@ -156,7 +182,7 @@ public class RoomGenerator
     }
   }
 
-  private Point chooseHallPoint(int hallIndex)
+  private Point chooseHallPoint(ArrayList<Hall> hall, int hallIndex)
   {
     int xSpawn = 0;
     int ySpawn = 0;
@@ -168,11 +194,11 @@ public class RoomGenerator
     {
       i++;
       // if (halls[hallIndex].isVertical())
-      if (halls.get(hallIndex).isVertical())
+      if (hall.get(hallIndex).isVertical())
       {
-        startY = halls.get(hallIndex).getStartY();
-        endY = halls.get(hallIndex).getEndY();
-        xSpawn = halls.get(hallIndex).getStartX();
+        startY = hall.get(hallIndex).getStartY();
+        endY = hall.get(hallIndex).getEndY();
+        xSpawn = hall.get(hallIndex).getStartX();
         distance = Math.abs(startY - endY);
 
         if (startY < endY)
@@ -194,9 +220,9 @@ public class RoomGenerator
       }
       else
       {
-        startX = halls.get(hallIndex).getStartX();
-        endX = halls.get(hallIndex).getEndX();
-        ySpawn = halls.get(hallIndex).getStartY();
+        startX = hall.get(hallIndex).getStartX();
+        endX = hall.get(hallIndex).getEndX();
+        ySpawn = hall.get(hallIndex).getStartY();
         distance = Math.abs(startX - endX);
 
         if (startX < endX)
@@ -219,7 +245,7 @@ public class RoomGenerator
 
       if (i == 50)
       {
-        return chooseHallPoint(rand.nextInt(halls.size()));
+        return chooseHallPoint(hall, rand.nextInt(hall.size()));
       }
     }
 
@@ -237,7 +263,7 @@ public class RoomGenerator
     }
   }
 
-  private void makeHalls()
+  private void makeHalls(int quadrant)
   {
     Room targetRoom;
     boolean found;
@@ -248,21 +274,23 @@ public class RoomGenerator
     int targetY = 0;
     // numHalls = -1; // keeps track of how many halls we have.
 
-    for (Room currentRoom : rooms)
+    ArrayList<Room> qRoom = rooms.get(quadrant);
+    ArrayList<Hall> qHall = halls.get(quadrant);
+
+    for (Room currentRoom : qRoom)
     {
       found = false;
       while (!found)
       {
         found = true;
-        // targetRoom = rooms[rand.nextInt(5)];
-        targetRoom = rooms.get(rand.nextInt(rooms.size()));
+
+        targetRoom = qRoom.get(rand.nextInt(qRoom.size()));
         if (!(currentRoom.equals(targetRoom)))
         {
 
           // if its the first room in the array
-          if (currentRoom.equals(rooms.get(0)))
+          if (currentRoom.equals(qRoom.get(0)))
           {
-            // System.out.println(i);
             currentRoom.setIsConnected(true);
             targetRoom.setIsConnected(true);
           }
@@ -290,8 +318,8 @@ public class RoomGenerator
             // halls,
             // a vertical one and a horizontal one.
 
-            halls.add(new Hall(startX, startY, targetX, targetY, true));
-            halls.add(halls.get(halls.size() - 1).getNeighbor());
+            qHall.add(new Hall(startX, startY, targetX, targetY, true));
+            qHall.add(qHall.get(qHall.size() - 1).getNeighbor());
           }
           else
           {
@@ -306,9 +334,9 @@ public class RoomGenerator
       }
     }
 
-    for (int i = 0; i < halls.size(); i++)
+    for (int i = 0; i < qHall.size(); i++)
     {
-      addHallToMap(halls.get(i));
+      addHallToMap(qHall.get(i));
     }
   }
 
@@ -367,7 +395,7 @@ public class RoomGenerator
     }
   }
 
-  private void makeRooms()
+  private void makeRooms(int quadrant)
   {
     int startX = 0;
     int startY = 0;
@@ -377,22 +405,44 @@ public class RoomGenerator
     boolean isFirstRoom = true;
     Room r;
 
+    ArrayList<Room> qRoom = rooms.get(quadrant);
+
     for (int i = 0; i < 100;) // until 100 failures
     {
       while (!hasFoundLegalSpot)
       {
         hasFoundLegalSpot = true;
-        startX = rand.nextInt(mapWidth - MAX_ROOM_WIDTH) + 1;
-        startY = rand.nextInt(mapHeight - MAX_ROOM_WIDTH) + 1;
+
+        switch (quadrant)
+        {
+          case 0:
+            startX = rand.nextInt(mapWidth - MAX_ROOM_WIDTH) + 26;
+            startY = rand.nextInt(25 - MAX_ROOM_WIDTH) + 1;
+            break;
+          case 1:
+            startX = rand.nextInt(25 - MAX_ROOM_WIDTH) + 1;
+            startY = rand.nextInt(25 - MAX_ROOM_WIDTH) + 1;
+            break;
+          case 2:
+            startX = rand.nextInt(25 - MAX_ROOM_WIDTH) + 1;
+            startY = rand.nextInt(mapHeight - MAX_ROOM_WIDTH) + 26;
+            break;
+          case 3:
+            startX = rand.nextInt(mapWidth - MAX_ROOM_WIDTH) + 26;
+            startY = rand.nextInt(mapHeight - MAX_ROOM_WIDTH) + 26;
+            break;
+        }
+        // startX = rand.nextInt(mapWidth - MAX_ROOM_WIDTH) + 1;
+        // startY = rand.nextInt(mapHeight - MAX_ROOM_WIDTH) + 1;
         width = rand.nextInt(MAX_ROOM_WIDTH - MIN_ROOM_WIDTH + 1) + MIN_ROOM_WIDTH;
         height = rand.nextInt(width - MIN_ROOM_HEIGHT) + MIN_ROOM_HEIGHT;
 
         if (!isFirstRoom)
         {
           r = new Room(startX, startY, width, height);
-          for (int j = 0; j < rooms.size(); j++)
+          for (int j = 0; j < qRoom.size(); j++)
           {
-            if (intersection(r, rooms.get(j)))
+            if (intersection(r, qRoom.get(j)))
             {
               i++;
               hasFoundLegalSpot = false;
@@ -403,20 +453,20 @@ public class RoomGenerator
         if (startX <= 0 || startY <= 0)
         {
           i++;
-//          System.out.println(i);
+          // System.out.println(i);
           if (i == 0 && isFirstRoom)
           {
-//            System.out.println("wow");
+            // System.out.println("wow");
           }
           hasFoundLegalSpot = false;
         }
         else if (startX + width >= mapWidth || startY + height >= mapHeight)
         {
           i++;
-//          System.out.println(i + "     ---2");
+          // System.out.println(i + " ---2");
           if (i == 0 && isFirstRoom)
           {
-//            System.out.println("wow2");
+            // System.out.println("wow2");
           }
           hasFoundLegalSpot = false;
         }
@@ -425,13 +475,12 @@ public class RoomGenerator
 
       hasFoundLegalSpot = false;
       isFirstRoom = false;
-      rooms.add(new Room(startX, startY, width, height));
-      // addRoomToMap();
+      qRoom.add(new Room(startX, startY, width, height));
     }
 
-    for (int i = 0; i < rooms.size(); i++)
+    for (int i = 0; i < qRoom.size(); i++)
     {
-      addRoomToMap(rooms.get(i));
+      addRoomToMap(qRoom.get(i));
     }
   }
 
@@ -483,8 +532,8 @@ public class RoomGenerator
     return true;
   }
 
-  public static void main(String[] args)
-  {
-    // RoomGenerator rg = new RoomGenerator(36, 36);
-  }
+//  public static void main(String[] args)
+//  {
+//    RoomGenerator rg = new RoomGenerator(51, 51);
+//  }
 }
