@@ -38,6 +38,7 @@ import Utilities.MapGen;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
@@ -72,7 +73,7 @@ public class Game extends Application
   private static final double MOUSE_SPEED = 0.1;
   private static final double ROTATION_SPEED = 2.0;
   private static final double TRACK_SPEED = 0.3;
-  
+
   private final int MAP_HEIGHT = 51;
   private final int MAP_WIDTH = 41;
 
@@ -215,6 +216,9 @@ public class Game extends Application
 
   }
 
+  /**
+   * 
+   */
   private void buildLight()
   {
     light.setTranslateZ(WALL_HEIGHT / 2);
@@ -248,6 +252,7 @@ public class Game extends Application
         // center of screen//
         if (holdMouse && running)
         {
+          scene.setCursor(Cursor.NONE);
           Point p = MouseInfo.getPointerInfo().getLocation();
           int x = p.x;
           int y = p.y;
@@ -281,6 +286,7 @@ public class Game extends Application
           try
           {
             new Robot().mouseMove(950, 500);
+            
           }
           catch (AWTException e)
           {
@@ -451,12 +457,13 @@ public class Game extends Application
         {
           if (running)
           {
+            scene.setCursor(Cursor.DEFAULT);
             pauseXform.setVisible(true);
             esc = true;
             mapXform.getChildren().clear();
             playerXform.getChildren().clear();
-            MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions, debug, world,
-                mapXform, playerXform);
+            MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions,
+                debug, world, mapXform, playerXform);
             first = false;
             camera.setTranslateZ(-500);
             cameraXform.rx.setAngle(90);
@@ -467,8 +474,8 @@ public class Game extends Application
             pauseXform.setVisible(false);
             esc = false;
             mapXform.getChildren().clear();
-            MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions, debug, world,
-                mapXform, playerXform);
+            MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions,
+                debug, world, mapXform, playerXform);
             first = false;
             camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
             cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
@@ -519,6 +526,7 @@ public class Game extends Application
         {
           if (holdMouse == true) holdMouse = false;
           else holdMouse = true;
+          scene.setCursor(Cursor.DEFAULT);
         }
         if (event.getCode() == KeyCode.Z) // puts the player on the "ground"
         {
@@ -602,8 +610,8 @@ public class Game extends Application
     esc = false;
     first = true;
     running = true;
-    MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions, debug, world,
-        mapXform, playerXform);
+    MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions, debug,
+        world, mapXform, playerXform);
     first = false;
     buildCamera();
     buildLight();
@@ -634,8 +642,8 @@ public class Game extends Application
     house = new HouseBuilder(MAP_WIDTH, MAP_HEIGHT);
     tiles = house.getMap();
 
-    MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions, debug, world,
-        mapXform, playerXform);
+    MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions, debug,
+        world, mapXform, playerXform);
     first = false;
     buildCamera();
     buildLight();
@@ -660,17 +668,20 @@ public class Game extends Application
     {
       playerHitbox = new Hitbox(playerXform);
     }
-    esc = true;
-    running = false;
-    MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions, debug, world,
-        mapXform, playerXform);
+    if (!debug)
+    {
+      esc = true;
+      running = false;
+    }
+    MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions, debug,
+        world, mapXform, playerXform);
     first = false;
     buildCamera();
     buildLight();
     buildPauseMenu();
     buildStartMenu();
     makeSoundClips();
-
+    if(debug) startXform.setVisible(false);
     theScene = new Scene(root, windowX, windowY, true);
     Stop[] stops = new Stop[] { new Stop(0, Color.RED), new Stop(1, Color.ORANGE) };
     LinearGradient lg = new LinearGradient(0, 1, 0, 0, true, CycleMethod.NO_CYCLE, stops);

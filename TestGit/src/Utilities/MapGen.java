@@ -15,6 +15,7 @@ import CPU.LineWalk;
 import CPU.RandomWalk;
 import CPU.Zombie;
 import RoomGenerator.HouseBuilder;
+import ZombieBuilder.ZombieBuilder;
 import application.Xform;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
@@ -184,38 +185,38 @@ public class MapGen
           tile.setMaterial(zombieSpawn);
           if (first)
           {
-            // // Code for making the zombie model
-            // Group zomb = ZombieBuilder.getZombie(i, j, TILE_SIZE);
-            //
-            // if (tiles[i][j] == 'R')
-            // {
-            // zombies.add(new RandomWalk(j, i, zomb));
-            // }
-            // else // tiles[i][j] == 'L'
-            // {
-            // zombies.add(new LineWalk(j, i, zomb));
-            // }
-            // zomb.setTranslateX(i - TILE_SIZE / 2);
-            // zomb.setTranslateZ(j - TILE_SIZE / 2);
-            // zomb.setTranslateY(.5);
+             // Code for making the zombie model
+             Group zomb = ZombieBuilder.getZombie(i, j, TILE_SIZE);
+            
+             if (tiles[i][j] == 'R')
+             {
+             zombies.add(new RandomWalk(j, i, zomb));
+             }
+             else // tiles[i][j] == 'L'
+             {
+             zombies.add(new LineWalk(j, i, zomb));
+             }
+             zomb.setTranslateX(i* TILE_SIZE);
+             zomb.setTranslateZ(j* TILE_SIZE);
+             zomb.setTranslateY(.5);
 
-            // Zombie model is a cylinder
-            Cylinder c = new Cylinder(TILE_SIZE / 4, WALL_HEIGHT);
-            Group zomb = new Group(c);
-
-            if (tiles[i][j] == 'R')
-            {
-              c.setMaterial(notPathable);
-              zombies.add(new RandomWalk(j, i, zomb));
-            }
-            else // tiles[i][j] == 'L'
-            {
-              c.setMaterial(zombieSpawn);
-              zombies.add(new LineWalk(j, i, zomb));
-            }
-            zomb.setTranslateX(i * TILE_SIZE);
-            zomb.setTranslateZ(j * TILE_SIZE);
-            zomb.setTranslateY(WALL_HEIGHT / 2);
+//             //Zombie model is a cylinder
+//            Cylinder c = new Cylinder(TILE_SIZE / 4, WALL_HEIGHT);
+//            Group zomb = new Group(c);
+//
+//            if (tiles[i][j] == 'R')
+//            {
+//              c.setMaterial(notPathable);
+//              zombies.add(new RandomWalk(j, i, zomb));
+//            }
+//            else // tiles[i][j] == 'L'
+//            {
+//              c.setMaterial(zombieSpawn);
+//              zombies.add(new LineWalk(j, i, zomb));
+//            }
+//            zomb.setTranslateX(i * TILE_SIZE);
+//            zomb.setTranslateZ(j * TILE_SIZE);
+//            zomb.setTranslateY(WALL_HEIGHT / 2);
 
             world.getChildren().add(zomb);
           }
