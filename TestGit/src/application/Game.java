@@ -296,8 +296,15 @@ public class Game extends Application
       {
         System.out.println("Retry");
         resetMap();
-        camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
-        cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+        if(debug)
+        {
+            camera.setTranslateZ(-1000);
+        }
+        else
+        {      
+          camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+          cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+        }
         running = true;
 
       }
@@ -306,8 +313,15 @@ public class Game extends Application
         System.out.println("New Map");
         makeNewMap();
         pauseXform.setVisible(false);
-        camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
-        cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+        if(debug)
+        {
+            camera.setTranslateZ(-1000);
+        }
+        else
+        {      
+          camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+          cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+        }
         running = true;
 
       }
@@ -323,7 +337,7 @@ public class Game extends Application
         makeNewMap();
         if(debug)
         {
-        	camera.setTranslateZ(-1000);
+            camera.setTranslateZ(-1000);
         }
         else
         {      
@@ -690,7 +704,7 @@ public class Game extends Application
         walkThread = new Worker();
         walkThread.start();
 				if ((System.currentTimeMillis() - last) > 2000) {
-					System.out.println(last);
+
 					for (Zombie z : zombies) // tells zombies to figure out
 												// their next move
 					{
