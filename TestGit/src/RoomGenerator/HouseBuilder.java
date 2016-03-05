@@ -4,6 +4,8 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Random;
 
+import application.Game;
+
 public class HouseBuilder
 {
   private final int MIN_ROOM_WIDTH = 6;
@@ -37,105 +39,46 @@ public class HouseBuilder
     for (int i = 0; i < 4; i++)
     {
       partitionMap(i);
-      // makeDoors(i);
-      // makeWalls(i);
     }
 
-    if (true)
+    makePlayerSpawnPoint();
+
+    if (Game.debug)
     {
       printMap();
     }
   }
 
-  // private void makeDoors(int quadrant)
-  // {
-  // int startX = 0;
-  // int startY = 0;
-  // int width = mapWidth / 2 - 1;
-  // int height = mapHeight / 2 - 1;
-  //
-  // if (quadrant == 0)
-  // {
-  // startX = mapWidth / 2 + 1;
-  // startY += 1;
-  // }
-  // if (quadrant == 1)
-  // {
-  // startX += 1;
-  // startY += 1;
-  // }
-  // if (quadrant == 2)
-  // {
-  // startX += 1;
-  // startY = mapHeight / 2 + 1;
-  // }
-  // else if (quadrant == 3)
-  // {
-  // startX = mapWidth / 2 + 1;
-  // startY = mapHeight / 2 + 1;
-  // }
-  //
-  // int numberHalls = 0;
-  // int hallLen = 0;
-  //
-  // for(int y = startY; y < height; y++)
-  // {
-  // for(int x = startX; x < width; x++)
-  // {
-  // if(house[y][x] == '-' && house[y][x+2] == 'H') //found a hall with a room
-  // to the left
-  // {
-  // hallLen = findLengthOfHall(x,y,0);
-  // }
-  // else if(house[y][x] == '-' && house[y+2][x] == 'H') //found hall with a
-  // room to the north
-  // {
-  // hallLen = findLengthOfHall(x,y);
-  // }
-  // else if(house[y][x] == 'X' && house[y][x+2] == 'H') //found hall with a
-  // room to the right
-  // {
-  // hallLen = findLengthOfHall(x,y);
-  // }
-  // else if(house[y][x] == 'X' && house[y+2][x] == 'H') //found hall with room
-  // to the south
-  // {
-  // hallLen = findLengthOfHall(x,y);
-  // }
-  // }
-  // }
-  // }
-
-  // private int findLengthOfHall(int x, int y)
-  // {
-  //
-  // }
-
-  private void makeWalls(int quadrant)
+  public char[][] getMap()
   {
-    for (int i = 0; i < mapHeight; i++)
-    {
-      for (int j = 0; j < mapWidth; j++)
-      {
-        if ((house[i][j] == 'H') && (house[i][j - 1] == '-'))
-        {
-          house[i][j - 1] = 'X';
-        }
-        else if ((house[i][j] == 'H') && (house[i][j + 1] == '-'))
-        {
-          house[i][j + 1] = 'X';
-        }
+    return house;
+  }
 
-        if ((house[i][j] == 'H') && (house[i - 1][j] == '-'))
-        {
-          house[i - 1][j] = 'X';
-        }
-        else if ((house[i][j] == 'H') && (house[i + 1][j] == '-'))
-        {
-          house[i + 1][j] = 'X';
-        }
-      }
+  public Point getPlayerSpawnPoint()
+  {
+    return playerSpawnPoint;
+  }
+
+  /*
+   * Checks to see if a location is a legal spot to be on.
+   * 
+   */
+  public boolean isPointLegal(int x, int y)
+  {
+    if (house[y][x] != '-')
+    {
+      return true;
     }
+    return false;
+  }
+
+  public boolean isEndPoint(int x, int y)
+  {
+    if (house[y][x] == 'E')
+    {
+      return true;
+    }
+    return false;
   }
 
   private void partitionMap(int quadrant)
@@ -267,8 +210,8 @@ public class HouseBuilder
           {
             house[y][x] = 'H';
           }
-          
-          if(house[r-1][x] != 'D' && house[r+3][x] != 'D')
+
+          if (house[r - 1][x] != 'D' && house[r + 3][x] != 'D')
           {
             house[r - 1][x] = 'X';
             house[r + 3][x] = 'X';
@@ -279,38 +222,6 @@ public class HouseBuilder
       addDoorsToHall(r, h, c);
     }
 
-  }
-
-  public char[][] getMap()
-  {
-    return house;
-  }
-
-  public Point getPlayerSpawnPoint()
-  {
-    return playerSpawnPoint;
-  }
-
-  /*
-   * Checks to see if a location is a legal spot to be on.
-   * 
-   */
-  public boolean isPointLegal(int x, int y)
-  {
-    if (house[y][x] != '-')
-    {
-      return true;
-    }
-    return false;
-  }
-
-  public boolean isEndPoint(int x, int y)
-  {
-    if (house[y][x] == 'E')
-    {
-      return true;
-    }
-    return false;
   }
 
   private void markQuadrants()
@@ -331,13 +242,93 @@ public class HouseBuilder
     }
   }
 
+  /*
+   * Randomly chooses 1 of the 4 quadrants, and denotes a spawn in any point in
+   * a hallway
+   */
+  private void makePlayerSpawnPoint()
+  {
+    int i = rand.nextInt(4);
+
+    int startX = 0;
+    int startY = 0;
+    int width = mapWidth / 2 - 1;
+    int height = mapHeight / 2 - 1;
+
+    System.out.println(i);
+
+    if (i == 0)
+    {
+      startX = mapWidth / 2 + 1;
+      startY += 1;
+    }
+    if (i == 1)
+    {
+      startX += 1;
+      startY += 1;
+    }
+    if (i == 2)
+    {
+      startX += 1;
+      startY = mapHeight / 2 + 1;
+    }
+    else if (i == 3)
+    {
+      startX = mapWidth / 2 + 1;
+      startY = mapHeight / 2 + 1;
+    }
+
+    boolean found = false;
+
+    while (!found)
+    {
+      for (int j = startY; j <= (startY + height); j++)
+      {
+        for (int k = startX; k <= (startX + width); k++)
+        {
+          if (house[j][k] == 'H')
+          {
+            if (rand.nextDouble() < .9)
+            {
+              house[j][k] = 'P';
+              found = true;
+            }
+          }
+          if (found)
+          {
+            break;
+          }
+        }
+        if (found)
+        {
+          break;
+        }
+      }
+
+    }
+  }
+
   private void cleanMap()
   {
     for (int i = 0; i < mapHeight; i++)
     {
       for (int j = 0; j < mapWidth; j++)
       {
-        house[i][j] = '-';
+        if (rand.nextDouble() < .01)
+        {
+          if (rand.nextInt(2) == 0)
+          {
+            house[i][j] = 'R';
+          }
+          else
+          {
+            house[i][j] = 'L';
+          }
+        }
+        else
+        {
+          house[i][j] = '-';
+        }
       }
     }
   }
