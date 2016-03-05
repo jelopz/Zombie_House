@@ -38,6 +38,7 @@ import Utilities.MapGen;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
@@ -251,6 +252,7 @@ public class Game extends Application
         // center of screen//
         if (holdMouse && running)
         {
+          scene.setCursor(Cursor.NONE);
           Point p = MouseInfo.getPointerInfo().getLocation();
           int x = p.x;
           int y = p.y;
@@ -284,6 +286,7 @@ public class Game extends Application
           try
           {
             new Robot().mouseMove(950, 500);
+            
           }
           catch (AWTException e)
           {
@@ -454,6 +457,7 @@ public class Game extends Application
         {
           if (running)
           {
+            scene.setCursor(Cursor.DEFAULT);
             pauseXform.setVisible(true);
             esc = true;
             mapXform.getChildren().clear();
