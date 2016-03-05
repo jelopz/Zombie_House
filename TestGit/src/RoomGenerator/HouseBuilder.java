@@ -255,8 +255,6 @@ public class HouseBuilder
     int width = mapWidth / 2 - 1;
     int height = mapHeight / 2 - 1;
 
-    System.out.println(i);
-
     if (i == 0)
     {
       startX = mapWidth / 2 + 1;

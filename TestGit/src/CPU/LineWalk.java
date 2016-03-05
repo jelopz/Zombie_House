@@ -1,7 +1,6 @@
 package CPU;
 
 import RoomGenerator.HouseBuilder;
-import RoomGenerator.RoomGenerator;
 import application.Game;
 import javafx.scene.Group;
 

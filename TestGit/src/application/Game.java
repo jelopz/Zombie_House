@@ -38,7 +38,6 @@ import CPU.RandomWalk;
 import CPU.Zombie;
 import Hitbox.Hitbox;
 import RoomGenerator.HouseBuilder;
-import RoomGenerator.RoomGenerator;
 import Sound.Clip;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -72,7 +71,7 @@ import javafx.stage.Stage;
 
 public class Game extends Application
 {
-  public static boolean debug = true;
+  public static boolean debug = false;
 
   public static final double TILE_SIZE = 56; // number of subdivisions in
   // tile
@@ -818,11 +817,9 @@ public class Game extends Application
   {
 
     double nextX, nextZ;
-    int i = 0;
 
     public void handle(long now)
     {
-      System.out.println(i++);
       // pressing esc key changes this boolean, effectively pauses the game and
       // temporarily changes the camera angle;
       if (running)
@@ -834,8 +831,6 @@ public class Game extends Application
         {
           z.determineNextMove(house);
         }
-
-        // zombies.get(0).determineNextMove(house);
 
         /* Moves the camera around the world */
 

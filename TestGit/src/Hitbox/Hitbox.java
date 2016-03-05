@@ -1,7 +1,6 @@
 package Hitbox;
 
 import RoomGenerator.HouseBuilder;
-import RoomGenerator.RoomGenerator;
 import application.Game;
 import application.Xform;
 import javafx.scene.Group;

@@ -2,7 +2,6 @@ package CPU;
 
 import Hitbox.Hitbox;
 import RoomGenerator.HouseBuilder;
-import RoomGenerator.RoomGenerator;
 import javafx.scene.Group;
 
 public class RandomWalk extends Zombie
