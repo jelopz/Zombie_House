@@ -186,7 +186,7 @@ public class MapGen
           if (first)
           {
              // Code for making the zombie model
-             Group zomb = ZombieBuilder.getZombie(i, j, TILE_SIZE);
+             Group zomb = ZombieBuilder.getZombie(i, j, TILE_SIZE, tiles[i][j]);
             
              if (tiles[i][j] == 'R')
              {

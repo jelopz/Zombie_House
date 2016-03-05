@@ -45,8 +45,9 @@ public class ZombieBuilder
     return new MeshView[] { new MeshView(mesh) };
   }
 
-  public static Group getZombie(int i, int j, double TILE_SIZE)
+  public static Group getZombie(int i, int j, double TILE_SIZE, char zombieType)
   {
+	PhongMaterial zombieMaterial;
     MeshView[] meshViews = loadMeshViews();
     for (int t = 0; t < meshViews.length; t++)
     {
@@ -57,8 +58,16 @@ public class ZombieBuilder
       meshViews[t].setScaleY(MODEL_SCALE_FACTOR);
       meshViews[t].setScaleZ(MODEL_SCALE_FACTOR);
 
-      PhongMaterial zombieMaterial = new PhongMaterial(Color.DARKGREEN);
-      zombieMaterial.setSpecularColor(Color.LIGHTGREEN);
+      if(zombieType == 'R')
+      {
+        zombieMaterial = new PhongMaterial(Color.DARKGREEN);
+        zombieMaterial.setSpecularColor(Color.LIGHTGREEN);
+      }
+      else //zombieType == 'L'
+      {
+        zombieMaterial = new PhongMaterial(Color.DARKRED);
+        zombieMaterial.setSpecularColor(Color.RED);
+      }
       zombieMaterial.setSpecularPower(16);
       meshViews[t].setMaterial(zombieMaterial);
 
