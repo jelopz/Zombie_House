@@ -26,22 +26,6 @@ public class LineWalk extends Zombie
 
   }
 
-//  private void findNextAngle(HouseBuilder house)
-//  {
-//    angleZ = rand.nextDouble();
-//    angleX = Math.sqrt(1 - (angleZ * angleZ));
-//
-//    if (rand.nextInt(2) == 0) // 50/50 chance of x being positive or negative
-//    {
-//      angleZ = -1 * angleZ;
-//    }
-//
-//    if (rand.nextInt(2) == 0) // 50/50 chance of y being positive or negative
-//    {
-//      angleX = -1 * angleX;
-//    }
-//  }
-
 	public void move(HouseBuilder house) { //move based on current heading
       translationZ = model.getTranslateZ() + angleZ;
       translationX = model.getTranslateX() + angleX;

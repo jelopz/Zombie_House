@@ -1,6 +1,5 @@
 package CPU;
 
-import Hitbox.Hitbox;
 import RoomGenerator.HouseBuilder;
 import application.Game;
 import javafx.scene.Group;
@@ -20,23 +19,6 @@ public class RandomWalk extends Zombie
 		findNextAngle(house);
 		isStuck = false;
 	}
-	
-//	private void findNextAngle(HouseBuilder house) {
-//		angleZ = rand.nextDouble();
-//		angleX = Math.sqrt(1 - (angleZ * angleZ));
-//
-//		if (rand.nextInt(2) == 0) // 50/50 chance of x being positive or
-//									// negative
-//		{
-//			angleZ = -1 * angleZ;
-//		}
-//
-//		if (rand.nextInt(2) == 0) // 50/50 chance of y being positive or
-//									// negative
-//		{
-//			angleX = -1 * angleX;
-//		}
-//	}
 
 	public void move(HouseBuilder house) {
 		translationZ = model.getTranslateZ() + angleZ;
@@ -61,12 +43,6 @@ public class RandomWalk extends Zombie
 	          model.setTranslateZ(translationZ);
 	          model.setTranslateX(translationX);
 	        }
-//			for (Zombie z : Game.zombies) {
-//				if ((!z.equals(this)) && zombieCollision(z)) {
-//					model.setTranslateZ(translationZ - 2 * angleZ);
-//					model.setTranslateX(translationX - 2 * angleX);
-//				}
-//			}
 		}
 	}
 
