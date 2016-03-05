@@ -6,7 +6,6 @@ import javafx.scene.Group;
 
 public class LineWalk extends Zombie
 {
-  private double angleZ, angleX;
   private double translationZ, translationX;
   private boolean hasAngle; // has an angle he is currently walking in
 
@@ -21,28 +20,27 @@ public class LineWalk extends Zombie
   {
     if (!hasAngle) //has nowhere to go
     {
-      findNextAngle(house);
+      super.findNextAngle(house);
+      hasAngle = true;
     }
 
   }
 
-  private void findNextAngle(HouseBuilder house)
-  {
-    angleZ = rand.nextDouble();
-    angleX = Math.sqrt(1 - (angleZ * angleZ));
-
-    if (rand.nextInt(2) == 0) // 50/50 chance of x being positive or negative
-    {
-      angleZ = -1 * angleZ;
-    }
-
-    if (rand.nextInt(2) == 0) // 50/50 chance of y being positive or negative
-    {
-      angleX = -1 * angleX;
-    }
-
-    hasAngle = true;
-  }
+//  private void findNextAngle(HouseBuilder house)
+//  {
+//    angleZ = rand.nextDouble();
+//    angleX = Math.sqrt(1 - (angleZ * angleZ));
+//
+//    if (rand.nextInt(2) == 0) // 50/50 chance of x being positive or negative
+//    {
+//      angleZ = -1 * angleZ;
+//    }
+//
+//    if (rand.nextInt(2) == 0) // 50/50 chance of y being positive or negative
+//    {
+//      angleX = -1 * angleX;
+//    }
+//  }
 
 	public void move(HouseBuilder house) { //move based on current heading
       translationZ = model.getTranslateZ() + angleZ;
