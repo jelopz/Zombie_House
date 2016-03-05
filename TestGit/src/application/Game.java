@@ -526,6 +526,7 @@ public class Game extends Application
         {
           if (holdMouse == true) holdMouse = false;
           else holdMouse = true;
+          scene.setCursor(Cursor.DEFAULT);
         }
         if (event.getCode() == KeyCode.Z) // puts the player on the "ground"
         {
