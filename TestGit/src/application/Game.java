@@ -89,7 +89,8 @@ public class Game extends Application
   private final Group root = new Group();
 
   private final Xform world = new Xform();
-  private final Xform labelXform = new Xform();
+  private final Xform pauseXform = new Xform();
+  private final Xform startXform = new Xform();
   private final Xform cameraXform = new Xform();
   private final Xform cameraXform2 = new Xform();
   private final Xform cameraXform3 = new Xform();
@@ -159,10 +160,38 @@ public class Game extends Application
     cameraXform.setTranslateY(WALL_HEIGHT / 2);
   }
 
-  private void buildMenu()
+  private void buildStartMenu()
+  {
+    Text l1 = new Text("Start Game");
+    l1.setScaleX(5);
+    l1.setScaleY(5);
+    l1.setTranslateY(-60);
+    l1.setFill(Color.WHITE);
+    Text l2 = new Text("Do A Thing!");
+    l2.setScaleX(5);
+    l2.setScaleY(5);
+    l2.setFill(Color.WHITE);
+    Text l3 = new Text("Exit Game");
+    l3.setScaleX(5);
+    l3.setScaleY(5);
+    l3.setTranslateY(55);
+    l3.setFill(Color.WHITE);
+    startXform.setVisible(false);
+    startXform.getChildren().addAll(l1, l2, l3);
+    startXform.setRotateZ(180);
+    startXform.t.setZ(-WALL_HEIGHT / 2 - 5);
+    startXform.t.setX(25);
+    startXform.setPickOnBounds(true);
+    startXform.setVisible(true);
+    cameraXform.getChildren().add(startXform);
+    camera.setTranslateZ(-500);
+    cameraXform.rx.setAngle(90);
+
+  }
+
+  private void buildPauseMenu()
   {
     Text l1 = new Text("Retry");
-    // Label l1 = new Label("Retry");
     l1.setScaleX(5);
     l1.setScaleY(5);
     l1.setTranslateY(-60);
@@ -176,13 +205,13 @@ public class Game extends Application
     l3.setScaleY(5);
     l3.setTranslateY(55);
     l3.setFill(Color.WHITE);
-    labelXform.setVisible(false);
-    labelXform.getChildren().addAll(l1, l2, l3);
-    labelXform.setRotateZ(180);
-    labelXform.t.setZ(-WALL_HEIGHT / 2 - 5);
-    labelXform.t.setX(25);
-    labelXform.setPickOnBounds(true);
-    cameraXform.getChildren().add(labelXform);
+    pauseXform.setVisible(false);
+    pauseXform.getChildren().addAll(l1, l2, l3);
+    pauseXform.setRotateZ(180);
+    pauseXform.t.setZ(-WALL_HEIGHT / 2 - 5);
+    pauseXform.t.setX(25);
+    pauseXform.setPickOnBounds(true);
+    cameraXform.getChildren().add(pauseXform);
 
   }
 
@@ -263,19 +292,46 @@ public class Game extends Application
     scene.setOnMouseClicked((event) ->
     {
       PickResult res = event.getPickResult();
-      if (labelXform.getChildren().get(0) == res.getIntersectedNode())
+      if (pauseXform.getChildren().get(0) == res.getIntersectedNode())
       {
+        System.out.println("Retry");
         resetMap();
-        if (debug) System.out.println("Retry");
+        camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+        cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+        running = true;
+
       }
-      else if (labelXform.getChildren().get(1) == res.getIntersectedNode())
+      else if (pauseXform.getChildren().get(1) == res.getIntersectedNode())
       {
+        System.out.println("New Map");
         makeNewMap();
-        if (debug) System.out.println("Start Over");
+        pauseXform.setVisible(false);
+        camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+        cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+        running = true;
+
       }
-      else if (labelXform.getChildren().get(2) == res.getIntersectedNode())
+      else if (pauseXform.getChildren().get(2) == res.getIntersectedNode())
       {
-        if (debug) System.out.println("Quit");
+        System.out.println("Quit");
+        pauseXform.setVisible(false);
+        startXform.setVisible(true);
+      }
+      else if (startXform.getChildren().get(0) == res.getIntersectedNode())
+      {
+        System.out.println("Start Game");
+        makeNewMap();
+        camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+        cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+      }
+      else if (startXform.getChildren().get(1) == res.getIntersectedNode())
+      {
+
+        System.out.println("Do A Thing!");
+      }
+      else if (startXform.getChildren().get(2) == res.getIntersectedNode())
+      {
+        System.out.println("Exit Game");
         System.exit(0);
       }
     });
@@ -374,7 +430,7 @@ public class Game extends Application
         {
           if (running)
           {
-            labelXform.setVisible(true);
+            pauseXform.setVisible(true);
             esc = true;
             mapXform.getChildren().clear();
             playerXform.getChildren().clear();
@@ -387,7 +443,7 @@ public class Game extends Application
           }
           else
           {
-            labelXform.setVisible(false);
+            pauseXform.setVisible(false);
             esc = false;
             mapXform.getChildren().clear();
             MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, mapW, mapH, zombies, first, esc, collisions, debug, world,
@@ -511,7 +567,8 @@ public class Game extends Application
 
   private void resetMap()
   {
-    labelXform.getChildren().clear();
+    startXform.getChildren().clear();
+    pauseXform.getChildren().clear();
     world.getChildren().clear();
     playerXform.getChildren().clear();
     cameraXform.getChildren().clear();
@@ -529,12 +586,16 @@ public class Game extends Application
     first = false;
     buildCamera();
     buildLight();
-    buildMenu();
+    buildStartMenu();
+    startXform.setVisible(false);
+    buildPauseMenu();
+
   }
 
   private void makeNewMap()
   {
-    labelXform.getChildren().clear();
+    startXform.getChildren().clear();
+    pauseXform.getChildren().clear();
     world.getChildren().clear();
     playerXform.getChildren().clear();
     cameraXform.getChildren().clear();
@@ -557,7 +618,10 @@ public class Game extends Application
     first = false;
     buildCamera();
     buildLight();
-    buildMenu();
+    buildStartMenu();
+    startXform.setVisible(false);
+    buildPauseMenu();
+
   }
 
   @Override
@@ -575,12 +639,15 @@ public class Game extends Application
     {
       playerHitbox = new Hitbox(playerXform);
     }
+    esc = true;
+    running = false;
     MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, mapW, mapH, zombies, first, esc, collisions, debug, world,
         mapXform, playerXform);
     first = false;
     buildCamera();
     buildLight();
-    buildMenu();
+    buildPauseMenu();
+    buildStartMenu();
     makeSoundClips();
 
     theScene = new Scene(root, windowX, windowY, true);
