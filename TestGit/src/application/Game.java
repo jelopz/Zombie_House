@@ -39,6 +39,7 @@ import CPU.Zombie;
 import Hitbox.Hitbox;
 import RoomGenerator.HouseBuilder;
 import Sound.Clip;
+import Utilities.MapGen;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
@@ -85,6 +86,7 @@ public class Game extends Application
   private static final double MOUSE_SPEED = 0.1;
   private static final double ROTATION_SPEED = 2.0;
   private static final double TRACK_SPEED = 0.3;
+  private static final MapGen MG = new MapGen();
   // Our House
   private HouseBuilder house;
 
@@ -210,222 +212,7 @@ public class Game extends Application
 
   }
 
-  private void drawMap()
-  {
-
-    if (first)
-      zombies = new ArrayList<>();
-    // Material for floors and ceilings//
-    PhongMaterial pathable = new PhongMaterial();
-    pathable.setDiffuseColor(Color.WHITE);
-    pathable.setSpecularColor(Color.ORANGE);
-
-    // Material for denoting the tile which the player will spawn on
-    PhongMaterial spawnPoint = new PhongMaterial();
-    spawnPoint.setDiffuseColor(Color.LIGHTGREEN);
-    spawnPoint.setSpecularColor(Color.WHITE);
-
-    // Material for denoting the tile which the zombie will spawn on
-    PhongMaterial zombieSpawn = new PhongMaterial();
-    zombieSpawn.setDiffuseColor(Color.RED);
-    zombieSpawn.setSpecularColor(Color.WHITE);
-
-    // material for walls (this and one above may need to be the same, check
-    // ruberic//
-
-    PhongMaterial notPathable = new PhongMaterial();
-    notPathable.setDiffuseColor(Color.LIGHTGREEN);
-    notPathable.setSpecularColor(Color.BLACK);
-
-    PhongMaterial zombieColor = new PhongMaterial();
-    zombieColor.setDiffuseColor(Color.ORANGE);
-    zombieColor.setSpecularColor(Color.RED);
-
-    // creates a blue cylinder centered on the camera for testing//
-    PhongMaterial playerColor = new PhongMaterial();
-    playerColor.setDiffuseColor(Color.BLUE);
-    playerColor.setSpecularColor(Color.DARKBLUE);
-
-    PhongMaterial bricks = new PhongMaterial();
-    bricks.setDiffuseMap(new Image(getClass().getResource("img.png").toExternalForm()));
-    bricks.setDiffuseColor(Color.WHITE);
-    bricks.setSpecularPower(0);
-
-    PhongMaterial blueBricks = new PhongMaterial();
-    blueBricks.setDiffuseMap(new Image(getClass().getResource("bluetile.png").toExternalForm()));
-    blueBricks.setSpecularPower(0);
-
-    PhongMaterial greenBricks = new PhongMaterial();
-    greenBricks.setDiffuseMap(new Image(getClass().getResource("greentile.png").toExternalForm()));
-    greenBricks.setDiffuseColor(Color.WHITE);
-    greenBricks.setSpecularPower(0);
-
-    PhongMaterial yellowBricks = new PhongMaterial();
-    yellowBricks.setDiffuseMap(new Image(getClass().getResource("yellowtile.png").toExternalForm()));
-    yellowBricks.setDiffuseColor(Color.WHITE);
-    yellowBricks.setSpecularPower(0);
-
-    // loops through a 2d array, generates rectangles of wall and floor tiles//
-    for (int i = 0; i < mapH; i++)
-    {
-      for (int j = 0; j < mapW; j++)
-      {
-        Box tile = new Box(TILE_SIZE, 1, TILE_SIZE);
-        tile.setDrawMode(DrawMode.FILL);
-        tile.setTranslateX(i * TILE_SIZE);
-        tile.setTranslateZ(j * TILE_SIZE);
-        Box ceiling = new Box(TILE_SIZE, 1, TILE_SIZE);
-        ceiling.setDrawMode(DrawMode.FILL);
-        if (esc)
-        {
-          ceiling.setDrawMode(DrawMode.LINE);
-        }
-        if (!debug)
-        {
-          ceiling.setTranslateX(i * TILE_SIZE);
-          ceiling.setTranslateZ(j * TILE_SIZE);
-          ceiling.setMaterial(bricks);
-        }
-        if (tiles[i][j] == '-' || tiles[i][j] == 'H' || tiles[i][j] == 'D')// make a floor tile//
-        {
-          if (!debug)
-          {
-            ceiling.setTranslateY(WALL_HEIGHT + .5);
-            mapXform.getChildren().add(ceiling);
-          }
-
-          tile.setTranslateY(0.5);
-
-          if (j < mapW / 2 && i < mapH / 2)
-          {
-            tile.setMaterial(bricks);
-          }
-          else if (j < mapW / 2 && i > mapH / 2)
-          {
-            tile.setMaterial(yellowBricks);
-          }
-          else if (j > mapW / 2 && i > mapH / 2)
-          {
-            tile.setMaterial(greenBricks);
-          }
-          else if (j > mapW / 2 && i < mapH / 2)
-          {
-            tile.setMaterial(blueBricks);
-          }
-
-        }
-//        else if (tiles[i][j] == 'E')
-//        {
-//          if (!debug)
-//          {
-//            ceiling.setTranslateY(WALL_HEIGHT + .5);
-//            mapXform.getChildren().add(ceiling);
-//          }
-//
-//          tile.setTranslateY(0.5);
-//          tile.setMaterial(pathable);
-//          endPointTile = new Point(j, i);
-//        }
-        else if (tiles[i][j] == 'P')
-        {
-          if (!debug)
-          {
-            ceiling.setTranslateY(WALL_HEIGHT + .5);
-            mapXform.getChildren().add(ceiling);
-          }
-
-          tile.setTranslateY(0.5);
-          tile.setMaterial(spawnPoint);
-
-          // Just doing this for testing collisions
-          if (esc)
-          {
-            Cylinder player = new Cylinder(TILE_SIZE / 4, WALL_HEIGHT);
-            player.setTranslateX(0);
-            player.setTranslateZ(0);
-            player.setTranslateY(WALL_HEIGHT / 2);
-            player.setMaterial(playerColor);
-            playerXform.getChildren().add(player);
-            mapXform.getChildren().add(playerXform);
-          }
-
-        }
-        else if (tiles[i][j] == 'R' || tiles[i][j] == 'L')
-        {
-          if (!debug)
-          {
-            ceiling.setTranslateY(WALL_HEIGHT + .5);
-            mapXform.getChildren().add(ceiling);
-          }
-
-          // Just doing this for testing collisions
-          tile.setTranslateY(0.5);
-          tile.setMaterial(zombieSpawn);
-          if (first)
-          {
-            // Code for making the zombie model
-            Group zomb = ZombieBuilder.getZombie(i, j, TILE_SIZE);
-
-            if (tiles[i][j] == 'R')
-            {
-              zombies.add(new RandomWalk(j, i, zomb));
-            }
-            else // tiles[i][j] == 'L'
-            {
-              zombies.add(new LineWalk(j, i, zomb));
-            }
-            zomb.setTranslateX(i - TILE_SIZE / 2);
-            zomb.setTranslateZ(j - TILE_SIZE / 2);
-            zomb.setTranslateY(.5);
-
-            // // Zombie model is a cylinder
-            // Cylinder c = new Cylinder(TILE_SIZE / 4, WALL_HEIGHT);
-            // Group zomb = new Group(c);
-            //
-            // if (tiles[i][j] == 'R')
-            // {
-            // c.setMaterial(notPathable);
-            // zombies.add(new RandomWalk(j, i, zomb));
-            // }
-            // else // tiles[i][j] == 'L'
-            // {
-            // c.setMaterial(zombieSpawn);
-            // zombies.add(new LineWalk(j, i, zomb));
-            // }
-            // zomb.setTranslateX(i*TILE_SIZE);
-            // zomb.setTranslateZ(j*TILE_SIZE);
-            // zomb.setTranslateY(WALL_HEIGHT/2);
-
-            world.getChildren().add(zomb);
-          }
-        }
-        else// make a wall tile//
-        {
-          tile.setScaleY(WALL_HEIGHT);
-          tile.setTranslateY(WALL_HEIGHT / 2);
-          tile.setMaterial(bricks);
-        }
-        mapXform.getChildren().add(tile);
-      }
-    }
-
-    if (collisions)// sets 8 points around the player for testing collisions
-    {
-      playerHitbox = new Hitbox(playerXform);
-    }
-
-    if (first)
-    {
-      world.getChildren().add(mapXform);
-
-      // places playerXform on spawn point
-
-      playerXform.t.setZ(house.getPlayerSpawnPoint().x * TILE_SIZE);
-      playerXform.t.setX(house.getPlayerSpawnPoint().y * TILE_SIZE);
-    }
-    first = false;
-    mapXform.setVisible(true);
-  }
+  
 
   private void handleMouse(Scene scene, final Node root)
   {
@@ -487,19 +274,16 @@ public class Game extends Application
       if (labelXform.getChildren().get(0) == res.getIntersectedNode())
       {
         resetMap();
-        if (debug)
-          System.out.println("Retry");
+        if (debug) System.out.println("Retry");
       }
       else if (labelXform.getChildren().get(1) == res.getIntersectedNode())
       {
         makeNewMap();
-        if (debug)
-          System.out.println("Start Over");
+        if (debug) System.out.println("Start Over");
       }
       else if (labelXform.getChildren().get(2) == res.getIntersectedNode())
       {
-        if (debug)
-          System.out.println("Quit");
+        if (debug) System.out.println("Quit");
         System.exit(0);
       }
     });
@@ -602,7 +386,9 @@ public class Game extends Application
             esc = true;
             mapXform.getChildren().clear();
             playerXform.getChildren().clear();
-            drawMap();
+            MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, mapW, mapH, zombies, first, esc, collisions, debug, world,
+                mapXform, playerXform);
+            first = false;
             camera.setTranslateZ(-500);
             cameraXform.rx.setAngle(90);
             running = false;
@@ -612,7 +398,9 @@ public class Game extends Application
             labelXform.setVisible(false);
             esc = false;
             mapXform.getChildren().clear();
-            drawMap();
+            MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, mapW, mapH, zombies, first, esc, collisions, debug, world,
+                mapXform, playerXform);
+            first = false;
             camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
             cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
             running = true;
@@ -622,6 +410,7 @@ public class Game extends Application
         // location
         if (event.getCode() == KeyCode.F12)
         {
+
           makeNewMap();
         }
         // pressing F11 resets the game with same Map, Zombies, and player
@@ -637,8 +426,7 @@ public class Game extends Application
         {
           speed = sprint;
         }
-        else
-          speed = walk;
+        else speed = walk;
 
         if (event.getCode() == KeyCode.W)
         {
@@ -660,10 +448,8 @@ public class Game extends Application
         // hold and release mouse from center of screen by pressing c
         if (event.getCode() == KeyCode.R)
         {
-          if (holdMouse == true)
-            holdMouse = false;
-          else
-            holdMouse = true;
+          if (holdMouse == true) holdMouse = false;
+          else holdMouse = true;
         }
         if (event.getCode() == KeyCode.Z) // puts the player on the "ground"
         {
@@ -746,7 +532,9 @@ public class Game extends Application
     esc = false;
     first = true;
     running = true;
-    drawMap();
+    MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, mapW, mapH, zombies, first, esc, collisions, debug, world,
+        mapXform, playerXform);
+    first = false;
     buildCamera();
     buildLight();
     buildMenu();
@@ -772,7 +560,9 @@ public class Game extends Application
     house = new HouseBuilder(mapW, mapH);
     tiles = house.getMap();
 
-    drawMap();
+    MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, mapW, mapH, zombies, first, esc, collisions, debug, world,
+        mapXform, playerXform);
+    first = false;
     buildCamera();
     buildLight();
     buildMenu();
@@ -784,19 +574,25 @@ public class Game extends Application
     root.getChildren().add(world);
     world.getTransforms().add(new Scale(scaleVal, scaleVal, scaleVal));
 
-//    house = new RoomGenerator(mapW, mapH);
+    // house = new RoomGenerator(mapW, mapH);
     house = new HouseBuilder(mapW, mapH);
     tiles = house.getMap();
 
-    drawMap();
+    zombies = new ArrayList<>();
+    if (collisions)// sets 8 points around the player for testing collisions
+    {
+      playerHitbox = new Hitbox(playerXform);
+    }
+    MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, mapW, mapH, zombies, first, esc, collisions, debug, world,
+        mapXform, playerXform);
+    first = false;
     buildCamera();
     buildLight();
     buildMenu();
     makeSoundClips();
 
     theScene = new Scene(root, windowX, windowY, true);
-    Stop[] stops = new Stop[]
-    { new Stop(0, Color.RED), new Stop(1, Color.ORANGE) };
+    Stop[] stops = new Stop[] { new Stop(0, Color.RED), new Stop(1, Color.ORANGE) };
     LinearGradient lg = new LinearGradient(0, 1, 0, 0, true, CycleMethod.NO_CYCLE, stops);
     theScene.setFill(lg);
     theScene.setCamera(camera);
