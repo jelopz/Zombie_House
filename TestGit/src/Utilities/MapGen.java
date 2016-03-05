@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import CPU.LineWalk;
 import CPU.RandomWalk;
+import CPU.Zombie;
 import Hitbox.Hitbox;
 import RoomGenerator.HouseBuilder;
 import application.Xform;
@@ -19,7 +20,7 @@ public class MapGen
 {
 
 
-  public void drawMap(HouseBuilder house, double TILE_SIZE, double WALL_HEIGHT, char[][] tiles, int mapW, int mapH, ArrayList zombies,
+  public void drawMap(HouseBuilder house, double TILE_SIZE, double WALL_HEIGHT, char[][] tiles, int mapW, int mapH, ArrayList<Zombie> zombies,
       boolean first, boolean esc, boolean collisions, boolean debug,Xform world, Xform mapXform, Xform playerXform)
   {
 
