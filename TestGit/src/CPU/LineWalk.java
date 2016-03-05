@@ -1,5 +1,6 @@
 package CPU;
 
+import RoomGenerator.HouseBuilder;
 import RoomGenerator.RoomGenerator;
 import application.Game;
 import javafx.scene.Group;
@@ -17,7 +18,7 @@ public class LineWalk extends Zombie
   }
 
   @Override
-  public void determineNextMove(RoomGenerator house)
+  public void determineNextMove(HouseBuilder house)
   {
     if (hasAngle)
     {
@@ -58,7 +59,7 @@ public class LineWalk extends Zombie
 
   }
 
-  private void findNextAngle(RoomGenerator house)
+  private void findNextAngle(HouseBuilder house)
   {
     angleZ = rand.nextDouble();
     angleX = Math.sqrt(1 - (angleZ * angleZ));

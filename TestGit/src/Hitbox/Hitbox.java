@@ -1,5 +1,6 @@
 package Hitbox;
 
+import RoomGenerator.HouseBuilder;
 import RoomGenerator.RoomGenerator;
 import application.Game;
 import application.Xform;
@@ -69,7 +70,7 @@ public class Hitbox
    * Takes a look at each point on the octogon and determines what tile it's on.
    * it then checks to see if that tile is a legal tile to be on.
    */
-  public boolean isWallCollision(RoomGenerator house)
+  public boolean isWallCollision(HouseBuilder house)
   {
     if (Game.collisions)
     {
@@ -89,7 +90,7 @@ public class Hitbox
     return false;
   }
 
-  public boolean hasReachedGoal(RoomGenerator house)
+  public boolean hasReachedGoal(HouseBuilder house)
   {
     int x, y;
     for (int i = 0; i < 8; i++) // get what tile the point is on.

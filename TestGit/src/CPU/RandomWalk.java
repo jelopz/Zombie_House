@@ -1,6 +1,7 @@
 package CPU;
 
 import Hitbox.Hitbox;
+import RoomGenerator.HouseBuilder;
 import RoomGenerator.RoomGenerator;
 import javafx.scene.Group;
 
@@ -14,7 +15,7 @@ public class RandomWalk extends Zombie
   }
 
   @Override
-  public void determineNextMove(RoomGenerator house)
+  public void determineNextMove(HouseBuilder house)
   {
     int z = rand.nextInt(4) + 1;
 

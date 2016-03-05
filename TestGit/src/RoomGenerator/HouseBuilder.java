@@ -65,7 +65,7 @@ public class HouseBuilder
    */
   public boolean isPointLegal(int x, int y)
   {
-    if (house[y][x] != '-')
+    if (house[y][x] != 'X')
     {
       return true;
     }
@@ -291,6 +291,7 @@ public class HouseBuilder
             if (rand.nextDouble() < .9)
             {
               house[j][k] = 'P';
+              playerSpawnPoint = new Point(k,j);
               found = true;
             }
           }

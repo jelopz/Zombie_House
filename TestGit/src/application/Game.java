@@ -37,6 +37,7 @@ import CPU.LineWalk;
 import CPU.RandomWalk;
 import CPU.Zombie;
 import Hitbox.Hitbox;
+import RoomGenerator.HouseBuilder;
 import RoomGenerator.RoomGenerator;
 import Sound.Clip;
 import javafx.animation.AnimationTimer;
@@ -86,8 +87,7 @@ public class Game extends Application
   private static final double ROTATION_SPEED = 2.0;
   private static final double TRACK_SPEED = 0.3;
   // Our House
-  private RoomGenerator house;
-  private Point endPointTile;
+  private HouseBuilder house;
 
   private Scene theScene;
   private double scaleVal = 1;
@@ -107,7 +107,7 @@ public class Game extends Application
 
   private char[][] tiles;
   private int mapH = 51;
-  private int mapW = 51;
+  private int mapW = 41;
 
   private double windowX = 1024;
   private double windowY = 768;
@@ -214,7 +214,8 @@ public class Game extends Application
   private void drawMap()
   {
 
-    if (first) zombies = new ArrayList<>();
+    if (first)
+      zombies = new ArrayList<>();
     // Material for floors and ceilings//
     PhongMaterial pathable = new PhongMaterial();
     pathable.setDiffuseColor(Color.WHITE);
@@ -286,7 +287,7 @@ public class Game extends Application
           ceiling.setTranslateZ(j * TILE_SIZE);
           ceiling.setMaterial(bricks);
         }
-        if (tiles[i][j] == 'O' || tiles[i][j] == 'H')// make a floor tile//
+        if (tiles[i][j] == '-' || tiles[i][j] == 'H' || tiles[i][j] == 'D')// make a floor tile//
         {
           if (!debug)
           {
@@ -296,36 +297,36 @@ public class Game extends Application
 
           tile.setTranslateY(0.5);
 
-          if (j < mapW/2 && i < mapH/2)
+          if (j < mapW / 2 && i < mapH / 2)
           {
             tile.setMaterial(bricks);
           }
-          else if (j < mapW/2 && i > mapH/2)
+          else if (j < mapW / 2 && i > mapH / 2)
           {
             tile.setMaterial(yellowBricks);
           }
-          else if (j > mapW/2 && i > mapH/2)
+          else if (j > mapW / 2 && i > mapH / 2)
           {
             tile.setMaterial(greenBricks);
           }
-          else if (j > mapW/2 && i < mapH/2)
+          else if (j > mapW / 2 && i < mapH / 2)
           {
             tile.setMaterial(blueBricks);
           }
-          
-        }
-        else if (tiles[i][j] == 'E')
-        {
-          if (!debug)
-          {
-            ceiling.setTranslateY(WALL_HEIGHT + .5);
-            mapXform.getChildren().add(ceiling);
-          }
 
-          tile.setTranslateY(0.5);
-          tile.setMaterial(pathable);
-          endPointTile = new Point(j, i);
         }
+//        else if (tiles[i][j] == 'E')
+//        {
+//          if (!debug)
+//          {
+//            ceiling.setTranslateY(WALL_HEIGHT + .5);
+//            mapXform.getChildren().add(ceiling);
+//          }
+//
+//          tile.setTranslateY(0.5);
+//          tile.setMaterial(pathable);
+//          endPointTile = new Point(j, i);
+//        }
         else if (tiles[i][j] == 'P')
         {
           if (!debug)
@@ -487,16 +488,19 @@ public class Game extends Application
       if (labelXform.getChildren().get(0) == res.getIntersectedNode())
       {
         resetMap();
-        if (debug) System.out.println("Retry");
+        if (debug)
+          System.out.println("Retry");
       }
       else if (labelXform.getChildren().get(1) == res.getIntersectedNode())
       {
         makeNewMap();
-        if (debug) System.out.println("Start Over");
+        if (debug)
+          System.out.println("Start Over");
       }
       else if (labelXform.getChildren().get(2) == res.getIntersectedNode())
       {
-        if (debug) System.out.println("Quit");
+        if (debug)
+          System.out.println("Quit");
         System.exit(0);
       }
     });
@@ -634,7 +638,8 @@ public class Game extends Application
         {
           speed = sprint;
         }
-        else speed = walk;
+        else
+          speed = walk;
 
         if (event.getCode() == KeyCode.W)
         {
@@ -656,8 +661,10 @@ public class Game extends Application
         // hold and release mouse from center of screen by pressing c
         if (event.getCode() == KeyCode.R)
         {
-          if (holdMouse == true) holdMouse = false;
-          else holdMouse = true;
+          if (holdMouse == true)
+            holdMouse = false;
+          else
+            holdMouse = true;
         }
         if (event.getCode() == KeyCode.Z) // puts the player on the "ground"
         {
@@ -763,7 +770,7 @@ public class Game extends Application
     running = true;
     root.getChildren().add(world);
     world.getTransforms().add(new Scale(scaleVal, scaleVal, scaleVal));
-    house = new RoomGenerator(mapW, mapH);
+    house = new HouseBuilder(mapW, mapH);
     tiles = house.getMap();
 
     drawMap();
@@ -778,7 +785,8 @@ public class Game extends Application
     root.getChildren().add(world);
     world.getTransforms().add(new Scale(scaleVal, scaleVal, scaleVal));
 
-    house = new RoomGenerator(mapW, mapH);
+//    house = new RoomGenerator(mapW, mapH);
+    house = new HouseBuilder(mapW, mapH);
     tiles = house.getMap();
 
     drawMap();
@@ -788,7 +796,8 @@ public class Game extends Application
     makeSoundClips();
 
     theScene = new Scene(root, windowX, windowY, true);
-    Stop[] stops = new Stop[] { new Stop(0, Color.RED), new Stop(1, Color.ORANGE) };
+    Stop[] stops = new Stop[]
+    { new Stop(0, Color.RED), new Stop(1, Color.ORANGE) };
     LinearGradient lg = new LinearGradient(0, 1, 0, 0, true, CycleMethod.NO_CYCLE, stops);
     theScene.setFill(lg);
     theScene.setCamera(camera);
@@ -809,9 +818,11 @@ public class Game extends Application
   {
 
     double nextX, nextZ;
+    int i = 0;
 
     public void handle(long now)
     {
+      System.out.println(i++);
       // pressing esc key changes this boolean, effectively pauses the game and
       // temporarily changes the camera angle;
       if (running)
