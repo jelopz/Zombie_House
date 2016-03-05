@@ -58,7 +58,7 @@ import javafx.stage.Stage;
 
 public class Game extends Application
 {
-  public static boolean debug = false;
+  public static boolean debug = true;
 
   public static final double TILE_SIZE = 56; // number of subdivisions in
   // tile
@@ -321,8 +321,15 @@ public class Game extends Application
       {
         System.out.println("Start Game");
         makeNewMap();
-        camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
-        cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+        if(debug)
+        {
+        	camera.setTranslateZ(-1000);
+        }
+        else
+        {      
+          camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+          cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+        }
       }
       else if (startXform.getChildren().get(1) == res.getIntersectedNode())
       {
