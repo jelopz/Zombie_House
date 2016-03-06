@@ -317,16 +317,16 @@ public class HouseBuilder
         {
           if (rand.nextInt(2) == 0)
           {
-            house[i][j] = new Tile('R');
+            house[i][j] = new Tile('R', j, i);
           }
           else
           {
-            house[i][j] = new Tile('L');
+            house[i][j] = new Tile('L', j, i);
           }
         }
         else
         {
-          house[i][j] = new Tile('-');
+          house[i][j] = new Tile('-', j, i);
         }
       }
     }
