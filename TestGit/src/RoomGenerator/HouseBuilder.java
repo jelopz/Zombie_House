@@ -44,14 +44,14 @@ public class HouseBuilder
 
     startQuadrant = makePlayerSpawnPoint();
 
-//    if (startQuadrant == 0)
-//    {
-//      makeEndPoint(3);
-//    }
-//    else
-//    {
-//      makeEndPoint(startQuadrant - 1);
-//    }
+    if (startQuadrant == 0)
+    {
+      makeEndPoint(3);
+    }
+    else
+    {
+      makeEndPoint(startQuadrant - 1);
+    }
 
     if (Game.debug)
     {
@@ -260,23 +260,6 @@ public class HouseBuilder
     int width = mapWidth / 2 - 1;
     int height = mapHeight / 2 - 1;
 
-//    if (endQuadrant == 0)
-//    {
-//
-//    }
-//    if (endQuadrant == 1)
-//    {
-//
-//    }
-//    if (endQuadrant == 2)
-//    {
-//
-//    }
-//    else if (endQuadrant == 3)
-//    {
-//
-//    }
-
     boolean found = false;
 
     while (!found)
@@ -284,71 +267,82 @@ public class HouseBuilder
       // decides which one of the two outer walls to use
       if (rand.nextInt(2) == 0) 
       {
-        if (endQuadrant == 0)
+        if (endQuadrant == 0 || endQuadrant == 1)
         {
-          for(int i = 0; i < startX + width; i++)
+          for(int i = startX; i < startX + width; i++)
           {
             if (rand.nextDouble() < .3)
             {
-              house[0][i].setTileType('E');
-              found = true;
+              if(house[1][i].getTileType() != 'X') //checks to make sure exit isn't behind a wall.
+              {       
+                house[0][i].setTileType('E');
+                found = true;
+              }
+            }
+            if (found)
+            {
+            	break;
             }
           }
         }
-        if (endQuadrant == 1)
+        else if (endQuadrant == 2 || endQuadrant == 3)
         {
-          for(int i = 0; i < startX + width; i++)
+          for(int i = startX; i < startX + width; i++)
           {
             if (rand.nextDouble() < .3)
             {
-              house[0][i].setTileType('E');
-              found = true;
+              if(house[startY+height-1][i].getTileType() != 'X')
+              {       
+                house[startY+height][i].setTileType('E');
+                found = true;
+              }
             }
-          }
-        }
-        if (endQuadrant == 2)
-        {
-          for(int i = 0; i < startX + width; i++)
-          {
-            if (rand.nextDouble() < .3)
+            if (found)
             {
-              house[0][i].setTileType('E');
-              found = true;
-            }
-          }
-        }
-        else if (endQuadrant == 3)
-        {
-          for(int i = 0; i < startX + width; i++)
-          {
-            if (rand.nextDouble() < .3)
-            {
-              house[0][i].setTileType('E');
-              found = true;
+            	break;
             }
           }
         }
       }
       else
       {
-        if (endQuadrant == 0)
+        if (endQuadrant == 0 || endQuadrant == 3)
         {
-
+            for(int i = startY; i < startY + height; i++)
+            {
+              if (rand.nextDouble() < .3)
+              {
+              	if(house[i][startX+width-1].getTileType() != 'X')
+              	{       
+                  house[i][startX+width].setTileType('E');
+                  found = true;
+              	}
+              }
+              if (found)
+              {
+              	break;
+              }
+            }
         }
-        if (endQuadrant == 1)
+        else if (endQuadrant == 1 || endQuadrant == 2)
         {
-
-        }
-        if (endQuadrant == 2)
-        {
-
-        }
-        else if (endQuadrant == 3)
-        {
-
+            for(int i = startY; i < startY + height; i++)
+            {
+              if (rand.nextDouble() < .3)
+              {
+            	if(house[i][1].getTileType() != 'X')
+            	{               
+            	  house[i][0].setTileType('E');
+                  found = true;
+            	}
+              }
+              if (found)
+              {
+              	break;
+              }
+            }
         }
       }
-
     }
   }
 
