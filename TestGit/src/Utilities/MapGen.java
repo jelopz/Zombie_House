@@ -117,7 +117,7 @@ public class MapGen
 
           tile.setTranslateY(0.5);
 
-          if (j < mapW / 2 && i < mapH / 2)
+          if ((j < mapW / 2 && i < mapH / 2))
           {
             tile.setMaterial(bricks);
           }
@@ -132,6 +132,25 @@ public class MapGen
           else if (j > mapW / 2 && i < mapH / 2)
           {
             tile.setMaterial(blueBricks);
+          }
+          else
+          {
+        	  if(i < mapH / 2)
+        	  {
+        		  if(j+2 > mapW)
+        		  {
+        		    tile.setMaterial(blueBricks);
+        		  }
+        		  else
+        		  {
+        			  tile.setMaterial(bricks);
+        		  }
+        		  
+        	  }
+        	  else
+        	  {
+        		  tile.setMaterial(greenBricks);
+        	  }
           }
 
         }
