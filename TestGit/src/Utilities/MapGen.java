@@ -139,17 +139,24 @@ public class MapGen
         	  {
         		  if(j+2 > mapW)
         		  {
-        		    tile.setMaterial(blueBricks);
+        		    tile.setMaterial(bricks);
         		  }
         		  else
         		  {
-        			  tile.setMaterial(bricks);
+        			tile.setMaterial(blueBricks);
         		  }
         		  
         	  }
         	  else
         	  {
-        		  tile.setMaterial(greenBricks);
+        		  if(j < mapW/ 2)
+        		  {
+        	        tile.setMaterial(yellowBricks);
+        		  }
+        		  else
+        		  {
+        		    tile.setMaterial(greenBricks);
+        		  }
         	  }
           }
 
