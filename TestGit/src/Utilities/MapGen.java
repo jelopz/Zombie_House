@@ -15,6 +15,7 @@ import CPU.LineWalk;
 import CPU.RandomWalk;
 import CPU.Zombie;
 import RoomGenerator.HouseBuilder;
+import RoomGenerator.Tile;
 import ZombieBuilder.ZombieBuilder;
 import application.Xform;
 import javafx.scene.Group;
@@ -28,12 +29,9 @@ import javafx.scene.shape.DrawMode;
 public class MapGen
 {
 
-
-  public void drawMap(HouseBuilder house, double TILE_SIZE, double WALL_HEIGHT, char[][] tiles, int mapW, int mapH, ArrayList<Zombie> zombies,
-      boolean first, boolean esc, boolean collisions, boolean debug,Xform world, Xform mapXform, Xform playerXform)
+  public void drawMap(HouseBuilder house, double TILE_SIZE, double WALL_HEIGHT, Tile[][] tiles, int mapW, int mapH, ArrayList<Zombie> zombies, boolean first, boolean esc, boolean collisions, boolean debug, Xform world, Xform mapXform, Xform playerXform)
   {
 
- 
     // Material for floors and ceilings//
     PhongMaterial pathable = new PhongMaterial();
     pathable.setDiffuseColor(Color.WHITE);
@@ -105,10 +103,8 @@ public class MapGen
           ceiling.setTranslateZ(j * TILE_SIZE);
           ceiling.setMaterial(bricks);
         }
-        if (tiles[i][j] == '-' || tiles[i][j] == 'H' || tiles[i][j] == 'D')// make
-                                                                           // a
-                                                                           // floor
-                                                                           // tile//
+        if (tiles[i][j].getTileType() == '-' || tiles[i][j].getTileType() == 'H' ||
+            tiles[i][j].getTileType() == 'D')// make a floor tile
         {
           if (!debug)
           {
@@ -148,7 +144,7 @@ public class MapGen
         // tile.setMaterial(pathable);
         // endPointTile = new Point(j, i);
         // }
-        else if (tiles[i][j] == 'P')
+        else if (tiles[i][j].getTileType() == 'P')
         {
           if (!debug)
           {
@@ -172,7 +168,7 @@ public class MapGen
           }
 
         }
-        else if (tiles[i][j] == 'R' || tiles[i][j] == 'L')
+        else if (tiles[i][j].getTileType() == 'R' || tiles[i][j].getTileType() == 'L')
         {
           if (!debug)
           {
@@ -185,38 +181,38 @@ public class MapGen
           tile.setMaterial(zombieSpawn);
           if (first)
           {
-             // Code for making the zombie model
-             Group zomb = ZombieBuilder.getZombie(i, j, TILE_SIZE, tiles[i][j]);
-            
-             if (tiles[i][j] == 'R')
-             {
-             zombies.add(new RandomWalk(j, i, zomb));
-             }
-             else // tiles[i][j] == 'L'
-             {
-             zombies.add(new LineWalk(j, i, zomb));
-             }
-             zomb.setTranslateX(i* TILE_SIZE);
-             zomb.setTranslateZ(j* TILE_SIZE);
-             zomb.setTranslateY(.5);
+            // Code for making the zombie model
+            Group zomb = ZombieBuilder.getZombie(i, j, TILE_SIZE, tiles[i][j].getTileType());
 
-//             //Zombie model is a cylinder
-//            Cylinder c = new Cylinder(TILE_SIZE / 4, WALL_HEIGHT);
-//            Group zomb = new Group(c);
-//
-//            if (tiles[i][j] == 'R')
-//            {
-//              c.setMaterial(notPathable);
-//              zombies.add(new RandomWalk(j, i, zomb));
-//            }
-//            else // tiles[i][j] == 'L'
-//            {
-//              c.setMaterial(zombieSpawn);
-//              zombies.add(new LineWalk(j, i, zomb));
-//            }
-//            zomb.setTranslateX(i * TILE_SIZE);
-//            zomb.setTranslateZ(j * TILE_SIZE);
-//            zomb.setTranslateY(WALL_HEIGHT / 2);
+            if (tiles[i][j].getTileType() == 'R')
+            {
+              zombies.add(new RandomWalk(j, i, zomb));
+            }
+            else // tiles[i][j] == 'L'
+            {
+              zombies.add(new LineWalk(j, i, zomb));
+            }
+            zomb.setTranslateX(i * TILE_SIZE);
+            zomb.setTranslateZ(j * TILE_SIZE);
+            zomb.setTranslateY(.5);
+
+            // //Zombie model is a cylinder
+            // Cylinder c = new Cylinder(TILE_SIZE / 4, WALL_HEIGHT);
+            // Group zomb = new Group(c);
+            //
+            // if (tiles[i][j] == 'R')
+            // {
+            // c.setMaterial(notPathable);
+            // zombies.add(new RandomWalk(j, i, zomb));
+            // }
+            // else // tiles[i][j] == 'L'
+            // {
+            // c.setMaterial(zombieSpawn);
+            // zombies.add(new LineWalk(j, i, zomb));
+            // }
+            // zomb.setTranslateX(i * TILE_SIZE);
+            // zomb.setTranslateZ(j * TILE_SIZE);
+            // zomb.setTranslateY(WALL_HEIGHT / 2);
 
             world.getChildren().add(zomb);
           }
@@ -231,8 +227,6 @@ public class MapGen
       }
     }
 
-   
-
     if (first)
     {
       world.getChildren().add(mapXform);
@@ -242,7 +236,7 @@ public class MapGen
       playerXform.t.setZ(house.getPlayerSpawnPoint().x * TILE_SIZE);
       playerXform.t.setX(house.getPlayerSpawnPoint().y * TILE_SIZE);
     }
-    
+
     mapXform.setVisible(true);
   }
 }

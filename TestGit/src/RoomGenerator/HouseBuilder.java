@@ -14,7 +14,7 @@ public class HouseBuilder
 
   // Arraylist of each quadrants rooms and halls
 
-  private char[][] house; // The map, house[y][x]
+  private Tile[][] house; // The map, house[y][x]
 
   private int mapWidth;
   private int mapHeight;
@@ -30,7 +30,7 @@ public class HouseBuilder
     mapWidth = w;
     mapHeight = h;
 
-    house = new char[h][w];
+    house = new Tile[h][w];
 
     rand = new Random();
     cleanMap();
@@ -49,7 +49,7 @@ public class HouseBuilder
     }
   }
 
-  public char[][] getMap()
+  public Tile[][] getMap()
   {
     return house;
   }
@@ -65,7 +65,7 @@ public class HouseBuilder
    */
   public boolean isPointLegal(int x, int y)
   {
-    if (house[y][x] != 'X')
+    if (house[y][x].getTileType() != 'X')
     {
       return true;
     }
@@ -74,7 +74,7 @@ public class HouseBuilder
 
   public boolean isEndPoint(int x, int y)
   {
-    if (house[y][x] == 'E')
+    if (house[y][x].getTileType() == 'E')
     {
       return true;
     }
@@ -124,20 +124,20 @@ public class HouseBuilder
     if (!isVertical)
     {
       int d = rand.nextInt(c.height - 3) + c.y + 1;
-      house[d][hallStartPoint - 1] = 'D';
-      house[d + 1][hallStartPoint - 1] = 'D';
+      house[d][hallStartPoint - 1].setTileType('D');
+      house[d + 1][hallStartPoint - 1].setTileType('D');
       d = rand.nextInt(c.height - 3) + c.y + 1;
-      house[d][hallStartPoint + 3] = 'D';
-      house[d + 1][hallStartPoint + 3] = 'D';
+      house[d][hallStartPoint + 3].setTileType('D');
+      house[d + 1][hallStartPoint + 3].setTileType('D');
     }
     else
     {
       int d = rand.nextInt(c.width - 1) + c.x;
-      house[hallStartPoint - 1][d] = 'D';
-      house[hallStartPoint - 1][d + 1] = 'D';
+      house[hallStartPoint - 1][d].setTileType('D');
+      house[hallStartPoint - 1][d + 1].setTileType('D');
       d = rand.nextInt(c.width - 1) + c.x;
-      house[hallStartPoint + 3][d] = 'D';
-      house[hallStartPoint + 3][d + 1] = 'D';
+      house[hallStartPoint + 3][d].setTileType('D');
+      house[hallStartPoint + 3][d + 1].setTileType('D');
     }
   }
 
@@ -166,16 +166,16 @@ public class HouseBuilder
       }
       for (int y = c.y; y < (c.y + c.height); y++)
       {
-        if (house[y][r - 1] != 'D' && house[y][r + 3] != 'D')
+        if (house[y][r - 1].getTileType() != 'D' && house[y][r + 3].getTileType() != 'D')
         {
-          house[y][r - 1] = 'X';
-          house[y][r + 3] = 'X';
+          house[y][r - 1].setTileType('X');
+          house[y][r + 3].setTileType('X');
         }
         for (int x = r; x < r + 3; x++)
         {
-          if (house[y][x] != 'X' && house[y][x] != 'D')
+          if (house[y][x].getTileType() != 'X' && house[y][x].getTileType() != 'D')
           {
-            house[y][x] = 'H';
+            house[y][x].setTileType('H');
           }
         }
       }
@@ -206,15 +206,15 @@ public class HouseBuilder
       {
         for (int x = c.x; x < (c.x + c.width); x++)
         {
-          if (house[y][x] != 'X' && house[y][x] != 'D')
+          if (house[y][x].getTileType() != 'X' && house[y][x].getTileType() != 'D')
           {
-            house[y][x] = 'H';
+            house[y][x].setTileType('H');
           }
 
-          if (house[r - 1][x] != 'D' && house[r + 3][x] != 'D')
+          if (house[r - 1][x].getTileType() != 'D' && house[r + 3][x].getTileType() != 'D')
           {
-            house[r - 1][x] = 'X';
-            house[r + 3][x] = 'X';
+            house[r - 1][x].setTileType('X');
+            house[r + 3][x].setTileType('X');
           }
         }
       }
@@ -229,16 +229,16 @@ public class HouseBuilder
 
     for (int i = 0; i < mapHeight; i++)
     {
-      house[i][mapWidth / 2] = 'X';
-      house[i][0] = 'X';
-      house[i][mapWidth - 1] = 'X';
+      house[i][mapWidth / 2].setTileType('X');
+      house[i][0].setTileType('X');
+      house[i][mapWidth - 1].setTileType('X');
     }
 
     for (int i = 0; i < mapWidth; i++)
     {
-      house[mapHeight / 2][i] = 'X';
-      house[0][i] = 'X';
-      house[mapHeight - 1][i] = 'X';
+      house[mapHeight / 2][i].setTileType('X');
+      house[0][i].setTileType('X');
+      house[mapHeight - 1][i].setTileType('X');
     }
   }
 
@@ -284,12 +284,12 @@ public class HouseBuilder
       {
         for (int k = startX; k <= (startX + width); k++)
         {
-          if (house[j][k] == 'H')
+          if (house[j][k].getTileType() == 'H')
           {
             if (rand.nextDouble() < .9)
             {
-              house[j][k] = 'P';
-              playerSpawnPoint = new Point(k,j);
+              house[j][k].setTileType('P');
+              playerSpawnPoint = new Point(k, j);
               found = true;
             }
           }
@@ -317,16 +317,16 @@ public class HouseBuilder
         {
           if (rand.nextInt(2) == 0)
           {
-            house[i][j] = 'R';
+            house[i][j] = new Tile('R');
           }
           else
           {
-            house[i][j] = 'L';
+            house[i][j] = new Tile('L');
           }
         }
         else
         {
-          house[i][j] = '-';
+          house[i][j] = new Tile('-');
         }
       }
     }
@@ -338,7 +338,7 @@ public class HouseBuilder
     {
       for (int j = 0; j < mapWidth; j++)
       {
-        System.out.print(house[i][j]);
+        System.out.print(house[i][j].getTileType());
       }
       System.out.println();
     }

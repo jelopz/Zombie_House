@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import CPU.Zombie;
 import Hitbox.Hitbox;
 import RoomGenerator.HouseBuilder;
+import RoomGenerator.Tile;
 import Sound.Clip;
 import Utilities.MapGen;
 import javafx.animation.AnimationTimer;
@@ -117,7 +118,7 @@ public class Game extends Application
 
   private Hitbox playerHitbox;
 
-  private char[][] tiles;
+  private Tile[][] tiles;
 
   private boolean esc = false;
   private boolean first = true;
