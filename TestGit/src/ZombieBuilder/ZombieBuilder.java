@@ -51,7 +51,7 @@ public class ZombieBuilder
     MeshView[] meshViews = loadMeshViews();
     for (int t = 0; t < meshViews.length; t++)
     {
-      meshViews[t].setTranslateX(i );
+      meshViews[t].setTranslateX(i);
       meshViews[t].setTranslateZ(j);
       meshViews[t].setTranslateY(.5);
       meshViews[t].setScaleX(MODEL_SCALE_FACTOR);
