@@ -20,6 +20,7 @@ public class HouseBuilder
   private int mapHeight;
 
   private Point playerSpawnPoint;
+  private int startQuadrant;
 
   Random rand;
 
@@ -41,7 +42,16 @@ public class HouseBuilder
       partitionMap(i);
     }
 
-    makePlayerSpawnPoint();
+    startQuadrant = makePlayerSpawnPoint();
+
+//    if (startQuadrant == 0)
+//    {
+//      makeEndPoint(3);
+//    }
+//    else
+//    {
+//      makeEndPoint(startQuadrant - 1);
+//    }
 
     if (Game.debug)
     {
@@ -242,35 +252,166 @@ public class HouseBuilder
     }
   }
 
+  private void makeEndPoint(int endQuadrant)
+  {
+    Point quadrantStart = findQuadrantStartPoint(endQuadrant);
+    int startY = quadrantStart.y;
+    int startX = quadrantStart.x;
+    int width = mapWidth / 2 - 1;
+    int height = mapHeight / 2 - 1;
+
+//    if (endQuadrant == 0)
+//    {
+//
+//    }
+//    if (endQuadrant == 1)
+//    {
+//
+//    }
+//    if (endQuadrant == 2)
+//    {
+//
+//    }
+//    else if (endQuadrant == 3)
+//    {
+//
+//    }
+
+    boolean found = false;
+
+    while (!found)
+    {
+      // decides which one of the two outer walls to use
+      if (rand.nextInt(2) == 0) 
+      {
+        if (endQuadrant == 0)
+        {
+          for(int i = 0; i < startX + width; i++)
+          {
+            if (rand.nextDouble() < .3)
+            {
+              house[0][i].setTileType('E');
+              found = true;
+            }
+          }
+        }
+        if (endQuadrant == 1)
+        {
+          for(int i = 0; i < startX + width; i++)
+          {
+            if (rand.nextDouble() < .3)
+            {
+              house[0][i].setTileType('E');
+              found = true;
+            }
+          }
+        }
+        if (endQuadrant == 2)
+        {
+          for(int i = 0; i < startX + width; i++)
+          {
+            if (rand.nextDouble() < .3)
+            {
+              house[0][i].setTileType('E');
+              found = true;
+            }
+          }
+        }
+        else if (endQuadrant == 3)
+        {
+          for(int i = 0; i < startX + width; i++)
+          {
+            if (rand.nextDouble() < .3)
+            {
+              house[0][i].setTileType('E');
+              found = true;
+            }
+          }
+        }
+      }
+      else
+      {
+        if (endQuadrant == 0)
+        {
+
+        }
+        if (endQuadrant == 1)
+        {
+
+        }
+        if (endQuadrant == 2)
+        {
+
+        }
+        else if (endQuadrant == 3)
+        {
+
+        }
+      }
+
+    }
+  }
+
+  private Point findQuadrantStartPoint(int quadrant)
+  {
+    int startX = 0;
+    int startY = 0;
+    int width = mapWidth / 2 - 1;
+    int height = mapHeight / 2 - 1;
+
+    if (quadrant == 0)
+    {
+      startX = mapWidth / 2 + 1;
+      startY += 1;
+    }
+    if (quadrant == 1)
+    {
+      startX += 1;
+      startY += 1;
+    }
+    if (quadrant == 2)
+    {
+      startX += 1;
+      startY = mapHeight / 2 + 1;
+    }
+    else if (quadrant == 3)
+    {
+      startX = mapWidth / 2 + 1;
+      startY = mapHeight / 2 + 1;
+    }
+
+    return new Point(startX, startY);
+  }
+
   /*
    * Randomly chooses 1 of the 4 quadrants, and denotes a spawn in any point in
    * a hallway
    */
-  private void makePlayerSpawnPoint()
+  private int makePlayerSpawnPoint()
   {
-    int i = rand.nextInt(4);
+    int spawnQ = rand.nextInt(4);
 
     int startX = 0;
     int startY = 0;
     int width = mapWidth / 2 - 1;
     int height = mapHeight / 2 - 1;
 
-    if (i == 0)
+    if (spawnQ == 0)
     {
       startX = mapWidth / 2 + 1;
       startY += 1;
     }
-    if (i == 1)
+    if (spawnQ == 1)
     {
       startX += 1;
       startY += 1;
     }
-    if (i == 2)
+    if (spawnQ == 2)
     {
       startX += 1;
       startY = mapHeight / 2 + 1;
     }
-    else if (i == 3)
+    else if (spawnQ == 3)
     {
       startX = mapWidth / 2 + 1;
       startY = mapHeight / 2 + 1;
@@ -286,7 +427,7 @@ public class HouseBuilder
         {
           if (house[j][k].getTileType() == 'H')
           {
-            if (rand.nextDouble() < .9)
+            if (rand.nextDouble() < .3)
             {
               house[j][k].setTileType('P');
               playerSpawnPoint = new Point(k, j);
@@ -305,6 +446,8 @@ public class HouseBuilder
       }
 
     }
+
+    return spawnQ;
   }
 
   private void cleanMap()
