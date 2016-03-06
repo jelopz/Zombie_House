@@ -334,15 +334,17 @@ public class HouseBuilder
       // decides which one of the two outer walls to use
       if (rand.nextInt(2) == 0) 
       {
+    	  System.out.println("yes");
         if (endQuadrant == 0 || endQuadrant == 1)
         {
-          for(int i = startX; i < startX + width; i++)
+          for(int i = startX; i < startX + width - 1; i++)
           {
             if (rand.nextDouble() < .3)
             {
-              if(house[1][i].getTileType() != 'X') //checks to make sure exit isn't behind a wall.
+              if(house[1][i].getTileType() != 'X' && house[1][i+1].getTileType() != 'X') //checks to make sure exit isn't behind a wall.
               {       
                 house[0][i].setTileType('E');
+                house[0][i+1].setTileType('E');
                 found = true;
               }
             }
@@ -354,13 +356,14 @@ public class HouseBuilder
         }
         else if (endQuadrant == 2 || endQuadrant == 3)
         {
-          for(int i = startX; i < startX + width; i++)
+          for(int i = startX; i < startX + width - 1; i++)
           {
             if (rand.nextDouble() < .3)
             {
-              if(house[startY+height-1][i].getTileType() != 'X')
+              if(house[startY+height-1][i].getTileType() != 'X' && house[startY+height-1][i+1].getTileType() != 'X')
               {       
                 house[startY+height][i].setTileType('E');
+                house[startY+height][i+1].setTileType('E');
                 found = true;
               }
             }
@@ -379,9 +382,10 @@ public class HouseBuilder
             {
               if (rand.nextDouble() < .3)
               {
-              	if(house[i][startX+width-1].getTileType() != 'X')
+              	if(house[i][startX+width-1].getTileType() != 'X' && house[i+1][startX+width-1].getTileType() != 'X')
               	{       
                   house[i][startX+width].setTileType('E');
+                  house[i+1][startX+width].setTileType('E');
                   found = true;
               	}
               }
@@ -397,9 +401,10 @@ public class HouseBuilder
             {
               if (rand.nextDouble() < .3)
               {
-            	if(house[i][1].getTileType() != 'X')
+            	if(house[i][1].getTileType() != 'X' && house[i+1][0].getTileType() != 'E')
             	{               
             	  house[i][0].setTileType('E');
+            	  house[i+1][0].setTileType('E');
                   found = true;
             	}
               }
