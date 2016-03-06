@@ -9,6 +9,7 @@
 
 package Utilities;
 
+import java.awt.Point;
 import java.util.ArrayList;
 
 import CPU.LineWalk;
@@ -17,6 +18,7 @@ import CPU.Zombie;
 import RoomGenerator.HouseBuilder;
 import RoomGenerator.Tile;
 import ZombieBuilder.ZombieBuilder;
+import application.Game;
 import application.Xform;
 import javafx.scene.CacheHint;
 import javafx.scene.Group;
@@ -133,18 +135,18 @@ public class MapGen
           }
 
         }
-        // else if (tiles[i][j] == 'E')
-        // {
-        // if (!debug)
-        // {
-        // ceiling.setTranslateY(WALL_HEIGHT + .5);
-        // mapXform.getChildren().add(ceiling);
-        // }
-        //
-        // tile.setTranslateY(0.5);
-        // tile.setMaterial(pathable);
-        // endPointTile = new Point(j, i);
-        // }
+         else if (tiles[i][j].getTileType() == 'E')
+         {
+         if (!debug)
+         {
+         ceiling.setTranslateY(WALL_HEIGHT + .5);
+         mapXform.getChildren().add(ceiling);
+         }
+        
+         tile.setTranslateY(0.5);
+         tile.setMaterial(pathable);
+         Game.endPointTile = new Point(j, i);
+         }
         else if (tiles[i][j].getTileType() == 'P')
         {
           if (!debug)

@@ -111,6 +111,7 @@ public class Game extends Application
   private static final MapGen MG = new MapGen();
 
   private HouseBuilder house; // Our House
+  public static Point endPointTile;
 
   private Scene theScene;
 
