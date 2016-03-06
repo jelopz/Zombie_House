@@ -21,6 +21,7 @@ public class HouseBuilder
 
   private Point playerSpawnPoint;
   private int startQuadrant;
+  private int endQuadrant;
 
   Random rand;
 
@@ -43,15 +44,16 @@ public class HouseBuilder
     }
 
     startQuadrant = makePlayerSpawnPoint();
-
-    if (startQuadrant == 0)
+    endQuadrant = startQuadrant - 1;
+    
+    if(startQuadrant == 0)
     {
-      makeEndPoint(3);
+      endQuadrant = 3;
     }
-    else
-    {
-      makeEndPoint(startQuadrant - 1);
-    }
+    
+    makeEndPoint(endQuadrant);
+    
+    connectQuadrants(startQuadrant);
 
     if (Game.debug)
     {
@@ -91,6 +93,71 @@ public class HouseBuilder
     return false;
   }
 
+	/*
+	 * Recursive method to connect all 4 quadrants together. Given a quadrant,
+	 * makes a door to the quadrant directly counter clockwise to that quadrant.
+	 * If the given quadrant is the quadrant with the end point, stop. We don't
+	 * want to make a door directly from the player quadrant to the final
+	 * quadrant.
+	 */
+  private void connectQuadrants(int quadrant)
+  {
+	  System.out.println(quadrant);
+	  if(quadrant == endQuadrant) //we finished our path
+	  {
+		  return;
+	  }
+	  
+	  Point quadrantStart = findQuadrantStartPoint(quadrant);
+	  int startY = quadrantStart.y;
+	  int startX = quadrantStart.x;
+	  int width = mapWidth / 2 - 1;
+	  int height = mapHeight / 2 - 1;
+	  boolean done = false;
+	  
+	  if(quadrant == 0 || quadrant == 2)
+	  {
+	    for(int i = startY; i < startY+height-1; i++)
+	    {
+          if (rand.nextDouble() < .3)
+          {
+		    house[i][mapWidth/2].setTileType('D');
+		    house[i+1][mapWidth/2].setTileType('D');
+		    done = true;
+          }
+          if(done)
+          {
+        	break;
+          }
+	    }
+	  }
+	  else if(quadrant == 1 || quadrant == 3)
+	  {
+		for(int i = startX; i < startX+width; i++)
+	    {
+	      if (rand.nextDouble() < .3)
+	      {
+		    house[mapHeight/2][i].setTileType('D');
+		    house[mapHeight/2][i+1].setTileType('D');
+		    done = true;
+	      }
+	      if(done)
+	      {
+	    	break;
+	      }
+		}
+	  }
+	  
+	  if(quadrant == 4)
+	  {
+	    connectQuadrants(0);
+	  }
+	  else
+	  {
+	    connectQuadrants(quadrant+1);
+	  }
+  }
+  
   private void partitionMap(int quadrant)
   {
     int startX = 0;

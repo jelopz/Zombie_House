@@ -60,7 +60,7 @@ import javafx.stage.Stage;
 
 public class Game extends Application
 {
-  public static boolean debug = true;
+  public static boolean debug = false;
 
   public static final double TILE_SIZE = 56; // number of subdivisions in
   // tile
