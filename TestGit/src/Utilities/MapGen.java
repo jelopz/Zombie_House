@@ -18,6 +18,7 @@ import RoomGenerator.HouseBuilder;
 import RoomGenerator.Tile;
 import ZombieBuilder.ZombieBuilder;
 import application.Xform;
+import javafx.scene.CacheHint;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -195,6 +196,8 @@ public class MapGen
             zomb.setTranslateX(i * TILE_SIZE);
             zomb.setTranslateZ(j * TILE_SIZE);
             zomb.setTranslateY(.5);
+            zomb.setCache(true);
+            zomb.setCacheHint(CacheHint.SPEED);
 
             // //Zombie model is a cylinder
             // Cylinder c = new Cylinder(TILE_SIZE / 4, WALL_HEIGHT);
@@ -223,6 +226,8 @@ public class MapGen
           tile.setTranslateY(WALL_HEIGHT / 2);
           tile.setMaterial(bricks);
         }
+        tile.setCache(true);
+        tile.setCacheHint(CacheHint.SPEED);
         mapXform.getChildren().add(tile);
       }
     }
