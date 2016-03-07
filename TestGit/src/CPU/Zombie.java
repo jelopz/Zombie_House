@@ -3,8 +3,10 @@ package CPU;
 import java.awt.Point;
 import java.util.Random;
 import Hitbox.Hitbox;
+import Pathfinding.Path;
 import Pathfinding.Pathfinder;
 import RoomGenerator.HouseBuilder;
+import RoomGenerator.Tile;
 import application.Game;
 import javafx.scene.Group;
 
@@ -18,6 +20,9 @@ public abstract class Zombie
   protected boolean isStuck;
   protected boolean smellsPlayer;
   protected Pathfinder pathfinder;
+
+  protected Path currentPath;
+
   private double radius;
 
   public Zombie(int x, int y, Group m)
@@ -53,19 +58,16 @@ public abstract class Zombie
 
   abstract public void move(HouseBuilder house);
 
-//  protected void smell(double playerZ, double playerX)
-//  {
-//    double d = pathfinder.findEucl(playerZ, playerX, model.getTranslateZ(), model.getTranslateX());
-//
-//    if (d/Game.TILE_SIZE < 15)
-//    {
-//      smellsPlayer = true;
-//    }
-//    else
-//    {
-//      smellsPlayer = false;
-//    }
-//  }
+  protected void smell(Tile[][] house, double playerZ, double playerX)
+  {
+    int sX = (int) (model.getTranslateZ() / Game.TILE_SIZE); // starting X
+    int sY = (int) (model.getTranslateX() / Game.TILE_SIZE); // starting Y
+
+    int tX = (int) (playerZ / Game.TILE_SIZE); // target X
+    int tY = (int) (playerX / Game.TILE_SIZE); // target Y
+
+    pathfinder.init(new Point(sX,sY), new Point(tX, tY), house);
+  }
 
   protected void findNextAngle(HouseBuilder house)
   {

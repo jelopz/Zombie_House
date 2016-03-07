@@ -17,12 +17,20 @@ public class LineWalk extends Zombie
 
   @Override
   public void determineNextMove(HouseBuilder house, double playerZ, double playerX)
-  {    
+  {
     double d = pathfinder.findEucl(playerZ, playerX, model.getTranslateZ(), model.getTranslateX());
-    
-    if(d/Game.TILE_SIZE < 15)
+
+    if (d / Game.TILE_SIZE < 15)
     {
-      System.out.println("CLOSE ENOUGH TO MAYBE SMELL");
+      smell(house.getMap(), playerZ, playerX);
+
+      if (pathfinder.doesPathExist())
+      {
+        if (Game.debug)
+        {
+          System.out.println("CLOSE ENOUGH TO SMELL " + this);
+        }
+      }
     }
 
     if (!hasAngle) // has nowhere to go

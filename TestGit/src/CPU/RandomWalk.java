@@ -19,7 +19,15 @@ public class RandomWalk extends Zombie
     
     if(d/Game.TILE_SIZE < 15)
     {
-      System.out.println("CLOSE ENOUGH TO MAYBE SMELL");
+      smell(house.getMap(), playerZ, playerX);
+      
+      if(pathfinder.doesPathExist())
+      {
+        if(Game.debug)
+        {
+          System.out.println("CLOSE ENOUGH TO SMELL   " + this);
+        }
+      }
     }
     
     findNextAngle(house);
