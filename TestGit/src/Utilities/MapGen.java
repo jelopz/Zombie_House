@@ -106,8 +106,10 @@ public class MapGen
           ceiling.setTranslateZ(j * TILE_SIZE);
           ceiling.setMaterial(bricks);
         }
-        if (tiles[i][j].getTileType() == '-' || tiles[i][j].getTileType() == 'H' ||
-            tiles[i][j].getTileType() == 'D')// make a floor tile
+        if (tiles[i][j].getTileType() == '-' || tiles[i][j].getTileType() == 'H' || tiles[i][j].getTileType() == 'D')// make
+                                                                                                                     // a
+                                                                                                                     // floor
+                                                                                                                     // tile
         {
           if (!debug)
           {
@@ -135,44 +137,29 @@ public class MapGen
           }
           else
           {
-        	  if(i < mapH / 2)
-        	  {
-        		  if(j+2 > mapW)
-        		  {
-        		    tile.setMaterial(bricks);
-        		  }
-        		  else
-        		  {
-        			tile.setMaterial(blueBricks);
-        		  }
-        		  
-        	  }
-        	  else
-        	  {
-        		  if(j < mapW/ 2)
-        		  {
-        	        tile.setMaterial(yellowBricks);
-        		  }
-        		  else
-        		  {
-        		    tile.setMaterial(greenBricks);
-        		  }
-        	  }
+            if (i < (mapH / 2) + 1 && j < (mapW / 2) + 1)
+            {
+              tile.setMaterial(bricks);
+            }
+            else
+            {
+                tile.setMaterial(greenBricks);
+            }
           }
 
         }
-         else if (tiles[i][j].getTileType() == 'E')
-         {
-         if (!debug)
-         {
-         ceiling.setTranslateY(WALL_HEIGHT + .5);
-         mapXform.getChildren().add(ceiling);
-         }
-        
-         tile.setTranslateY(0.5);
-         tile.setMaterial(pathable);
-         Game.endPointTile = new Point(j, i);
-         }
+        else if (tiles[i][j].getTileType() == 'E')
+        {
+          if (!debug)
+          {
+            ceiling.setTranslateY(WALL_HEIGHT + .5);
+            mapXform.getChildren().add(ceiling);
+          }
+
+          tile.setTranslateY(0.5);
+          tile.setMaterial(pathable);
+          Game.endPointTile = new Point(j, i);
+        }
         else if (tiles[i][j].getTileType() == 'P')
         {
           if (!debug)
