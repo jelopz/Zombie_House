@@ -4,6 +4,8 @@
 
 package RoomGenerator;
 
+import java.util.ArrayList;
+
 import Pathfinding.Path;
 
 public class Tile
@@ -54,12 +56,12 @@ public class Tile
     return y;
   }
 
-  public void printPath(Path p)
+  public void printPath(ArrayList<Tile> p)
   {
     if (parent != null)
     {
 //      System.out.println("( " + x + " , " + y + " ) , ");
-      p.addTileToPath(this);
+      p.add(this);
       parent.printPath(p);
     }
   }

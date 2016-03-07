@@ -12,9 +12,7 @@ package Utilities;
 import java.awt.Point;
 import java.util.ArrayList;
 
-import CPU.LineWalk;
-import CPU.RandomWalk;
-import CPU.Zombie;
+import CPU.OurZombie;
 import RoomGenerator.HouseBuilder;
 import RoomGenerator.Tile;
 import ZombieBuilder.ZombieBuilder;
@@ -32,7 +30,7 @@ import javafx.scene.shape.DrawMode;
 public class MapGen
 {
 
-  public void drawMap(HouseBuilder house, double TILE_SIZE, double WALL_HEIGHT, Tile[][] tiles, int mapW, int mapH, ArrayList<Zombie> zombies, boolean first, boolean esc, boolean collisions, boolean debug, Xform world, Xform mapXform, Xform playerXform)
+  public void drawMap(HouseBuilder house, double TILE_SIZE, double WALL_HEIGHT, Tile[][] tiles, int mapW, int mapH, ArrayList<OurZombie> zombies, boolean first, boolean esc, boolean collisions, boolean debug, Xform world, Xform mapXform, Xform playerXform)
   {
 
     // Material for floors and ceilings//
@@ -202,11 +200,11 @@ public class MapGen
 
             if (tiles[i][j].getTileType() == 'R')
             {
-              zombies.add(new RandomWalk(j, i, zomb));
+              zombies.add(new OurZombie(j, i, zomb));
             }
             else // tiles[i][j] == 'L'
             {
-              zombies.add(new LineWalk(j, i, zomb));
+              zombies.add(new OurZombie(j, i, zomb));
             }
             zomb.setTranslateX(i * TILE_SIZE);
             zomb.setTranslateZ(j * TILE_SIZE);

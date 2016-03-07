@@ -30,7 +30,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import CPU.Zombie;
+import CPU.OurZombie;
 import Hitbox.Hitbox;
 import RoomGenerator.HouseBuilder;
 import RoomGenerator.Tile;
@@ -60,7 +60,7 @@ import javafx.stage.Stage;
 
 public class Game extends Application
 {
-  public static boolean debug = false;
+  public static boolean debug = true;
 
   public static final double TILE_SIZE = 56; // number of subdivisions in
   // tile
@@ -106,7 +106,7 @@ public class Game extends Application
 
   private final PointLight light = new PointLight(Color.WHITE);
 
-  public static ArrayList<Zombie> zombies; // List of Zombies
+  public static ArrayList<OurZombie> zombies; // List of Zombies
 
   private static final MapGen MG = new MapGen();
 
@@ -529,22 +529,6 @@ public class Game extends Application
             holdMouse = true;
           scene.setCursor(Cursor.DEFAULT);
         }
-        if (event.getCode() == KeyCode.Z) // puts the player on the "ground"
-        {
-          cameraXform2.t.setY(0);
-        }
-        if (event.getCode() == KeyCode.X) // turns on and off collision
-                                          // detection
-        {
-          if (collisions)
-          {
-            collisions = false;
-          }
-          else
-          {
-            collisions = true;
-          }
-        }
       }
     });
     scene.setOnKeyReleased(new EventHandler<KeyEvent>()
@@ -845,21 +829,30 @@ public class Game extends Application
             }
           }
         }
-      }
 
-      if ((System.currentTimeMillis() - last) > 2000)
-      {
-        for (Zombie z : zombies) // tells zombies to figure out
-        // their next move
+        if ((System.currentTimeMillis() - last) > 2000)
         {
-          z.determineNextMove(house, playerXform.t.getTz(), playerXform.t.getTx());
+          if (debug)
+          {
+            System.out.println("------- new -----");
+          }
+          // tells zombies to figure out their next move
+          for (OurZombie z : zombies)
+          {
+            z.determineNextMove(house, playerXform.t.getTz(), playerXform.t.getTx());
+          }
+          // zombies.get(0).determineNextMove(house, playerXform.t.getTz(),
+          // playerXform.t.getTx());
+          last = System.currentTimeMillis();
         }
-        last = System.currentTimeMillis();
-      }
 
-      for (Zombie z : zombies)
-      {
-        z.move(house);
+        zombies.get(0).move(house);
+
+        for (OurZombie z : zombies)
+        {
+          z.move(house);
+        }
+
       }
     }
   }
