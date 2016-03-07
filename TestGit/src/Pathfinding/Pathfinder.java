@@ -14,15 +14,17 @@ import java.util.TreeSet;
 import RoomGenerator.HouseBuilder;
 import RoomGenerator.Tile;
 import RoomGenerator.TileComparator;
+import application.Game;
 
 public class Pathfinder
 {
   private boolean pathExists;
-  
+
   private Comparator<Tile> comparator;// for priority queue
   private PriorityQueue<Tile> frontier;// priority queue for search algorithm
   private HashSet<Tile> visitedNodes;
-  private Path path;
+  // private Path path;
+  private ArrayList<Tile> path;
 
   public Pathfinder()
   {
@@ -31,7 +33,7 @@ public class Pathfinder
 
   public void init(Point startingPoint, Point targetPoint, Tile[][] house)
   {
-    path = new Path();
+    path = new ArrayList<>();
     frontier = new PriorityQueue<>(10, comparator);
     visitedNodes = new HashSet<>();
 
@@ -42,17 +44,17 @@ public class Pathfinder
 
     Dijkstra(targetPoint, house);
   }
-  
+
   public boolean doesPathExist()
   {
     return pathExists;
   }
-  
-  public Path getPath()
+
+  public ArrayList<Tile> getPath()
   {
     return path;
   }
-  
+
   public double findEucl(double x1, double y1, double x2, double y2)
   {
     double xDiff = x1 - x2;
@@ -67,9 +69,22 @@ public class Pathfinder
 
   private void cleanVisitedList(Tile[][] house)
   {
-    for (Tile t : visitedNodes)
+    // for (Tile t : visitedNodes)
+    // {
+    // // t.reset();
+    // house[t.getY()][t.getX()] = new
+    // Tile(house[t.getY()][t.getX()].getTileType(), t.getX(), t.getY());
+    // }
+
+    Tile t;
+    for (int i = 0; i < 51; i++)
     {
-      t.reset();
+      for (int j = 0; j < 41; j++)
+      {
+        // t = house[i][j];
+        // house[i][j] = new Tile(t.getTileType(), t.getX(), t.getY());
+        house[i][j].reset();
+      }
     }
   }
 
@@ -137,7 +152,9 @@ public class Pathfinder
         neighbors[3] = null;
       }
 
-      if (currentNode.getTileType() == house[targetPoint.y][targetPoint.x].getTileType())
+      // if (currentNode.getTileType() ==
+      // house[targetPoint.y][targetPoint.x].getTileType())
+      if ((currentNode.getX() == targetPoint.x) && (currentNode.getY() == targetPoint.y))
       {
         found = true;
         break;
@@ -169,71 +186,69 @@ public class Pathfinder
     {
       // currentNode.printParents();
       currentNode.printPath(path);
-      System.out.println("found");
-      ArrayList<Tile> p1 = path.getPath();
-      Tile t;
 
-//      for (Tile q : p1)
-//      {
-//        System.out.println("( " + q.getX() + " , " + q.getY() + " ) , ");
-//      }
-      
+      if (Game.debug)
+      {
+        for (Tile q : path)
+        {
+          System.out.print("( " + q.getX() + " , " + q.getY() + " ) , ");
+        }
+        System.out.println();
+      }
       pathExists = true;
     }
     else
     {
-      // System.out.println(currentStart + " to " + currentGoal + " is
-      // impossible.");
-//      System.out.println("didnt find");
       pathExists = false;
     }
 
     cleanVisitedList(house);
   }
 
-//  public static void main(String[] args)
-//  {
-//    HouseBuilder h = new HouseBuilder(51, 41);
-//    Tile[][] map = h.getMap();
-//
-//    Pathfinder p = new Pathfinder();
-//
-//    // grab all the points zombies from the map
-//    ArrayList<Point> pp = new ArrayList<>();
-//    for (int i = 0; i < 41; i++)
-//    {
-//      for (int j = 0; j < 51; j++)
-//      {
-//        if (map[i][j].getTileType() == 'L' || map[i][j].getTileType() == 'R')
-//        {
-//          pp.add(new Point(j, i));
-//        }
-//      }
-//    }
-//
-//    // for each zombie, if its in the smell radius, print the path
-//    for (Point z : pp)
-//    {
-//      System.out.println("we lookin: " + z);
-//      System.out.println("player: " + h.getPlayerSpawnPoint());
-//      if (p.findEucl(z.getX(), z.getY(), h.getPlayerSpawnPoint().getX(), h.getPlayerSpawnPoint().getY()) < 15)
-//      {
-//        p.init(z, h.getPlayerSpawnPoint(), map);
-//      }
-//      else
-//      {
-//        System.out.println("eucl too big");
-//      }
-//    }
-//
-//    // prints the map
-//    for (int i = 0; i < 41; i++)
-//    {
-//      for (int j = 0; j < 51; j++)
-//      {
-//        System.out.print(map[i][j].getTileType());
-//      }
-//      System.out.println();
-//    }
-//  }
+  // public static void main(String[] args)
+  // {
+  // HouseBuilder h = new HouseBuilder(51, 41);
+  // Tile[][] map = h.getMap();
+  //
+  // Pathfinder p = new Pathfinder();
+  //
+  // // grab all the points zombies from the map
+  // ArrayList<Point> pp = new ArrayList<>();
+  // for (int i = 0; i < 41; i++)
+  // {
+  // for (int j = 0; j < 51; j++)
+  // {
+  // if (map[i][j].getTileType() == 'L' || map[i][j].getTileType() == 'R')
+  // {
+  // pp.add(new Point(j, i));
+  // }
+  // }
+  // }
+  //
+  // // for each zombie, if its in the smell radius, print the path
+  // for (Point z : pp)
+  // {
+  // System.out.println("we lookin: " + z);
+  // System.out.println("player: " + h.getPlayerSpawnPoint());
+  // if (p.findEucl(z.getX(), z.getY(), h.getPlayerSpawnPoint().getX(),
+  // h.getPlayerSpawnPoint().getY()) < 15)
+  // {
+  // p.init(z, h.getPlayerSpawnPoint(), map);
+  // }
+  // else
+  // {
+  // System.out.println("eucl too big");
+  // }
+  // }
+  //
+  // // prints the map
+  // for (int i = 0; i < 41; i++)
+  // {
+  // for (int j = 0; j < 51; j++)
+  // {
+  // System.out.print(map[i][j].getTileType());
+  // }
+  // System.out.println();
+  // }
+  // }
 }
