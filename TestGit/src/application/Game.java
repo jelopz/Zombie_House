@@ -115,7 +115,6 @@ public class Game extends Application
 
   private Scene theScene;
 
-
   private Hitbox playerHitbox;
 
   private Tile[][] tiles;
@@ -463,8 +462,7 @@ public class Game extends Application
             esc = true;
             mapXform.getChildren().clear();
             playerXform.getChildren().clear();
-            MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions,
-                debug, world, mapXform, playerXform);
+            MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions, debug, world, mapXform, playerXform);
             first = false;
             camera.setTranslateZ(-500);
             cameraXform.rx.setAngle(90);
@@ -475,8 +473,7 @@ public class Game extends Application
             pauseXform.setVisible(false);
             esc = false;
             mapXform.getChildren().clear();
-            MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions,
-                debug, world, mapXform, playerXform);
+            MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions, debug, world, mapXform, playerXform);
             first = false;
             camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
             cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
@@ -503,7 +500,8 @@ public class Game extends Application
         {
           speed = sprint;
         }
-        else speed = walk;
+        else
+          speed = walk;
 
         if (event.getCode() == KeyCode.W)
         {
@@ -525,8 +523,10 @@ public class Game extends Application
         // hold and release mouse from center of screen by pressing c
         if (event.getCode() == KeyCode.R)
         {
-          if (holdMouse == true) holdMouse = false;
-          else holdMouse = true;
+          if (holdMouse == true)
+            holdMouse = false;
+          else
+            holdMouse = true;
           scene.setCursor(Cursor.DEFAULT);
         }
         if (event.getCode() == KeyCode.Z) // puts the player on the "ground"
@@ -611,8 +611,7 @@ public class Game extends Application
     esc = false;
     first = true;
     running = true;
-    MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions, debug,
-        world, mapXform, playerXform);
+    MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions, debug, world, mapXform, playerXform);
     first = false;
     buildCamera();
     buildLight();
@@ -643,8 +642,7 @@ public class Game extends Application
     house = new HouseBuilder(MAP_WIDTH, MAP_HEIGHT);
     tiles = house.getMap();
 
-    MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions, debug,
-        world, mapXform, playerXform);
+    MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions, debug, world, mapXform, playerXform);
     first = false;
     buildCamera();
     buildLight();
@@ -674,17 +672,18 @@ public class Game extends Application
       esc = true;
       running = false;
     }
-    MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions, debug,
-        world, mapXform, playerXform);
+    MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions, debug, world, mapXform, playerXform);
     first = false;
     buildCamera();
     buildLight();
     buildPauseMenu();
     buildStartMenu();
     makeSoundClips();
-    if (debug) startXform.setVisible(false);
+    if (debug)
+      startXform.setVisible(false);
     theScene = new Scene(root, windowX, windowY, true);
-    Stop[] stops = new Stop[] { new Stop(0, Color.RED), new Stop(1, Color.ORANGE) };
+    Stop[] stops = new Stop[]
+    { new Stop(0, Color.RED), new Stop(1, Color.ORANGE) };
     LinearGradient lg = new LinearGradient(0, 1, 0, 0, true, CycleMethod.NO_CYCLE, stops);
     theScene.setFill(lg);
     theScene.setCamera(camera);
@@ -849,11 +848,10 @@ public class Game extends Application
 
       if ((System.currentTimeMillis() - last) > 2000)
       {
-
         for (Zombie z : zombies) // tells zombies to figure out
         // their next move
         {
-          z.determineNextMove(house);
+          z.determineNextMove(house, playerXform.t.getTz(), playerXform.t.getTx());
         }
         last = System.currentTimeMillis();
       }
@@ -864,8 +862,6 @@ public class Game extends Application
       }
     }
   }
-
-  
 
   public static void main(String[] args)
   {

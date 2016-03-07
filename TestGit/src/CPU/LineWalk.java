@@ -16,9 +16,16 @@ public class LineWalk extends Zombie
   }
 
   @Override
-  public void determineNextMove(HouseBuilder house)
-  {
-    if (!hasAngle) //has nowhere to go
+  public void determineNextMove(HouseBuilder house, double playerZ, double playerX)
+  {    
+    double d = pathfinder.findEucl(playerZ, playerX, model.getTranslateZ(), model.getTranslateX());
+    
+    if(d/Game.TILE_SIZE < 15)
+    {
+      System.out.println("CLOSE ENOUGH TO MAYBE SMELL");
+    }
+
+    if (!hasAngle) // has nowhere to go
     {
       super.findNextAngle(house);
       hasAngle = true;
@@ -26,35 +33,36 @@ public class LineWalk extends Zombie
 
   }
 
-	public void move(HouseBuilder house) { //move based on current heading
-      translationZ = model.getTranslateZ() + angleZ;
-      translationX = model.getTranslateX() + angleX;
+  public void move(HouseBuilder house)
+  { // move based on current heading
+    translationZ = model.getTranslateZ() + angleZ;
+    translationX = model.getTranslateX() + angleX;
 
-      hitbox.updateBoundaryPoints(translationZ, translationX);
+    hitbox.updateBoundaryPoints(translationZ, translationX);
 
-      if (!hitbox.isWallCollision(house))
+    if (!hitbox.isWallCollision(house))
+    {
+
+      for (Zombie z : Game.zombies)
       {
-
-        for (Zombie z : Game.zombies)
+        if ((!z.equals(this)) && zombieCollision(z))
         {
-          if ((!z.equals(this)) && zombieCollision(z))
-          {
-            hasAngle = false;
+          hasAngle = false;
 
-            model.setTranslateZ(translationZ - 2 * angleZ);
-            model.setTranslateX(translationX - 2 * angleX);
-          }
-        }
-
-        if (hasAngle)
-        {
-          model.setTranslateZ(translationZ);
-          model.setTranslateX(translationX);
+          model.setTranslateZ(translationZ - 2 * angleZ);
+          model.setTranslateX(translationX - 2 * angleX);
         }
       }
-      else
+
+      if (hasAngle)
       {
-        hasAngle = false;
+        model.setTranslateZ(translationZ);
+        model.setTranslateX(translationX);
       }
-	}
+    }
+    else
+    {
+      hasAngle = false;
+    }
+  }
 }

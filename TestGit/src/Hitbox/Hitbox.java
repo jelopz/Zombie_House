@@ -77,8 +77,8 @@ public class Hitbox
       for (int i = 0; i < 8; i++) // get what tile the point is on.
       {
 
-        x = (int) (points[i].z / Game.TILE_SIZE); // z //x
-        y = (int) (points[i].x / Game.TILE_SIZE); // x //y
+        x = (int) (points[i].z / Game.TILE_SIZE); //x
+        y = (int) (points[i].x / Game.TILE_SIZE); //y
 
         if (!house.isPointLegal(x, y)) // is that tile not a legal move?
         {

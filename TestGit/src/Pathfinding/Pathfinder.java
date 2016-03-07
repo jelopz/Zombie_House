@@ -17,7 +17,7 @@ import RoomGenerator.TileComparator;
 
 public class Pathfinder
 {
-  private Comparator<Tile> comparator;// for priority queue 
+  private Comparator<Tile> comparator;// for priority queue
   private PriorityQueue<Tile> frontier;// priority queue for search algorithm
   private HashSet<Tile> visitedNodes;
   private Path path;
@@ -44,6 +44,18 @@ public class Pathfinder
     visitedNodes.add(frontier.peek());
 
     Dijkstra(targetPoint, house);
+  }
+  
+  public double findEucl(double x1, double y1, double x2, double y2)
+  {
+    double xDiff = x1 - x2;
+    double xSqr = Math.pow(xDiff, 2);
+
+    double yDiff = y1 - y2;
+    double ySqr = Math.pow(yDiff, 2);
+
+    double output = Math.sqrt(xSqr + ySqr);
+    return output;
   }
 
   private void cleanVisitedList(Tile[][] house)
@@ -132,10 +144,9 @@ public class Pathfinder
       {
         if (neighbors[i] == null || tooLong)
         {
-          //do nothing
+          // do nothing
         }
-        else if ((neighbors[i].getTileType() != 'X') &&
-            ((!neighbors[i].visited || (newCost < neighbors[i].currentCost))))
+        else if ((neighbors[i].getTileType() != 'X') && ((!neighbors[i].visited || (newCost < neighbors[i].currentCost))))
         {
           neighbors[i].visited = true;
           visitedNodes.add(neighbors[i]);
@@ -154,12 +165,12 @@ public class Pathfinder
       System.out.println("found");
       ArrayList<Tile> p1 = path.getPath();
       Tile t;
-      
-      for(Tile q : p1)
+
+      for (Tile q : p1)
       {
         System.out.println("( " + q.getX() + " , " + q.getY() + " ) , ");
       }
-      
+
     }
     else
     {
@@ -196,7 +207,14 @@ public class Pathfinder
     {
       System.out.println("we lookin: " + z);
       System.out.println("player: " + h.getPlayerSpawnPoint());
-      p.init(z, h.getPlayerSpawnPoint(), map);
+      if (p.findEucl(z.getX(), z.getY(), h.getPlayerSpawnPoint().getX(), h.getPlayerSpawnPoint().getY()) < 15)
+      {
+        p.init(z, h.getPlayerSpawnPoint(), map);
+      }
+      else
+      {
+        System.out.println("eucl too big");
+      }
     }
 
     // prints the map
