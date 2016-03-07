@@ -606,6 +606,7 @@ public class Game extends Application
     cameraXform3.getChildren().clear();
     mapXform.getChildren().clear();
     root.getChildren().clear();
+    zombies.clear();
 
     root.getChildren().add(world);
     esc = false;
