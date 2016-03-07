@@ -4,11 +4,14 @@
 
 package RoomGenerator;
 
+import Pathfinding.Path;
+
 public class Tile
 {
   private int x;
   private int y;
   private char tileType;
+
   public Tile parent;
   public int currentCost;
   public boolean visited;
@@ -19,7 +22,16 @@ public class Tile
     tileType = c;
     this.x = x;
     this.y = y;
+
+    reset();
+  }
+
+  public void reset()
+  {
     currentCost = 0;
+    visited = false;
+    priority = 0;
+    parent = null;
   }
 
   public char getTileType()
@@ -41,13 +53,14 @@ public class Tile
   {
     return y;
   }
-  
-  public void printPath()
+
+  public void printPath(Path p)
   {
-    if(parent != null)
+    if (parent != null)
     {
-      System.out.println("( " + x + " , " + y + " ) , ");
-      parent.printPath();
+//      System.out.println("( " + x + " , " + y + " ) , ");
+      p.addTileToPath(this);
+      parent.printPath(p);
     }
   }
 }

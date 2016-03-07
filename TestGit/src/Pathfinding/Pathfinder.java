@@ -7,7 +7,9 @@ package Pathfinding;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.PriorityQueue;
+import java.util.TreeSet;
 
 import RoomGenerator.HouseBuilder;
 import RoomGenerator.Tile;
@@ -15,21 +17,22 @@ import RoomGenerator.TileComparator;
 
 public class Pathfinder
 {
-  private Comparator<Tile> comparator;// for priority queue = new
-                                      // TileComparator();
-  private PriorityQueue<Tile> frontier;// = new PriorityQueue<>(10, comparator);
-
-  private ArrayList<Tile> visitedNodes;
+  private Comparator<Tile> comparator;// for priority queue 
+  private PriorityQueue<Tile> frontier;// priority queue for search algorithm
+  private HashSet<Tile> visitedNodes;
+  private Path path;
 
   public Pathfinder()
   {
     comparator = new TileComparator();
-    frontier = new PriorityQueue<>(10, comparator);
-    visitedNodes = new ArrayList<>();
   }
 
   public void init(Point startingPoint, Point targetPoint, Tile[][] house)
   {
+    path = new Path();
+    frontier = new PriorityQueue<>(10, comparator);
+    visitedNodes = new HashSet<>();
+
     frontier.add(house[startingPoint.y][startingPoint.x]);
     frontier.peek().visited = true;
 
@@ -40,32 +43,33 @@ public class Pathfinder
 
     visitedNodes.add(frontier.peek());
 
-    AStar(targetPoint, house);
-  }
-  
-  private void cleanVisitedList()
-  {
-    for(Tile t : visitedNodes)
-    {
-      t.visited = false;
-    }
-    
-    visitedNodes.clear();
+    Dijkstra(targetPoint, house);
   }
 
-  private void AStar(Point targetPoint, Tile[][] house)
+  private void cleanVisitedList(Tile[][] house)
+  {
+    for (Tile t : visitedNodes)
+    {
+      t.reset();
+    }
+  }
+
+  private void Dijkstra(Point targetPoint, Tile[][] house)
   {
     Tile currentNode = null;
+
     Tile northNeighbor = null;
     Tile eastNeighbor = null;
     Tile southNeighbor = null;
     Tile westNeighbor = null;
     Tile[] neighbors = new Tile[4];
+
     int newCost;
     int currentX;
     int currentY;
     boolean found = false;
     boolean tooLong = false;
+
     while (!frontier.isEmpty())
     {
       currentNode = frontier.remove();
@@ -81,7 +85,6 @@ public class Pathfinder
       }
       else
       {
-        System.out.println("0 debug");
         neighbors[0] = null;
       }
 
@@ -92,7 +95,6 @@ public class Pathfinder
       }
       else
       {
-        System.out.println("1 debug");
         neighbors[1] = null;
       }
 
@@ -103,7 +105,6 @@ public class Pathfinder
       }
       else
       {
-        System.out.println("2 debug");
         neighbors[2] = null;
       }
 
@@ -114,7 +115,6 @@ public class Pathfinder
       }
       else
       {
-        System.out.println("3 debug");
         neighbors[3] = null;
       }
 
@@ -123,22 +123,19 @@ public class Pathfinder
         found = true;
         break;
       }
-      else if(newCost > 15)
+      else if (newCost > 15)
       {
         tooLong = true;
       }
 
       for (int i = 0; i < 4; i++)
       {
-        if (neighbors[i] == null)
+        if (neighbors[i] == null || tooLong)
         {
-          System.out.println("bad" + i);
+          //do nothing
         }
-        else if(tooLong)
-        {
-          System.out.println("do nothing cuz too long");
-        }
-        else if ((neighbors[i].getTileType() != 'X') && ((!neighbors[i].visited || (newCost < neighbors[i].currentCost))))
+        else if ((neighbors[i].getTileType() != 'X') &&
+            ((!neighbors[i].visited || (newCost < neighbors[i].currentCost))))
         {
           neighbors[i].visited = true;
           visitedNodes.add(neighbors[i]);
@@ -153,8 +150,16 @@ public class Pathfinder
     if (found)
     {
       // currentNode.printParents();
+      currentNode.printPath(path);
       System.out.println("found");
-      currentNode.printPath();
+      ArrayList<Tile> p1 = path.getPath();
+      Tile t;
+      
+      for(Tile q : p1)
+      {
+        System.out.println("( " + q.getX() + " , " + q.getY() + " ) , ");
+      }
+      
     }
     else
     {
@@ -162,40 +167,39 @@ public class Pathfinder
       // impossible.");
       System.out.println("didnt find");
     }
-    
-    cleanVisitedList();
+
+    cleanVisitedList(house);
   }
 
   public static void main(String[] args)
   {
     HouseBuilder h = new HouseBuilder(51, 41);
     Tile[][] map = h.getMap();
+
+    Pathfinder p = new Pathfinder();
+
+    // grab all the points zombies from the map
     ArrayList<Point> pp = new ArrayList<>();
     for (int i = 0; i < 41; i++)
     {
       for (int j = 0; j < 51; j++)
       {
-        if (map[i][j].getTileType() == 'L')
+        if (map[i][j].getTileType() == 'L' || map[i][j].getTileType() == 'R')
         {
           pp.add(new Point(j, i));
         }
       }
     }
 
-    Pathfinder p = new Pathfinder();
-
+    // for each zombie, if its in the smell radius, print the path
     for (Point z : pp)
     {
-      System.out.println(z);
+      System.out.println("we lookin: " + z);
+      System.out.println("player: " + h.getPlayerSpawnPoint());
+      p.init(z, h.getPlayerSpawnPoint(), map);
     }
-    System.out.println("we lookin: " + pp.get(0));
-    System.out.println("player: " + h.getPlayerSpawnPoint());
-    p.init(pp.get(0), h.getPlayerSpawnPoint(), map);
-    
-//    System.out.println("we lookin: " + pp.get(1));
-//    System.out.println("player: " + h.getPlayerSpawnPoint());
-//    p.init(pp.get(1), h.getPlayerSpawnPoint(), map);
 
+    // prints the map
     for (int i = 0; i < 41; i++)
     {
       for (int j = 0; j < 51; j++)

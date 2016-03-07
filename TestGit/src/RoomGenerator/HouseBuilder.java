@@ -22,6 +22,8 @@ public class HouseBuilder
   private Point playerSpawnPoint;
   private int startQuadrant;
   private int endQuadrant;
+  
+  public ArrayList<Point> zombs;
 
   Random rand;
 
@@ -29,6 +31,8 @@ public class HouseBuilder
 
   public HouseBuilder(int w, int h)
   {
+    zombs = new ArrayList<>();
+    
     mapWidth = w;
     mapHeight = h;
 
@@ -102,7 +106,6 @@ public class HouseBuilder
 	 */
   private void connectQuadrants(int quadrant)
   {
-	  System.out.println(quadrant);
 	  if(quadrant == endQuadrant) //we finished our path
 	  {
 		  return;
@@ -334,7 +337,6 @@ public class HouseBuilder
       // decides which one of the two outer walls to use
       if (rand.nextInt(2) == 0) 
       {
-    	  System.out.println("yes");
         if (endQuadrant == 0 || endQuadrant == 1)
         {
           for(int i = startX; i < startX + width - 1; i++)
@@ -401,7 +403,7 @@ public class HouseBuilder
             {
               if (rand.nextDouble() < .3)
               {
-            	if(house[i][1].getTileType() != 'X' && house[i+1][0].getTileType() != 'E')
+            	if(house[i][1].getTileType() != 'X' && house[i+1][1].getTileType() != 'E')
             	{               
             	  house[i][0].setTileType('E');
             	  house[i+1][0].setTileType('E');
