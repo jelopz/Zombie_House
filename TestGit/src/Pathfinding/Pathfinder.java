@@ -166,14 +166,14 @@ public class Pathfinder
     System.out.println(x + " " + y);
     System.out.println(h.getPlayerSpawnPoint());
 
-    // for (int i = 0; i < 41; i++)
-    // {
-    // for (int j = 0; j < 51; j++)
-    // {
-    // System.out.print(map[i][j].getTileType());
-    // }
-    // System.out.println();
-    // }
+    for (int i = 0; i < 41; i++)
+    {
+      for (int j = 0; j < 51; j++)
+      {
+        System.out.print(map[i][j].getTileType());
+      }
+      System.out.println();
+    }
 
     Pathfinder p = new Pathfinder();
     p.init(new Point(x, y), h.getPlayerSpawnPoint(), map);
