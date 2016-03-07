@@ -42,6 +42,16 @@ public class Pathfinder
 
     AStar(targetPoint, house);
   }
+  
+  private void cleanVisitedList()
+  {
+    for(Tile t : visitedNodes)
+    {
+      t.visited = false;
+    }
+    
+    visitedNodes.clear();
+  }
 
   private void AStar(Point targetPoint, Tile[][] house)
   {
@@ -55,6 +65,7 @@ public class Pathfinder
     int currentX;
     int currentY;
     boolean found = false;
+    boolean tooLong = false;
     while (!frontier.isEmpty())
     {
       currentNode = frontier.remove();
@@ -112,12 +123,20 @@ public class Pathfinder
         found = true;
         break;
       }
+      else if(newCost > 15)
+      {
+        tooLong = true;
+      }
 
       for (int i = 0; i < 4; i++)
       {
         if (neighbors[i] == null)
         {
           System.out.println("bad" + i);
+        }
+        else if(tooLong)
+        {
+          System.out.println("do nothing cuz too long");
         }
         else if ((neighbors[i].getTileType() != 'X') && ((!neighbors[i].visited || (newCost < neighbors[i].currentCost))))
         {
@@ -143,28 +162,39 @@ public class Pathfinder
       // impossible.");
       System.out.println("didnt find");
     }
+    
+    cleanVisitedList();
   }
 
   public static void main(String[] args)
   {
     HouseBuilder h = new HouseBuilder(51, 41);
     Tile[][] map = h.getMap();
-    int x = 0;
-    int y = 0;
+    ArrayList<Point> pp = new ArrayList<>();
     for (int i = 0; i < 41; i++)
     {
       for (int j = 0; j < 51; j++)
       {
         if (map[i][j].getTileType() == 'L')
         {
-          x = j;
-          y = i;
+          pp.add(new Point(j, i));
         }
       }
     }
 
-    System.out.println(x + " " + y);
-    System.out.println(h.getPlayerSpawnPoint());
+    Pathfinder p = new Pathfinder();
+
+    for (Point z : pp)
+    {
+      System.out.println(z);
+    }
+    System.out.println("we lookin: " + pp.get(0));
+    System.out.println("player: " + h.getPlayerSpawnPoint());
+    p.init(pp.get(0), h.getPlayerSpawnPoint(), map);
+    
+//    System.out.println("we lookin: " + pp.get(1));
+//    System.out.println("player: " + h.getPlayerSpawnPoint());
+//    p.init(pp.get(1), h.getPlayerSpawnPoint(), map);
 
     for (int i = 0; i < 41; i++)
     {
@@ -174,8 +204,5 @@ public class Pathfinder
       }
       System.out.println();
     }
-
-    Pathfinder p = new Pathfinder();
-    p.init(new Point(x, y), h.getPlayerSpawnPoint(), map);
   }
 }
