@@ -1,5 +1,5 @@
 /*
- * Performs the A* Path finding algorithm given a 2D Array of Tiles.
+ * Performs the Djikstra path finding algorithm given a 2D Array of Tiles.
  */
 
 package Pathfinding;
@@ -18,19 +18,42 @@ import application.Game;
 
 public class Pathfinder
 {
-  private boolean pathExists;
+  private boolean pathExists; // true if we found a path in the previous search
 
   private Comparator<Tile> comparator;// for priority queue
   private PriorityQueue<Tile> frontier;// priority queue for search algorithm
   private HashSet<Tile> visitedNodes;
-  // private Path path;
-  private ArrayList<Tile> path;
+  private ArrayList<Tile> path; // starting from target (the player) to the
+                                // first movement. Does not contain initial
+                                // zombie starting tile
 
+  /*
+   * Initialize the comparator
+   */
   public Pathfinder()
   {
     comparator = new TileComparator();
   }
 
+  /*
+   * Find the standard straight line Euclidean distance between two points.
+   */
+  public static double findEucl(double x1, double y1, double x2, double y2)
+  {
+    double xDiff = x1 - x2;
+    double xSqr = Math.pow(xDiff, 2);
+
+    double yDiff = y1 - y2;
+    double ySqr = Math.pow(yDiff, 2);
+
+    double output = Math.sqrt(xSqr + ySqr);
+    return output;
+  }
+
+  /*
+   * Initializes a new path, frontier, and visitedNodes set.
+   * Adds the zombies starting point to the frontier, and begins the search
+   */
   public void init(Point startingPoint, Point targetPoint, Tile[][] house)
   {
     path = new ArrayList<>();
@@ -55,18 +78,10 @@ public class Pathfinder
     return path;
   }
 
-  public double findEucl(double x1, double y1, double x2, double y2)
-  {
-    double xDiff = x1 - x2;
-    double xSqr = Math.pow(xDiff, 2);
-
-    double yDiff = y1 - y2;
-    double ySqr = Math.pow(yDiff, 2);
-
-    double output = Math.sqrt(xSqr + ySqr);
-    return output;
-  }
-
+  /*
+   * Wipes the information pertenent to the previous path finding search clean.
+   * Leaves only the x,y coordinates and the tiletype.
+   */
   private void cleanVisitedList(Tile[][] house)
   {
     for (int i = 0; i < 51; i++)
@@ -78,6 +93,14 @@ public class Pathfinder
     }
   }
 
+  /*
+   * Valid moves are north, south, east, west. Given a node, check these four
+   * locations. If the cost of a newfound node is greater than 15, discard it.
+   * Else, if it either hasn't been found before or if the newCost is greater
+   * than it's older cost, set it with the newCost and add it to the frontier.
+   * 
+   * If a path is found, set pathExists to true. Else, set it to false.
+   */
   private void Dijkstra(Point targetPoint, Tile[][] house)
   {
     Tile currentNode = null;
@@ -142,8 +165,6 @@ public class Pathfinder
         neighbors[3] = null;
       }
 
-      // if (currentNode.getTileType() ==
-      // house[targetPoint.y][targetPoint.x].getTileType())
       if ((currentNode.getX() == targetPoint.x) && (currentNode.getY() == targetPoint.y))
       {
         found = true;
