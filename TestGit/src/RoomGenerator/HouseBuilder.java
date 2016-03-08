@@ -141,7 +141,7 @@ public class HouseBuilder {
 	 * @return true, if the point is a legal tile to be on
 	 */
 	public boolean isPointLegal(int x, int y) {
-		if(x > mapWidth || y > mapHeight || x < 0 || y < 0)
+		if(x > mapWidth-1 || y > mapHeight-1 || x < 0 || y < 0)
 		{
 			return false;
 		}
