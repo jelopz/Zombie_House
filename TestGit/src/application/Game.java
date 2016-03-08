@@ -67,7 +67,7 @@ public class Game extends Application
 {
 
   /** Initializes in debug mode of true */
-  public static boolean debug = true;
+  public static boolean debug = false;
 
   /** number of subdivisions in tile */
   public static final double TILE_SIZE = 56;
@@ -867,6 +867,10 @@ public class Game extends Application
 
     /** The current speed. */
     private double currentSpeed;
+    
+    private double distance;
+    
+    private boolean playerLost;
 
     /*
      * (non-Javadoc)
@@ -879,6 +883,7 @@ public class Game extends Application
       // temporarily changes the camera angle;
       if (running)
       {
+        
         if (isSprinting && stamina > 0)
         {
           currentSpeed = 2 * speed;
@@ -1071,8 +1076,7 @@ public class Game extends Application
 
           last = System.currentTimeMillis();
         }
-
-        double distance;
+        
         for (OurZombie z : zombies)
         {
           z.move(house);
@@ -1080,8 +1084,25 @@ public class Game extends Application
           if (distance < TILE_SIZE / 2)
           {
             // You've been hit by the zombie!
-            resetMap();
+            playerLost = true;
           }
+        }
+        
+        if(playerLost)
+        {
+          playerLost = false;
+          resetMap();
+          
+          if (debug)
+          {
+            camera.setTranslateZ(-1000);
+          }
+          else
+          {
+            camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+            cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+          }
+          running = true;
         }
       }
     }
