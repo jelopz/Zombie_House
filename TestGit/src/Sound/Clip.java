@@ -1,3 +1,8 @@
+/*
+ * Clip class holds an AudioClip and a boolean denoting if it is currently looping.
+ * 
+ * Made so the main Game class has a better idea if an audio clip is already playing or not.
+ */
 package Sound;
 
 import java.applet.Applet;
