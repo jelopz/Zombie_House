@@ -96,9 +96,6 @@ public class Game extends Application
   /** Variable to regulate how fast the camera rotates */
   private static final double ROTATION_SPEED = 2.0;
 
-  /** The Constant TRACK_SPEED. */
-  private static final double TRACK_SPEED = 0.3;
-
   /** The value for the height of the 2D represented map */
   private final int MAP_HEIGHT = 51;
 
@@ -228,8 +225,8 @@ public class Game extends Application
   /** The walk clip. */
   private Clip walkClip;
 
-  /** The run clip. Currently unused */
-  private Clip runClip;
+//  /** The run clip. Currently unused */
+//  private Clip runClip;
 
   /**
    * Builds the camera. Placed high above the map if debug mode is on, else, set
@@ -696,7 +693,7 @@ public class Game extends Application
     try
     {
       walkClip = new Clip(new URL("file:walkClip.wav"));
-      runClip = new Clip(new URL("file:runClip.wav"));
+//      runClip = new Clip(new URL("file:runClip.wav"));
     }
     catch (MalformedURLException e)
     {

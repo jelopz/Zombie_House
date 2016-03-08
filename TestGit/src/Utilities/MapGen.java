@@ -9,14 +9,12 @@
 
 package Utilities;
 
-import java.awt.Point;
 import java.util.ArrayList;
 
 import CPU.OurZombie;
 import RoomGenerator.HouseBuilder;
 import RoomGenerator.Tile;
 import ZombieBuilder.ZombieBuilder;
-import application.Game;
 import application.Xform;
 import javafx.scene.CacheHint;
 import javafx.scene.Group;
@@ -27,7 +25,6 @@ import javafx.scene.shape.Box;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.DrawMode;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MapGen.
  */

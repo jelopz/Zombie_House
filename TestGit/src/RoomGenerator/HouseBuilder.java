@@ -335,7 +335,6 @@ public class HouseBuilder
   {
     boolean badspot = false;
     int numObstacles = 0;
-    int x, y;
 
     while (numObstacles < 12)
     {

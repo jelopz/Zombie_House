@@ -20,7 +20,6 @@ import javafx.scene.shape.Mesh;
 import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Rotate;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ZombieBuilder.
  */

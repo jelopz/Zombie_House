@@ -9,12 +9,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.PriorityQueue;
-import java.util.TreeSet;
-
-import RoomGenerator.HouseBuilder;
 import RoomGenerator.Tile;
 import RoomGenerator.TileComparator;
-import application.Game;
 
 /**
  * Performs the Djikstra path finding algorithm given a 2D Array of Tiles.
