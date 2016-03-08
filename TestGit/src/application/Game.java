@@ -173,7 +173,7 @@ public class Game extends Application
     l1.setScaleY(5);
     l1.setTranslateY(-60);
     l1.setFill(Color.WHITE);
-    Text l2 = new Text("Do A Thing!");
+    Text l2 = new Text("Continue");
     l2.setScaleX(5);
     l2.setScaleY(5);
     l2.setFill(Color.WHITE);
@@ -359,7 +359,24 @@ public class Game extends Application
       else if (startXform.getChildren().get(1) == res.getIntersectedNode())
       {
 
-        System.out.println("Do A Thing!");
+        System.out.println("Continue");
+        pauseXform.setVisible(false);
+        startXform.setVisible(false);
+        esc = false;
+        mapXform.getChildren().clear();
+        MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions, debug,
+            world, mapXform, playerXform);
+        first = false;
+        running = true;
+        if (debug)
+        {
+          camera.setTranslateZ(-1000);
+        }
+        else
+        {
+          camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+          cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+        }
       }
       else if (startXform.getChildren().get(2) == res.getIntersectedNode())
       {
@@ -476,6 +493,7 @@ public class Game extends Application
           else
           {
             pauseXform.setVisible(false);
+            startXform.setVisible(false);
             esc = false;
             mapXform.getChildren().clear();
             MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions, debug, world, mapXform, playerXform);
