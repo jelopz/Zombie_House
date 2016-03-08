@@ -416,7 +416,6 @@ public class Game extends Application
       PickResult res = event.getPickResult();
       if (pauseXform.getChildren().get(0) == res.getIntersectedNode())
       {
-        System.out.println("Retry");
         resetMap();
         if (debug)
         {
@@ -432,7 +431,6 @@ public class Game extends Application
       }
       else if (pauseXform.getChildren().get(1) == res.getIntersectedNode())
       {
-        System.out.println("New Map");
         makeNewMap();
         pauseXform.setVisible(false);
         if (debug)
@@ -449,13 +447,11 @@ public class Game extends Application
       }
       else if (pauseXform.getChildren().get(2) == res.getIntersectedNode())
       {
-        System.out.println("Quit");
         pauseXform.setVisible(false);
         startXform.setVisible(true);
       }
       else if (startXform.getChildren().get(0) == res.getIntersectedNode())
       {
-        System.out.println("Start Game");
         makeNewMap();
         if (debug)
         {
@@ -469,8 +465,6 @@ public class Game extends Application
       }
       else if (startXform.getChildren().get(1) == res.getIntersectedNode())
       {
-
-        System.out.println("Continue");
         pauseXform.setVisible(false);
         startXform.setVisible(false);
         esc = false;
@@ -490,7 +484,6 @@ public class Game extends Application
       }
       else if (startXform.getChildren().get(2) == res.getIntersectedNode())
       {
-        System.out.println("Exit Game");
         System.exit(0);
       }
     });
@@ -546,14 +539,6 @@ public class Game extends Application
           // Up and Down mouse movements. I don't think this is required but
           // helps maneuver around the map in it's current state
           handleUpDownRotation(modifier); // comment out if unwanted
-        }
-        else if (me.isSecondaryButtonDown())
-        {
-          System.out.println("No effect yet");// replace with effect
-        }
-        else if (me.isMiddleButtonDown())// raise and lower camera
-        {
-          cameraXform2.t.setY(cameraXform2.t.getY() + mouseDeltaY * MOUSE_SPEED * modifier * TRACK_SPEED);
         }
       }
     });
@@ -915,6 +900,17 @@ public class Game extends Application
               if (mapsBeaten < 4)
               {
                 makeNewMap();
+                pauseXform.setVisible(false);
+                if (debug)
+                {
+                  camera.setTranslateZ(-1000);
+                }
+                else
+                {
+                  camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+                  cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+                }
+                running = true;
               }
               else
               {
@@ -953,6 +949,17 @@ public class Game extends Application
               if (mapsBeaten < 4)
               {
                 makeNewMap();
+                pauseXform.setVisible(false);
+                if (debug)
+                {
+                  camera.setTranslateZ(-1000);
+                }
+                else
+                {
+                  camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+                  cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+                }
+                running = true;
               }
               else
               {
@@ -990,6 +997,17 @@ public class Game extends Application
               if (mapsBeaten < 4)
               {
                 makeNewMap();
+                pauseXform.setVisible(false);
+                if (debug)
+                {
+                  camera.setTranslateZ(-1000);
+                }
+                else
+                {
+                  camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+                  cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+                }
+                running = true;
               }
               else
               {
@@ -1027,6 +1045,17 @@ public class Game extends Application
               if (mapsBeaten < 4)
               {
                 makeNewMap();
+                pauseXform.setVisible(false);
+                if (debug)
+                {
+                  camera.setTranslateZ(-1000);
+                }
+                else
+                {
+                  camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
+                  cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
+                }
+                running = true;
               }
               else
               {
