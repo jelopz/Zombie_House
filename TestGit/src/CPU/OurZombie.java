@@ -29,7 +29,9 @@ public class OurZombie
 
   private double radius;
 
-  public OurZombie(int x, int y, Group m)
+  private boolean isRandom;
+
+  public OurZombie(int x, int y, Group m, boolean b)
   {
     spawnPoint = new Point(x, y);
     model = m;
@@ -39,6 +41,7 @@ public class OurZombie
     isStuck = false;
     smellsPlayer = false;
     pathfinder = new Pathfinder();
+    isRandom = b;
   }
 
   private boolean zombieCollision(OurZombie z)
@@ -60,61 +63,97 @@ public class OurZombie
 
   public void determineNextMove(HouseBuilder house, double playerZ, double playerX)
   {
-    double d = pathfinder.findEucl(playerZ, playerX, model.getTranslateZ(), model.getTranslateX());
+    double zZ = model.getTranslateZ();
+    double zX = model.getTranslateX();
+    double d = pathfinder.findEucl(playerZ, playerX, zZ, zX);
 
     if (d / Game.TILE_SIZE < 15)
     {
       smell(house.getMap(), playerZ, playerX);
 
-      if (pathfinder.doesPathExist())// && isValid(playerZ, playerX,
-                                     // pathfinder.getPath()) &&
-                                     // !pathfinder.getPath().getPath().isEmpty())
+      if (pathfinder.doesPathExist())
       {
+        smellsPlayer = true;
+        currentPath = pathfinder.getPath();
         if (Game.debug)
         {
           System.out.println("CLOSE ENOUGH TO SMELL  green " + this);
         }
       }
+      else
+      {
+        smellsPlayer = false;
+      }
+    }
+    else
+    {
+      smellsPlayer = false;
     }
 
+    if (smellsPlayer)
+    {
+      if (Game.debug)
+      {
+        for (Tile q : currentPath)
+        {
+          System.out.print("( " + q.getX() + " , " + q.getY() + " ) , ");
+        }
+        System.out.println();
+      }
+
+      // centers model to the tile when smelling player
+      double z = Math.round((model.getTranslateZ()/Game.TILE_SIZE)) * Game.TILE_SIZE;
+      double x = Math.round((model.getTranslateX()/Game.TILE_SIZE)) * Game.TILE_SIZE;
+      System.out.println("new Z : " + z + " " + z/56);
+      System.out.println("new X : " + x + " " + x/56);
+
+      model.setTranslateZ(z);
+      model.setTranslateX(x);
+    }
+    // else
+    // {
     findNextAngle(house);
     isStuck = false;
+    // }
   }
 
-  private boolean isValid(double playerZ, double playerX, Path p)
+  private void chasePlayer()
   {
-    if (p.getPath().get(0).getX() == (int) (playerZ / 56) && p.getPath().get(0).getY() == (int) (playerX / 56))
-    {
-      return true;
-    }
-    return false;
+
   }
 
   public void move(HouseBuilder house)
   {
-    // System.out.println(model.getTranslateZ());
-    translationZ = model.getTranslateZ() + angleZ;
-    translationX = model.getTranslateX() + angleX;
-
-    hitbox.updateBoundaryPoints(translationZ, translationX);
-
-    if (!hitbox.isWallCollision(house))
+    if (smellsPlayer)
+    {
+      chasePlayer();
+    }
+    else
     {
 
-      for (OurZombie z : Game.zombies)
-      {
-        if ((!z.equals(this)) && zombieCollision(z))
-        {
-          isStuck = true;
-          model.setTranslateZ(translationZ - 2 * angleZ);
-          model.setTranslateX(translationX - 2 * angleX);
-        }
-      }
+      translationZ = model.getTranslateZ() + angleZ;
+      translationX = model.getTranslateX() + angleX;
 
-      if (!isStuck)
+      hitbox.updateBoundaryPoints(translationZ, translationX);
+
+      if (!hitbox.isWallCollision(house))
       {
-        model.setTranslateZ(translationZ);
-        model.setTranslateX(translationX);
+
+        for (OurZombie z : Game.zombies)
+        {
+          if ((!z.equals(this)) && zombieCollision(z))
+          {
+            isStuck = true;
+            model.setTranslateZ(translationZ - 2 * angleZ);
+            model.setTranslateX(translationX - 2 * angleX);
+          }
+        }
+
+        if (!isStuck)
+        {
+          model.setTranslateZ(translationZ);
+          model.setTranslateX(translationX);
+        }
       }
     }
   }
