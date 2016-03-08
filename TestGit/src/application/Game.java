@@ -1028,6 +1028,7 @@ public class Game extends Application
               else
               {
                 // you beat the game.
+                System.exit(0);
               }
             }
             else
