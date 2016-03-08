@@ -21,7 +21,9 @@ public class OurZombie
   private double angleZ, angleX;
   private boolean isStuck;
   private boolean smellsPlayer;
+  private boolean hasAngle;
   private Pathfinder pathfinder;
+  private Tile currentTargetTile;
 
   private double translationZ, translationX;
 
@@ -40,6 +42,7 @@ public class OurZombie
     radius = Game.TILE_SIZE / 4;
     isStuck = false;
     smellsPlayer = false;
+    hasAngle = false;
     pathfinder = new Pathfinder();
     isRandom = b;
   }
@@ -66,6 +69,9 @@ public class OurZombie
     double zZ = model.getTranslateZ();
     double zX = model.getTranslateX();
     double d = pathfinder.findEucl(playerZ, playerX, zZ, zX);
+    
+    smellsPlayer = false;
+    currentPath = null;
 
     if (d / Game.TILE_SIZE < 15)
     {
@@ -80,17 +86,9 @@ public class OurZombie
           System.out.println("CLOSE ENOUGH TO SMELL  green " + this);
         }
       }
-      else
-      {
-        smellsPlayer = false;
-      }
-    }
-    else
-    {
-      smellsPlayer = false;
     }
 
-    if (smellsPlayer)
+    if (smellsPlayer && currentPath != null)
     {
       if (Game.debug)
       {
@@ -102,24 +100,45 @@ public class OurZombie
       }
 
       // centers model to the tile when smelling player
-      double z = Math.round((model.getTranslateZ()/Game.TILE_SIZE)) * Game.TILE_SIZE;
-      double x = Math.round((model.getTranslateX()/Game.TILE_SIZE)) * Game.TILE_SIZE;
-      System.out.println("new Z : " + z + " " + z/56);
-      System.out.println("new X : " + x + " " + x/56);
+      double z = Math.floor((model.getTranslateZ() / Game.TILE_SIZE)) * Game.TILE_SIZE;
+      double x = Math.floor((model.getTranslateX() / Game.TILE_SIZE)) * Game.TILE_SIZE;
+      System.out.println("new Z : " + z + " " + z / 56);
+      System.out.println("new X : " + x + " " + x / 56);
 
       model.setTranslateZ(z);
       model.setTranslateX(x);
+      
+      findNextPath((int)(z/56), (int)(x/56));
+      isStuck = false;
     }
-    // else
-    // {
-    findNextAngle(house);
-    isStuck = false;
-    // }
+    else
+    {
+      findNextAngle(house);
+      isStuck = false;
+    }
   }
 
   private void chasePlayer()
   {
-
+    translationZ = model.getTranslateZ() + angleZ;
+    translationX = model.getTranslateX() + angleX;
+    
+    for (OurZombie z : Game.zombies)
+    {
+      if ((!z.equals(this)) && zombieCollision(z))
+      {
+        isStuck = true;
+        model.setTranslateZ(translationZ - 2 * angleZ);
+        model.setTranslateX(translationX - 2 * angleX);
+      }
+    }
+    
+    if (!isStuck)
+    {
+      model.setTranslateZ(translationZ);
+      model.setTranslateX(translationX);
+    }
+    
   }
 
   public void move(HouseBuilder house)
@@ -166,6 +185,22 @@ public class OurZombie
     int tX = (int) (playerZ / Game.TILE_SIZE); // target X tile
     int tY = (int) (playerX / Game.TILE_SIZE); // target Y tile
 
+    if(tX == 0)
+    {
+      tX = 1;
+    }
+    else if(tY == 0)
+    {
+      tY = 1;
+    }
+    else if(tX == 49)
+    {
+      tX = 48;
+    }
+    else if(tY == 49)
+    {
+      tY = 48;
+    }
     if (Game.debug)
     {
       System.out.println(sX + " " + sY + "    " + tX + " " + tY);
@@ -189,6 +224,41 @@ public class OurZombie
     // negative
     {
       angleX = -1 * angleX;
+    }
+  }
+  
+  private void findNextPath(int x, int y)
+  {
+    currentTargetTile = currentPath.get(currentPath.size()-1);
+    currentPath.remove(currentPath.size()-1);
+    System.out.println("---------");
+    System.out.println(x + " " + y + " .... targettile:  " + currentTargetTile.getX() + " " + currentTargetTile.getY());
+    System.out.println("---------");
+    if (x == currentTargetTile.getX())
+    {
+      if (y < currentTargetTile.getY())
+      {
+        angleZ = 0;
+        angleX = 1;
+      }
+      else
+      {
+        angleZ = 0;
+        angleX = -1;
+      }
+    }
+    else
+    {
+      if (x < currentTargetTile.getX())
+      {
+        angleZ = 1;
+        angleX = 0;
+      }
+      else
+      {
+        angleZ = -1;
+        angleX = 0;
+      }
     }
   }
 
