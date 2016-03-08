@@ -16,27 +16,50 @@ import RoomGenerator.Tile;
 import RoomGenerator.TileComparator;
 import application.Game;
 
+/**
+ * The Class Pathfinder.
+ */
 public class Pathfinder
 {
-  private boolean pathExists; // true if we found a path in the previous search
 
-  private Comparator<Tile> comparator;// for priority queue
-  private PriorityQueue<Tile> frontier;// priority queue for search algorithm
+  /** True if we found a path in the previous search */
+  private boolean pathExists;
+
+  /** Comparator for the PriorityQueue */
+  private Comparator<Tile> comparator;
+
+  /** For pathfinding algorithm */
+  private PriorityQueue<Tile> frontier;
+
+  /** The nodes visited in last path finding search */
   private HashSet<Tile> visitedNodes;
-  private ArrayList<Tile> path; // starting from target (the player) to the
-                                // first movement. Does not contain initial
-                                // zombie starting tile
 
-  /*
-   * Initialize the comparator
+  /**
+   * Starting from the target/player to the first movement required by the
+   * zombie. Does not contain initial zombie starting tile
+   */
+  private ArrayList<Tile> path;
+
+  /**
+   * Instantiates a new pathfinder by initializing the comparator.
    */
   public Pathfinder()
   {
     comparator = new TileComparator();
   }
 
-  /*
+  /**
    * Find the standard straight line Euclidean distance between two points.
+   *
+   * @param x1
+   *          x value for first point
+   * @param y1
+   *          y value for first point
+   * @param x2
+   *          x value for second point
+   * @param y2
+   *          y value for second point
+   * @return the Euclidean distance
    */
   public static double findEucl(double x1, double y1, double x2, double y2)
   {
@@ -50,9 +73,16 @@ public class Pathfinder
     return output;
   }
 
-  /*
-   * Initializes a new path, frontier, and visitedNodes set.
-   * Adds the zombies starting point to the frontier, and begins the search
+  /**
+   * Initializes a new path, frontier, and visitedNodes set. Adds the zombies
+   * starting point to the frontier, and begins the search
+   * 
+   * @param startingPoint
+   *          the zombie's current location
+   * @param targetPoint
+   *          the player's current location
+   * @param house
+   *          our tile grid map
    */
   public void init(Point startingPoint, Point targetPoint, Tile[][] house)
   {
@@ -68,19 +98,28 @@ public class Pathfinder
     Dijkstra(targetPoint, house);
   }
 
+  /**
+   * @return true, if previous search resulted in a path found
+   */
   public boolean doesPathExist()
   {
     return pathExists;
   }
 
+  /**
+   * @return the path, null if no path exists.
+   */
   public ArrayList<Tile> getPath()
   {
     return path;
   }
 
-  /*
+  /**
    * Wipes the information pertenent to the previous path finding search clean.
    * Leaves only the x,y coordinates and the tiletype.
+   * 
+   * @param house
+   *          our tile grid map
    */
   private void cleanVisitedList(Tile[][] house)
   {
@@ -93,13 +132,18 @@ public class Pathfinder
     }
   }
 
-  /*
+  /**
    * Valid moves are north, south, east, west. Given a node, check these four
    * locations. If the cost of a newfound node is greater than 15, discard it.
    * Else, if it either hasn't been found before or if the newCost is greater
    * than it's older cost, set it with the newCost and add it to the frontier.
    * 
    * If a path is found, set pathExists to true. Else, set it to false.
+   *
+   * @param targetPoint
+   *          the target/player's location
+   * @param house
+   *          our map
    */
   private void Dijkstra(Point targetPoint, Tile[][] house)
   {
