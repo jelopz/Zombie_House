@@ -918,7 +918,8 @@ public class Game extends Application
               }
               else
               {
-                // you beat the game.
+                  // you beat the game.
+                  System.exit(0);
               }
             }
             else
@@ -955,7 +956,8 @@ public class Game extends Application
               }
               else
               {
-                // you beat the game.
+                  // you beat the game.
+                  System.exit(0);
               }
             }
             else
@@ -991,7 +993,8 @@ public class Game extends Application
               }
               else
               {
-                // you beat the game.
+                  // you beat the game.
+                  System.exit(0);
               }
             }
             else
