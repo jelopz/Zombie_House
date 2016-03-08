@@ -1,8 +1,15 @@
+/*
+ * Hitbox class is used by the player and the zombies to determine if they are colliding against walls, zombies, or the player.
+ * Also used to determine if the player reaches the end point
+ * 
+ * The hitbox class itself consists of 8 points, for the invisible hexagonal hitbox surrounding zombies and the player.
+ * If any of these points hit something, a collision occurs and the player/zombie stops moving.
+ */
+
 package Hitbox;
 
 import RoomGenerator.HouseBuilder;
 import application.Game;
-import application.Xform;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -77,8 +84,8 @@ public class Hitbox
       for (int i = 0; i < 8; i++) // get what tile the point is on.
       {
 
-        x = (int) (points[i].z / Game.TILE_SIZE); //x
-        y = (int) (points[i].x / Game.TILE_SIZE); //y
+        x = (int) (points[i].z / Game.TILE_SIZE); // x
+        y = (int) (points[i].x / Game.TILE_SIZE); // y
 
         if (!house.isPointLegal(x, y)) // is that tile not a legal move?
         {
@@ -89,6 +96,9 @@ public class Hitbox
     return false;
   }
 
+  /*
+   * If any of the points has reached the end point tiles
+   */
   public boolean hasReachedGoal(HouseBuilder house)
   {
     int x, y;
