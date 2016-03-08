@@ -852,9 +852,9 @@ public class Game extends Application
 
     /** The current speed. */
     private double currentSpeed;
-    
+
     private double distance;
-    
+
     private boolean playerLost;
 
     /*
@@ -868,7 +868,7 @@ public class Game extends Application
       // temporarily changes the camera angle;
       if (running)
       {
-        
+
         if (isSprinting && stamina > 0)
         {
           currentSpeed = 2 * speed;
@@ -914,8 +914,8 @@ public class Game extends Application
               }
               else
               {
-                  // you beat the game.
-                  System.exit(0);
+                // you beat the game.
+                System.exit(0);
               }
             }
             else
@@ -963,8 +963,8 @@ public class Game extends Application
               }
               else
               {
-                  // you beat the game.
-                  System.exit(0);
+                // you beat the game.
+                System.exit(0);
               }
             }
             else
@@ -1011,8 +1011,8 @@ public class Game extends Application
               }
               else
               {
-                  // you beat the game.
-                  System.exit(0);
+                // you beat the game.
+                System.exit(0);
               }
             }
             else
@@ -1109,7 +1109,7 @@ public class Game extends Application
 
           last = System.currentTimeMillis();
         }
-        
+
         for (OurZombie z : zombies)
         {
           z.move(house);
@@ -1120,12 +1120,12 @@ public class Game extends Application
             playerLost = true;
           }
         }
-        
-        if(playerLost)
+
+        if (playerLost)
         {
           playerLost = false;
           resetMap();
-          
+
           if (debug)
           {
             camera.setTranslateZ(-1000);
