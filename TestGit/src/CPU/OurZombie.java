@@ -100,8 +100,6 @@ public class OurZombie
       // centers model to the tile when smelling player
       double z = Math.floor((model.getTranslateZ() / Game.TILE_SIZE)) * Game.TILE_SIZE;
       double x = Math.floor((model.getTranslateX() / Game.TILE_SIZE)) * Game.TILE_SIZE;
-      System.out.println("new Z : " + z + " " + z / 56);
-      System.out.println("new X : " + x + " " + x / 56);
 
       model.setTranslateZ(z);
       model.setTranslateX(x);
@@ -116,7 +114,6 @@ public class OurZombie
     }
     else if (!hasAngle) // linewalk default AI
     {
-      System.out.println("trying");
       findNextAngle(house);
       hasAngle = true;
     }
