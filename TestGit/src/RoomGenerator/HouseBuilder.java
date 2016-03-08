@@ -44,7 +44,7 @@ public class HouseBuilder
 
     for (int i = 0; i < 4; i++)
     {
-      partitionMap(i);
+      partitionQuadrant(i);
     }
 
     startQuadrant = makePlayerSpawnPoint();
@@ -64,56 +64,6 @@ public class HouseBuilder
     if (Game.debug)
     {
       printMap();
-    }
-  }
-
-  private void addObstacles()
-  {
-    boolean badspot = false;
-    int numObstacles = 0;
-    int x, y;
-
-    while (numObstacles < 12)
-    {
-      System.out.println(numObstacles);
-      int j = rand.nextInt(mapWidth-7) + 3;
-      int i = rand.nextInt(mapHeight-7) + 3;
-      // for (int i = 3; i < mapHeight - 4; i++)
-      // {
-      // for (int j = 3; j < mapWidth - 4; j++)
-      // {
-      if (house[i][j].getTileType() == '-')
-      {
-        for (int k = 1; k < 3; k++)
-        {
-          if (house[i - k][j].getTileType() != '-' || house[i + k][j].getTileType() != '-')
-          {
-            badspot = true;
-          }
-          if (house[i][j - k].getTileType() != '-' || house[i][j + k].getTileType() != '-')
-          {
-            badspot = true;
-          }
-          if (house[i - k][j - k].getTileType() != '-' || house[i + k][j + k].getTileType() != '-')
-          {
-            badspot = true;
-          }
-          if (house[i - k][j + k].getTileType() != '-' || house[i + k][j - k].getTileType() != '-')
-          {
-            badspot = true;
-          }
-        }
-
-        if (!badspot)
-        {
-          house[i][j].setTileType('X');
-          numObstacles++;
-        }
-      }
-      badspot = false;
-      // }
-      // }
-
     }
   }
 
@@ -213,7 +163,11 @@ public class HouseBuilder
     }
   }
 
-  private void partitionMap(int quadrant)
+  /*
+   * Given a quadrant chunk, a large room, split it up into multiple hallways
+   * and rooms
+   */
+  private void partitionQuadrant(int quadrant)
   {
     int startX = 0;
     int startY = 0;
@@ -251,6 +205,9 @@ public class HouseBuilder
     }
   }
 
+  /*
+   * Adds two doorways on a hallway, one on each long side.
+   */
   private void addDoorsToHall(int hallStartPoint, boolean isVertical, RoomCluster c)
   {
     if (!isVertical)
@@ -273,6 +230,59 @@ public class HouseBuilder
     }
   }
 
+  /*
+   * Randomly chooses points on the map. If the map is a room tile, check to see
+   * if there are any obstacles within 2 tiles of that point. If there is
+   * nothing, add an obstacle to that tile.
+   */
+  private void addObstacles()
+  {
+    boolean badspot = false;
+    int numObstacles = 0;
+    int x, y;
+
+    while (numObstacles < 12)
+    {
+      int j = rand.nextInt(mapWidth - 7) + 3;
+      int i = rand.nextInt(mapHeight - 7) + 3;
+
+      if (house[i][j].getTileType() == '-')
+      {
+        for (int k = 1; k < 3; k++)
+        {
+          if (house[i - k][j].getTileType() != '-' || house[i + k][j].getTileType() != '-')
+          {
+            badspot = true;
+          }
+          if (house[i][j - k].getTileType() != '-' || house[i][j + k].getTileType() != '-')
+          {
+            badspot = true;
+          }
+          if (house[i - k][j - k].getTileType() != '-' || house[i + k][j + k].getTileType() != '-')
+          {
+            badspot = true;
+          }
+          if (house[i - k][j + k].getTileType() != '-' || house[i + k][j - k].getTileType() != '-')
+          {
+            badspot = true;
+          }
+        }
+
+        if (!badspot)
+        {
+          house[i][j].setTileType('X');
+          numObstacles++;
+        }
+      }
+      badspot = false;
+    }
+  }
+
+  /*
+   * Given a cluster and a type of hallway(vertical or horizontal), if the
+   * cluster is large enough, the method splits the cluster with the type of
+   * hallway in a valid position.
+   */
   private void makeHall(RoomCluster c, boolean h)
   {
     if (!h)
@@ -356,6 +366,9 @@ public class HouseBuilder
 
   }
 
+  /*
+   * Marks the perimeter and split the four quadrants to four equal large rooms
+   */
   private void markQuadrants()
   {
 
@@ -374,6 +387,10 @@ public class HouseBuilder
     }
   }
 
+  /*
+   * Given a quadrant, it finds two adjacent points on an outer wall that is not
+   * obstructed by any walls in front of it and denotes it as the end point
+   */
   private void makeEndPoint(int endQuadrant)
   {
     Point quadrantStart = findQuadrantStartPoint(endQuadrant);
@@ -473,12 +490,14 @@ public class HouseBuilder
     }
   }
 
+  /*
+   * Given a quadrant, returns the point to the top-left corner tile, the
+   * starting tile.
+   */
   private Point findQuadrantStartPoint(int quadrant)
   {
     int startX = 0;
     int startY = 0;
-    int width = mapWidth / 2 - 1;
-    int height = mapHeight / 2 - 1;
 
     if (quadrant == 0)
     {
@@ -571,6 +590,10 @@ public class HouseBuilder
     return spawnQ;
   }
 
+  /*
+   * Initializes every tile in house[][] as a room tile, and decides if a zombie
+   * will spawn there.
+   */
   private void cleanMap()
   {
     for (int i = 0; i < mapHeight; i++)
@@ -596,7 +619,7 @@ public class HouseBuilder
     }
   }
 
-  private void printMap() // debug
+  private void printMap()
   {
     for (int i = 0; i < mapHeight; i++)
     {
@@ -606,10 +629,5 @@ public class HouseBuilder
       }
       System.out.println();
     }
-  }
-
-  public static void main(String[] args)
-  {
-    HouseBuilder rg = new HouseBuilder(51, 41);
   }
 }
