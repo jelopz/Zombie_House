@@ -263,8 +263,8 @@ public class OurZombie
     if (!currentPath.isEmpty())
     {
       currentTargetTile = currentPath.get(currentPath.size() - 1);
+      currentPath.remove(currentPath.size() - 1);
     }
-    currentPath.remove(currentPath.size() - 1);
     if (x == currentTargetTile.getX())
     {
       if (y < currentTargetTile.getY())
