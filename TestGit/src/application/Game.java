@@ -78,6 +78,8 @@ public class Game extends Application
   private final int MAP_HEIGHT = 51;
   private final int MAP_WIDTH = 41;
 
+  private int mapsBeaten;
+
   private double scaleVal = 1;
   private double sprint = 3;
   private double walk = 2;
@@ -603,7 +605,6 @@ public class Game extends Application
     buildStartMenu();
     startXform.setVisible(false);
     buildPauseMenu();
-
   }
 
   private void makeNewMap()
@@ -687,7 +688,6 @@ public class Game extends Application
 
   class MainGameLoop extends AnimationTimer
   {
-
     private long last = 0;
 
     public void handle(long now)
@@ -727,7 +727,15 @@ public class Game extends Application
           {
             if (playerHitbox.hasReachedGoal(house))
             {
-              makeNewMap();
+              mapsBeaten++;
+              if (mapsBeaten < 4)
+              {
+                makeNewMap();
+              }
+              else
+              {
+                // you beat the game.
+              }
             }
             else
             {
@@ -756,7 +764,15 @@ public class Game extends Application
           {
             if (playerHitbox.hasReachedGoal(house))
             {
-              makeNewMap();
+              mapsBeaten++;
+              if (mapsBeaten < 4)
+              {
+                makeNewMap();
+              }
+              else
+              {
+                // you beat the game.
+              }
             }
             else
             {
@@ -784,7 +800,15 @@ public class Game extends Application
           {
             if (playerHitbox.hasReachedGoal(house))
             {
-              makeNewMap();
+              mapsBeaten++;
+              if (mapsBeaten < 4)
+              {
+                makeNewMap();
+              }
+              else
+              {
+                // you beat the game.
+              }
             }
             else
             {
@@ -812,7 +836,15 @@ public class Game extends Application
           {
             if (playerHitbox.hasReachedGoal(house))
             {
-              makeNewMap();
+              mapsBeaten++;
+              if (mapsBeaten < 4)
+              {
+                makeNewMap();
+              }
+              else
+              {
+                // you beat the game.
+              }
             }
             else
             {
@@ -841,7 +873,7 @@ public class Game extends Application
           {
             z.determineNextMove(house, playerXform.t.getTz(), playerXform.t.getTx());
           }
-          
+
           last = System.currentTimeMillis();
         }
 
