@@ -22,16 +22,16 @@ package RoomGenerator;
 public class RoomCluster {
 
 	/** The top left most x value in the room cluster. */
-	public int x;
+	int x;
 
 	/** The top left most y value in the room cluster. */
-	public int y;
+	int y;
 
 	/** The width. */
-	public int width;
+	int width;
 
 	/** The height. */
-	public int height;
+	int height;
 
 	/**
 	 * Will the cluster recieve a horizontal or vertical hallway to partition
