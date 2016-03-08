@@ -916,9 +916,6 @@ public class Game extends Application
         {
           z.move(house);
         }
-        
-        System.out.println(stamina);
-
       }
     }
   }
