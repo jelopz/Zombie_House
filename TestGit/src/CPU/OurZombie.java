@@ -1,3 +1,12 @@
+/*
+ * Zombie AI class.
+ * 
+ * Each zombie is either of type RandomWalk or LineWalk, denoted by the isRandom boolean.
+ * 
+ * Each zombie behaves exactly the same when it smells the player. Differences only exist
+ * when the zombie is deciding when and where to move.
+ */
+
 package CPU;
 
 import java.awt.Point;
@@ -5,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import Hitbox.Hitbox;
-import Pathfinding.Path;
 import Pathfinding.Pathfinder;
 import RoomGenerator.HouseBuilder;
 import RoomGenerator.Tile;
@@ -23,13 +31,9 @@ public class OurZombie
   private boolean hasAngle;
   private Pathfinder pathfinder;
   private Tile currentTargetTile;
-
   private double translationZ, translationX;
-
   private ArrayList<Tile> currentPath;
-
   private double radius;
-
   private boolean isRandom;
 
   public OurZombie(Group m, boolean b)
@@ -45,28 +49,37 @@ public class OurZombie
     isRandom = b;
   }
 
-  private boolean zombieCollision(OurZombie z)
+  public Group getModel()
   {
-    double zDistance = z.model.getTranslateZ() - model.getTranslateZ();
-    double xDistance = z.model.getTranslateX() - model.getTranslateX();
-    zDistance *= zDistance;
-    xDistance *= xDistance;
-
-    double distance = Math.sqrt(zDistance + xDistance);
-
-    if (distance <= Game.TILE_SIZE / 2)
-    {
-      return true;
-    }
-
-    return false;
+    return model;
   }
 
+  /*
+   * First checks for the Euclidean distance between the zombie and the player.
+   * If it's within 15 tiles, we check to see if the player is within smell
+   * range. If the euclidean distance is greater than the zombie smell range, we
+   * know that it has no chance of it actually being in range to smell.
+   * 
+   * We use pathfinder to check to see if there is a path within the smell range
+   * to the player. If the zombie is within smell range, we set smellsPlayer to
+   * true.
+   * 
+   * If the zombie smells the player, it automatically moves to the center of
+   * it's current tile.
+   * 
+   * If the zombie is NOT within smell range, it proceeds with it's respective
+   * types standard AI.
+   * 
+   * A RandomWalk chooses a new heading every update.
+   * 
+   * A LineWalk chooses a new heading every update IF it has no current heading.
+   * Else, he continues on it's current heading.
+   */
   public void determineNextMove(HouseBuilder house, double playerZ, double playerX)
   {
     double zZ = model.getTranslateZ();
     double zX = model.getTranslateX();
-    double d = pathfinder.findEucl(playerZ, playerX, zZ, zX);
+    double d = Pathfinder.findEucl(playerZ, playerX, zZ, zX);
 
     smellsPlayer = false;
     currentPath = null;
@@ -119,34 +132,13 @@ public class OurZombie
     }
   }
 
-  private void chasePlayer(HouseBuilder house)
-  {
-    translationZ = model.getTranslateZ() + angleZ;
-    translationX = model.getTranslateX() + angleX;
-
-    hitbox.updateBoundaryPoints(translationZ, translationX);
-
-    if (!hitbox.isWallCollision(house))
-    {
-      for (OurZombie z : Game.zombies)
-      {
-        if ((!z.equals(this)) && zombieCollision(z))
-        {
-          isStuck = true;
-          model.setTranslateZ(translationZ - 2 * angleZ);
-          model.setTranslateX(translationX - 2 * angleX);
-        }
-      }
-
-      if (!isStuck)
-      {
-        model.setTranslateZ(translationZ);
-        model.setTranslateX(translationX);
-      }
-    }
-
-  }
-
+  /*
+   * If the zombie smells the player, the zombie chases the player.
+   * 
+   * Else,
+   * 
+   * The zombie follows it's current heading.
+   */
   public void move(HouseBuilder house)
   {
     if (smellsPlayer)
@@ -204,6 +196,65 @@ public class OurZombie
     }
   }
 
+  /*
+   * Checks to see if this zombie is colliding with the given zombie.
+   */
+  private boolean zombieCollision(OurZombie z)
+  {
+    double zDistance = z.model.getTranslateZ() - model.getTranslateZ();
+    double xDistance = z.model.getTranslateX() - model.getTranslateX();
+    zDistance *= zDistance;
+    xDistance *= xDistance;
+
+    double distance = Math.sqrt(zDistance + xDistance);
+
+    if (distance <= Game.TILE_SIZE / 2)
+    {
+      return true;
+    }
+
+    return false;
+  }
+
+  /*
+   * Using the currentPath variable given by the pathfinder, the zombie follows
+   * the path, tile to tile, that leads towards the player location.
+   */
+  private void chasePlayer(HouseBuilder house)
+  {
+    translationZ = model.getTranslateZ() + angleZ;
+    translationX = model.getTranslateX() + angleX;
+
+    hitbox.updateBoundaryPoints(translationZ, translationX);
+
+    if (!hitbox.isWallCollision(house))
+    {
+      for (OurZombie z : Game.zombies)
+      {
+        if ((!z.equals(this)) && zombieCollision(z))
+        {
+          isStuck = true;
+          model.setTranslateZ(translationZ - 2 * angleZ);
+          model.setTranslateX(translationX - 2 * angleX);
+        }
+      }
+
+      if (!isStuck)
+      {
+        model.setTranslateZ(translationZ);
+        model.setTranslateX(translationX);
+      }
+    }
+
+  }
+
+  /*
+   * Uses the Zombie's pathfinder to determine if there exists a path to the
+   * player within the smell range.
+   * 
+   * After calling this method, call pathfinder.doesPathExist() to determine if
+   * a path does or does not exist.
+   */
   private void smell(Tile[][] house, double playerZ, double playerX)
   {
     int sX = (int) (model.getTranslateZ() / Game.TILE_SIZE); // starting X tile
@@ -236,6 +287,9 @@ public class OurZombie
     pathfinder.init(new Point(sX, sY), new Point(tX, tY), house);
   }
 
+  /*
+   * Determines a heading randomly.
+   */
   private void findNextAngle(HouseBuilder house)
   {
     angleZ = rand.nextDouble();
@@ -255,6 +309,15 @@ public class OurZombie
 
   }
 
+  /*
+   * Used in conjunction with the chasePlayer method. Since a path is a list
+   * from tile to tile, once the zombie reaches a tile it needs the direction to
+   * the next one.
+   * 
+   * findNextPath removes the next tile in the path and sets it to
+   * currentTargetTile. if currentPath is empty, that means the zombie reached
+   * where it smelled the player in the last decision update.
+   */
   private void findNextPath(int x, int y)
   {
     if (!currentPath.isEmpty())
