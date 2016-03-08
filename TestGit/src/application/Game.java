@@ -32,6 +32,7 @@ import java.util.ArrayList;
 
 import CPU.OurZombie;
 import Hitbox.Hitbox;
+import Pathfinding.Pathfinder;
 import RoomGenerator.HouseBuilder;
 import RoomGenerator.Tile;
 import Sound.Clip;
@@ -364,8 +365,7 @@ public class Game extends Application
         startXform.setVisible(false);
         esc = false;
         mapXform.getChildren().clear();
-        MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions, debug,
-            world, mapXform, playerXform);
+        MG.drawMap(house, TILE_SIZE, WALL_HEIGHT, tiles, MAP_WIDTH, MAP_HEIGHT, zombies, first, esc, collisions, debug, world, mapXform, playerXform);
         first = false;
         running = true;
         if (debug)
@@ -903,7 +903,7 @@ public class Game extends Application
         {
           if (isSprinting)
           {
-            stamina -= ((System.currentTimeMillis() - last)/1000);
+            stamina -= ((System.currentTimeMillis() - last) / 1000);
             if (stamina < 0)
             {
               stamina = 0;
@@ -911,7 +911,7 @@ public class Game extends Application
           }
           else
           {
-            stamina += ((System.currentTimeMillis() - last)/1000);
+            stamina += ((System.currentTimeMillis() - last) / 1000);
             if (stamina > 5)
             {
               stamina = 5;
@@ -930,9 +930,15 @@ public class Game extends Application
           last = System.currentTimeMillis();
         }
 
+        double distance;
         for (OurZombie z : zombies)
         {
           z.move(house);
+          distance = Pathfinder.findEucl(playerXform.t.getTz(), playerXform.t.getTx(), z.getModel().getTranslateZ(), z.getModel().getTranslateX());
+          if (distance < TILE_SIZE / 2)
+          {
+            // You've been hit by the zombie!
+          }
         }
       }
     }
