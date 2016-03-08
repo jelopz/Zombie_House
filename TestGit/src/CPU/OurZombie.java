@@ -20,28 +20,73 @@ import RoomGenerator.Tile;
 import application.Game;
 import javafx.scene.Group;
 
+/**
+ * Zombie AI class.
+ * 
+ * Each zombie is either of type RandomWalk or LineWalk, denoted by the isRandom
+ * boolean.
+ * 
+ * Each zombie behaves exactly the same when it smells the player. Differences
+ * only exist when the zombie is deciding when and where to move.
+ */
 public class OurZombie
 {
+
+  /** The zombie's model. */
   private Group model;
+
+  /** The rand. */
   private static Random rand;
+
+  /** The zombie's hitbox. */
   private Hitbox hitbox;
-  private double angleZ, angleX;
+
+  /** The current heading for the Z axis */
+  private double angleZ;
+
+  /** The current heading for the X axis */
+  private double angleX;
+
+  /** Denotes if a zombie has run into a wall or another zombie */
   private boolean isStuck;
+
+  /** Does the zombie smell the player or not? */
   private boolean smellsPlayer;
+
+  /** Does the zombie currently have a header? */
   private boolean hasAngle;
+
+  /** The zombie's pathfinder to check to see if the zombie is in smell range */
   private Pathfinder pathfinder;
+
+  /** The current target tile. */
   private Tile currentTargetTile;
-  private double translationZ, translationX;
+
+  /** The model's next position on the Z axis */
+  private double translationZ;
+
+  /** The model's next position on the X axis */
+  private double translationX;
+
+  /** The current path to the player, if in smell range. */
   private ArrayList<Tile> currentPath;
-  private double radius;
+
+  /** Is the zombie a RandomWalk or LineWalk zombie? */
   private boolean isRandom;
 
+  /**
+   * Instantiates a new zombie.
+   *
+   * @param m
+   *          the zombie's model
+   * @param b
+   *          the boolean to denote if the zombie is of type RandomWalk or not
+   */
   public OurZombie(Group m, boolean b)
   {
     model = m;
     rand = new Random();
     hitbox = new Hitbox(model);
-    radius = Game.TILE_SIZE / 4;
     isStuck = false;
     smellsPlayer = false;
     hasAngle = false;
@@ -49,12 +94,17 @@ public class OurZombie
     isRandom = b;
   }
 
+  /**
+   * Gets the model.
+   *
+   * @return the model
+   */
   public Group getModel()
   {
     return model;
   }
 
-  /*
+  /**
    * First checks for the Euclidean distance between the zombie and the player.
    * If it's within 15 tiles, we check to see if the player is within smell
    * range. If the euclidean distance is greater than the zombie smell range, we
@@ -74,7 +124,15 @@ public class OurZombie
    * 
    * A LineWalk chooses a new heading every update IF it has no current heading.
    * Else, he continues on it's current heading.
+   *
+   * @param house
+   *          the house, the current map
+   * @param playerZ
+   *          the player's z coordinate
+   * @param playerX
+   *          the player's x coordinate
    */
+
   public void determineNextMove(HouseBuilder house, double playerZ, double playerX)
   {
     double zZ = model.getTranslateZ();
@@ -132,12 +190,15 @@ public class OurZombie
     }
   }
 
-  /*
+  /**
    * If the zombie smells the player, the zombie chases the player.
    * 
    * Else,
    * 
    * The zombie follows it's current heading.
+   *
+   * @param house
+   *          the house, the current map
    */
   public void move(HouseBuilder house)
   {
@@ -196,9 +257,15 @@ public class OurZombie
     }
   }
 
-  /*
-   * Checks to see if this zombie is colliding with the given zombie.
+  /**
+   * Checks to see if this zombie is colliding with the given zombie. If there
+   * is, both zombies test back so they don't get stuck inside eachother
+   *
+   * @param z
+   *          A zombie we are testing with this zombie.
+   * @return true, if a collision occurs.
    */
+
   private boolean zombieCollision(OurZombie z)
   {
     double zDistance = z.model.getTranslateZ() - model.getTranslateZ();
@@ -216,10 +283,14 @@ public class OurZombie
     return false;
   }
 
-  /*
+  /**
    * Using the currentPath variable given by the pathfinder, the zombie follows
    * the path, tile to tile, that leads towards the player location.
+   *
+   * @param house
+   *          the house, the current map
    */
+
   private void chasePlayer(HouseBuilder house)
   {
     translationZ = model.getTranslateZ() + angleZ;
@@ -248,12 +319,19 @@ public class OurZombie
 
   }
 
-  /*
+  /**
    * Uses the Zombie's pathfinder to determine if there exists a path to the
    * player within the smell range.
    * 
    * After calling this method, call pathfinder.doesPathExist() to determine if
    * a path does or does not exist.
+   *
+   * @param house
+   *          the house, the current map
+   * @param playerZ
+   *          the player's current z coordinate
+   * @param playerX
+   *          the player's current x coordinate
    */
   private void smell(Tile[][] house, double playerZ, double playerX)
   {
@@ -287,8 +365,11 @@ public class OurZombie
     pathfinder.init(new Point(sX, sY), new Point(tX, tY), house);
   }
 
-  /*
+  /**
    * Determines a heading randomly.
+   *
+   * @param house
+   *          the house, the current map
    */
   private void findNextAngle(HouseBuilder house)
   {
@@ -309,7 +390,7 @@ public class OurZombie
 
   }
 
-  /*
+  /**
    * Used in conjunction with the chasePlayer method. Since a path is a list
    * from tile to tile, once the zombie reaches a tile it needs the direction to
    * the next one.
@@ -317,6 +398,11 @@ public class OurZombie
    * findNextPath removes the next tile in the path and sets it to
    * currentTargetTile. if currentPath is empty, that means the zombie reached
    * where it smelled the player in the last decision update.
+   *
+   * @param x
+   *          the model's current x coordinate
+   * @param y
+   *          the model's current y coordinate
    */
   private void findNextPath(int x, int y)
   {

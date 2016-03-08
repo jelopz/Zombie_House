@@ -1,4 +1,4 @@
-/*
+/**
  * Hitbox class is used by the player and the zombies to determine if they are colliding against walls, zombies, or the player.
  * Also used to determine if the player reaches the end point
  * 
@@ -15,34 +15,62 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 
+/**
+ * Hitbox class is used by the player and the zombies to determine if they are
+ * colliding against walls, zombies, or the player. Also used to determine if
+ * the player reaches the end point
+ * 
+ * The hitbox class itself consists of 8 points, for the invisible hexagonal
+ * hitbox surrounding zombies and the player. If any of these points hit
+ * something, a collision occurs and the player/zombie stops moving.
+ */
 public class Hitbox
 {
-  private Point[] points; // The 8 points on the octogon shaped hitbox
 
+  /** The 8 points on the octogon shaped hitbox */
+  private Point[] points;
+
+  /**
+   * Instantiates a new hitbox.
+   *
+   * @param xform
+   *          the xform to add the hitbox to.
+   */
   public Hitbox(Group xform)
   {
     points = new Point[8];
     generateHitbox(xform, Game.debug);
   }
 
-  /*
-   * Returns the point from the given index. Does not test for an index out of
-   * bounds anywhere in any class
+  /**
+   * Returns the point from the given index.
+   *
+   * @param i
+   *          one of the 8 points that surround the hitbox.
+   * @return the point, if it is a valid index, else, returns null.
    */
+
   public Point getPoint(int i)
   {
-    return points[i];
+    if (i >= 0 && i <= 7)
+    {
+      return points[i];
+    }
+    return null;
   }
 
-  /*
+  /**
    * Updates the 8 points on the collision detecting octogon based on the
    * players location
+   *
+   * @param nextZ
+   *          the next Z position on the map for the model.
+   * @param nextX
+   *          the next X position on the map for the model
    */
+
   public void updateBoundaryPoints(double nextZ, double nextX)
   {
-
-    // updates the points on the octogon
-
     // I tried to simplify this further but apparently I don't know
     // how to do algebra and broke it so I'm leaving it like this
     // for now
@@ -72,33 +100,40 @@ public class Hitbox
     points[7].z = (nextZ + Game.TILE_SIZE / 4 + (Game.TILE_SIZE / 2));
   }
 
-  /*
+  /**
    * Takes a look at each point on the octogon and determines what tile it's on.
    * it then checks to see if that tile is a legal tile to be on.
+   *
+   * @param house
+   *          the house
+   * @return true, if a point on the hitbox is colliding with a wall
    */
   public boolean isWallCollision(HouseBuilder house)
   {
-    if (Game.collisions)
+    int x, y;
+    for (int i = 0; i < 8; i++) // get what tile the point is on.
     {
-      int x, y;
-      for (int i = 0; i < 8; i++) // get what tile the point is on.
+
+      x = (int) (points[i].z / Game.TILE_SIZE); // x
+      y = (int) (points[i].x / Game.TILE_SIZE); // y
+
+      if (!house.isPointLegal(x, y)) // is that tile not a legal move?
       {
-
-        x = (int) (points[i].z / Game.TILE_SIZE); // x
-        y = (int) (points[i].x / Game.TILE_SIZE); // y
-
-        if (!house.isPointLegal(x, y)) // is that tile not a legal move?
-        {
-          return true; // the point is colliding with something
-        }
+        return true; // the point is colliding with something
       }
     }
+
     return false;
   }
 
-  /*
-   * If any of the points has reached the end point tiles
+  /**
+   * Checks if any of the points has reached the end point tile
+   *
+   * @param house
+   *          Our current house/map
+   * @return true, if a point has reached the end point
    */
+
   public boolean hasReachedGoal(HouseBuilder house)
   {
     int x, y;
@@ -116,14 +151,20 @@ public class Hitbox
     return false;
   }
 
-  /*
+  /**
    * Generates a set of 8 points in the shape of an octogon to create a hitbox
    * for the player. A valid move is defined as a location where none of these 8
    * points are on a Wall tile.
    * 
    * Passing in the appropriate xform is only necessary for creating the
    * graphical representation of the hitbox
+   *
+   * @param xform
+   *          the xform we are giving a hitbox
+   * @param debug
+   *          debug variable for testing purposes
    */
+
   private void generateHitbox(Group xform, boolean debug)
   {
     double z = 0;

@@ -59,87 +59,182 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
+/**
+ * The Main Game class. Handle's all the player controls as well as the main
+ * game loop
+ */
 public class Game extends Application
 {
+
+  /** Initializes in debug mode of true */
   public static boolean debug = true;
 
-  public static final double TILE_SIZE = 56; // number of subdivisions in
-  // tile
+  /** number of subdivisions in tile */
+  public static final double TILE_SIZE = 56;
 
+  /** number of subdivisions in Wall height */
   public static final double WALL_HEIGHT = 64;
+
+  /** The Constant CAMERA_INITIAL_DISTANCE. */
   private static final double CAMERA_INITIAL_DISTANCE = 0;
+
+  /** The Constant CAMERA_INITIAL_X_ANGLE. */
   private static final double CAMERA_INITIAL_X_ANGLE = 0;
+
+  /** The Constant CAMERA_INITIAL_Y_ANGLE. */
   private static final double CAMERA_INITIAL_Y_ANGLE = 0;
+
+  /** The Constant CAMERA_NEAR_CLIP. */
   private static final double CAMERA_NEAR_CLIP = 0.1;
+
+  /** The Constant CAMERA_FAR_CLIP. */
   private static final double CAMERA_FAR_CLIP = 10000.0;
+
+  /** Variable to regulate how fast the mouse moves across screen */
   private static final double MOUSE_SPEED = 0.1;
+
+  /** Variable to regulate how fast the camera rotates */
   private static final double ROTATION_SPEED = 2.0;
+
+  /** The Constant TRACK_SPEED. */
   private static final double TRACK_SPEED = 0.3;
 
+  /** The value for the height of the 2D represented map */
   private final int MAP_HEIGHT = 51;
+
+  /** The value for the width of the 2D represented map */
   private final int MAP_WIDTH = 41;
 
+  /** The number of levels beaten. Used to keep track when game is over */
   private int mapsBeaten;
 
+  /** Player stamina */
   private double stamina;
+
+  /**
+   * Boolean to denote if the player is sprinting or not. If on and stamina is
+   * >0, player speed is double
+   */
   private boolean isSprinting;
 
+  /** The scale val. */
   private double scaleVal = 1;
-  // private double sprint = 4;
-  // private double walk = 2;
+
+  /** The default player speed */
   private double speed = 2;
+
+  /** The default non-fullscreen window width. */
   private double windowX = 1024;
+
+  /** The default non-fullscreen window height. */
   private double windowY = 768;
+
+  /** The mouse's x position. */
   private double mousePosX;
+
+  /** The mouse's y position */
   private double mousePosY;
+
+  /** The mouse's previous x position. */
   private double mouseOldX;
+
+  /** The mouse's previous y position */
   private double mouseOldY;
+
+  /** The change in the mouse's x position */
   private double mouseDeltaX;
+
+  /** The change in the mouse's y position */
   private double mouseDeltaY;
 
+  /** The root. */
   private final Group root = new Group();
 
+  /** The world. */
   private final Xform world = new Xform();
+
+  /** The pause screen xform. */
   private final Xform pauseXform = new Xform();
+
+  /** The start screen xform. */
   private final Xform startXform = new Xform();
+
+  /** The camera xform. */
   private final Xform cameraXform = new Xform();
+
+  /** The camera xform2. */
   private final Xform cameraXform2 = new Xform();
+
+  /** The camera xform3. */
   private final Xform cameraXform3 = new Xform();
+
+  /** The player xform. */
   private final Xform playerXform = new Xform();
+
+  /** The map xform. */
   private final Xform mapXform = new Xform();
 
+  /** The camera. */
   private final PerspectiveCamera camera = new PerspectiveCamera(true);
 
+  /** The light. */
   private final PointLight light = new PointLight(Color.WHITE);
 
-  public static ArrayList<OurZombie> zombies; // List of Zombies
+  /** The list of all the zombies on the current map */
+  public static ArrayList<OurZombie> zombies;
 
+  /** The map generator */
   private static final MapGen MG = new MapGen();
 
-  private HouseBuilder house; // Our House
-  public static Point endPointTile;
+  /** The house/Our current map. */
+  private HouseBuilder house;
 
+  /** The scene. */
   private Scene theScene;
 
+  /** The player hitbox. */
   private Hitbox playerHitbox;
 
+  /** The 2D array of tiles acquired from the Housebuilder */
   private Tile[][] tiles;
 
+  /** Boolean to denote if the esc key is pressed */
   private boolean esc = false;
-  private boolean first = true;
-  private boolean front = false;
-  private boolean back = false;
-  private boolean left = false;
-  private boolean right = false;
-  private boolean running = true;
-  private boolean holdMouse = true;
-  public static boolean collisions = true; // made static for debugging
 
+  /** The first. */
+  private boolean first = true;
+
+  /** Boolean to denote if the player is currently moving forward */
+  private boolean front = false;
+
+  /** Boolean to denote if the player is currently moving backward */
+  private boolean back = false;
+
+  /** Boolean to denote if the player is currently moving left */
+  private boolean left = false;
+
+  /** Boolean to denote if the player is currently moving right */
+  private boolean right = false;
+
+  /** Boolean to denote if the application is running or paused */
+  private boolean running = true;
+
+  /** The hold mouse. */
+  private boolean holdMouse = true;
+
+  /** The collisions. */
+  private boolean collisions = true;
+
+  /** The walk clip. */
   private Clip walkClip;
+
+  /** The run clip. Currently unused */
   private Clip runClip;
 
-  // private URL url = new URL("step.wav");
-
+  /**
+   * Builds the camera. Placed high above the map if debug mode is on, else, set
+   * at the correct height on the player spawn
+   */
   private void buildCamera()
   {
 
@@ -167,6 +262,9 @@ public class Game extends Application
     cameraXform.setTranslateY(WALL_HEIGHT / 2);
   }
 
+  /**
+   * Builds the start menu.
+   */
   private void buildStartMenu()
   {
     Text l1 = new Text("Start Game");
@@ -196,6 +294,9 @@ public class Game extends Application
 
   }
 
+  /**
+   * Builds the pause menu.
+   */
   private void buildPauseMenu()
   {
     Text l1 = new Text("Retry");
@@ -223,7 +324,8 @@ public class Game extends Application
   }
 
   /**
-   * 
+   * Builds the light then adds the light to the cameraXform so the camera and
+   * the light move together
    */
   private void buildLight()
   {
@@ -245,6 +347,14 @@ public class Game extends Application
 
   }
 
+  /**
+   * Handle mouse.
+   *
+   * @param scene
+   *          the scene
+   * @param root
+   *          the root
+   */
   private void handleMouse(Scene scene, final Node root)
   {
 
@@ -450,12 +560,15 @@ public class Game extends Application
 
   }
 
-  /*
+  /**
    * Allows you to look up and down. The light doesn't follow but since being
    * able to look up and down isn't required it doesn't matter. Nice for
    * maneuvering around the map in it's current state.
    * 
    * Doesn't allow you to "fly." You're walking on the ground looking around.
+   *
+   * @param modifier
+   *          the modifier
    */
   private void handleUpDownRotation(double modifier)
   {
@@ -464,6 +577,15 @@ public class Game extends Application
     cameraXform.rx.setAngle(cameraXform.rx.getAngle() + mouseDeltaY * MOUSE_SPEED * modifier * ROTATION_SPEED);
   }
 
+  /**
+   * Handle's keyboard input. WASD moves player. Esc key pauses. R "unlock" the
+   * mouse cursor
+   *
+   * @param scene
+   *          the scene
+   * @param worldXform
+   *          the world xform
+   */
   private void handleKeyboard(Scene scene, final Xform worldXform)
   {
 
@@ -502,19 +624,6 @@ public class Game extends Application
             cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
             running = true;
           }
-        }
-        // pressing F12 resets the game with new Map, Zombies, and player
-        // location
-        if (event.getCode() == KeyCode.F12)
-        {
-
-          makeNewMap();
-        }
-        // pressing F11 resets the game with same Map, Zombies, and player
-        // location
-        if (event.getCode() == KeyCode.F11)
-        {
-          resetMap();
         }
         if (event.isShiftDown())// adds to the player movement speed
         {
@@ -594,6 +703,9 @@ public class Game extends Application
     });
   }
 
+  /**
+   * Initialize the sound clips
+   */
   private void makeSoundClips()
   {
     try
@@ -607,6 +719,9 @@ public class Game extends Application
     }
   }
 
+  /**
+   * Reset's the map.
+   */
   private void resetMap()
   {
     startXform.getChildren().clear();
@@ -634,6 +749,9 @@ public class Game extends Application
     buildPauseMenu();
   }
 
+  /**
+   * Make's a new map and starts the new stage.
+   */
   private void makeNewMap()
   {
     startXform.getChildren().clear();
@@ -667,6 +785,11 @@ public class Game extends Application
 
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see javafx.application.Application#start(javafx.stage.Stage)
+   */
   @Override
   public void start(Stage primaryStage) throws Exception
   {
@@ -708,6 +831,7 @@ public class Game extends Application
 
     primaryStage.setTitle("Zombie House");
     primaryStage.setScene(theScene);
+    primaryStage.setFullScreen(true);
     primaryStage.show();
 
     AnimationTimer gameLoop = new MainGameLoop();
@@ -715,11 +839,40 @@ public class Game extends Application
 
   }
 
+  /**
+   * The Class MainGameLoop.
+   * 
+   * For each direction, before updating the player position, we take where the
+   * player would move, update the 8 collision detecting points to be in that
+   * position, and then test to see if either of those points are found ontop of
+   * a wall tile. If any of them are, the player does not move to that spot.
+   * Else, if none of them are, we update the players position to that position.
+   * 
+   * If the shift button is down and the stamina meter isn't completely
+   * depleted, the player moves twice as fast and the stamina value is depleted
+   * equal to the time the shift button is spent down. While the palyer is not
+   * sprinting, the stamina value is increased equal to the time spent not
+   * sprinting. The value can not go below 0 or above 5.
+   * 
+   * Every 2 seconds, the zombie determines its next move. For every frame,
+   * though, the zombie is moving based on what it determines every 2 seconds.
+   * 
+   * If the zombie and player collide, the map resets.
+   */
   class MainGameLoop extends AnimationTimer
   {
+
+    /** The last. */
     private long last = 0;
+
+    /** The current speed. */
     private double currentSpeed;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javafx.animation.AnimationTimer#handle(long)
+     */
     public void handle(long now)
     {
       // pressing esc key changes this boolean, effectively pauses the game and
@@ -739,17 +892,6 @@ public class Game extends Application
         double cos = Math.cos(Math.toRadians(cameraXform.ry.getAngle()));
         double sin = Math.sin(Math.toRadians(cameraXform.ry.getAngle()));
         /* Moves the camera around the world */
-
-        // For each direction, before updating the player position, we take
-        // where
-        // the player would move, update the 8 collision detecting points to be
-        // in
-        // that position, and then test to see if either of those points are
-        // found
-        // ontop of a wall tile. If any of them are, the player does not move to
-        // that spot. Else, if none of them are, we update the players position
-        // to
-        // that position.
 
         if (back)
         {
@@ -938,12 +1080,19 @@ public class Game extends Application
           if (distance < TILE_SIZE / 2)
           {
             // You've been hit by the zombie!
+            resetMap();
           }
         }
       }
     }
   }
 
+  /**
+   * The main method.
+   *
+   * @param args
+   *          the arguments
+   */
   public static void main(String[] args)
   {
     launch(args);

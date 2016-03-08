@@ -1,4 +1,4 @@
-/*
+/**
  * Performs the Djikstra path finding algorithm given a 2D Array of Tiles.
  */
 
@@ -17,7 +17,7 @@ import RoomGenerator.TileComparator;
 import application.Game;
 
 /**
- * The Class Pathfinder.
+ * Performs the Djikstra path finding algorithm given a 2D Array of Tiles.
  */
 public class Pathfinder
 {

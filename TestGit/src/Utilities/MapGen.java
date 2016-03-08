@@ -27,9 +27,31 @@ import javafx.scene.shape.Box;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.DrawMode;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class MapGen.
+ */
 public class MapGen
 {
 
+  /**
+   * Draw map.
+   *
+   * @param house the house
+   * @param TILE_SIZE the tile size
+   * @param WALL_HEIGHT the wall height
+   * @param tiles the tiles
+   * @param mapW the map w
+   * @param mapH the map h
+   * @param zombies the zombies
+   * @param first the first
+   * @param esc the esc
+   * @param collisions the collisions
+   * @param debug the debug
+   * @param world the world
+   * @param mapXform the map xform
+   * @param playerXform the player xform
+   */
   public void drawMap(HouseBuilder house, double TILE_SIZE, double WALL_HEIGHT, Tile[][] tiles, int mapW, int mapH, ArrayList<OurZombie> zombies, boolean first, boolean esc, boolean collisions, boolean debug, Xform world, Xform mapXform, Xform playerXform)
   {
 
@@ -154,7 +176,6 @@ public class MapGen
 
           tile.setTranslateY(0.5);
           tile.setMaterial(pathable);
-          Game.endPointTile = new Point(j, i);
         }
         else if (tiles[i][j].getTileType() == 'P')
         {

@@ -20,10 +20,21 @@ import javafx.scene.shape.Mesh;
 import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Rotate;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ZombieBuilder.
+ */
 public class ZombieBuilder
 {
+  
+  /** The Constant MODEL_SCALE_FACTOR. */
   private static final double MODEL_SCALE_FACTOR = 1;
 
+  /**
+   * Load mesh views.
+   *
+   * @return the mesh view[]
+   */
   static MeshView[] loadMeshViews()
   {
     // load file
@@ -46,6 +57,15 @@ public class ZombieBuilder
     { new MeshView(mesh) };
   }
 
+  /**
+   * Gets the zombie.
+   *
+   * @param i the i
+   * @param j the j
+   * @param TILE_SIZE the tile size
+   * @param zombieType the zombie type
+   * @return the zombie
+   */
   public static Group getZombie(int i, int j, double TILE_SIZE, char zombieType)
   {
     PhongMaterial zombieMaterial;
