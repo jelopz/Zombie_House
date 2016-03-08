@@ -104,10 +104,8 @@ public class MapGen
           ceiling.setTranslateZ(j * TILE_SIZE);
           ceiling.setMaterial(bricks);
         }
-        if (tiles[i][j].getTileType() == '-' || tiles[i][j].getTileType() == 'H' || tiles[i][j].getTileType() == 'D')// make
-                                                                                                                     // a
-                                                                                                                     // floor
-                                                                                                                     // tile
+        // Make a floor tile
+        if (tiles[i][j].getTileType() == '-' || tiles[i][j].getTileType() == 'H' || tiles[i][j].getTileType() == 'D')
         {
           if (!debug)
           {
@@ -141,7 +139,7 @@ public class MapGen
             }
             else
             {
-                tile.setMaterial(greenBricks);
+              tile.setMaterial(greenBricks);
             }
           }
 

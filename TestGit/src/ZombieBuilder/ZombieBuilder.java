@@ -26,7 +26,7 @@ public class ZombieBuilder
 
   static MeshView[] loadMeshViews()
   {
-    //load file
+    // load file
     URL in = Game.class.getResource("Zombie.stl");
     File file = null;
     try
@@ -37,33 +37,34 @@ public class ZombieBuilder
     {
       e.printStackTrace();
     }
-    //imports as triangle mesh
+    // imports as triangle mesh
     StlMeshImporter importer = new StlMeshImporter();
     importer.read(file);
     Mesh mesh = importer.getImport();
 
-    return new MeshView[] { new MeshView(mesh) };
+    return new MeshView[]
+    { new MeshView(mesh) };
   }
 
   public static Group getZombie(int i, int j, double TILE_SIZE, char zombieType)
   {
-	PhongMaterial zombieMaterial;
+    PhongMaterial zombieMaterial;
     MeshView[] meshViews = loadMeshViews();
     for (int t = 0; t < meshViews.length; t++)
     {
-      meshViews[t].setTranslateX(i);
-      meshViews[t].setTranslateZ(j);
-      meshViews[t].setTranslateY(.5);
+      meshViews[t].setTranslateX(3 * TILE_SIZE / 4);
+      // meshViews[t].setTranslateZ(j - TILE_SIZE/2);
+      // meshViews[t].setTranslateY(.5);
       meshViews[t].setScaleX(MODEL_SCALE_FACTOR);
       meshViews[t].setScaleY(MODEL_SCALE_FACTOR);
       meshViews[t].setScaleZ(MODEL_SCALE_FACTOR);
 
-      if(zombieType == 'R')
+      if (zombieType == 'R')
       {
         zombieMaterial = new PhongMaterial(Color.DARKGREEN);
         zombieMaterial.setSpecularColor(Color.LIGHTGREEN);
       }
-      else //zombieType == 'L'
+      else // zombieType == 'L'
       {
         zombieMaterial = new PhongMaterial(Color.DARKRED);
         zombieMaterial.setSpecularColor(Color.RED);
@@ -73,7 +74,7 @@ public class ZombieBuilder
 
       meshViews[t].getTransforms().setAll(new Rotate(90, Rotate.X_AXIS));
     }
-   
-    return  new Group(meshViews);
+
+    return new Group(meshViews);
   }
 }
