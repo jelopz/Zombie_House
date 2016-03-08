@@ -200,11 +200,11 @@ public class MapGen
 
             if (tiles[i][j].getTileType() == 'R')
             {
-              zombies.add(new OurZombie(j, i, zomb));
+              zombies.add(new OurZombie(j, i, zomb, true));
             }
             else // tiles[i][j] == 'L'
             {
-              zombies.add(new OurZombie(j, i, zomb));
+              zombies.add(new OurZombie(j, i, zomb, true));
             }
             zomb.setTranslateX(i * TILE_SIZE);
             zomb.setTranslateZ(j * TILE_SIZE);
