@@ -6,8 +6,6 @@ package RoomGenerator;
 
 import java.util.ArrayList;
 
-import Pathfinding.Path;
-
 public class Tile
 {
   private int x;

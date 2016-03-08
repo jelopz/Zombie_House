@@ -1,3 +1,19 @@
+/*
+ * RoomGenerator class for the main application. Creates a procedurally generated map
+ * consisting of tiles stored in a 2D array of Tiles. The map is completely space filled.
+ * 
+ * 
+ * Given a width and height, HouseBuilder builds a map with these dimensions of a large room.
+ * At each tile, a zombie has a chance to spawn there. Then, HouseBuilder partitions the map into 4 quadrants.
+ * In these four quadrants we are left with 4 large chunks of rooms. Per quadrant, we start placing
+ * hallways (and doors for these hallways), splitting each quadrant up into hallways and rooms randomly.
+ * Once done, we add the player spawn point in a randomly selected quadrant and add the end point in
+ * the quadrant counter clockwise to the player spawn. Then, from the player spawn, we make doorways from quadrant
+ * to quadrant going clockwise.
+ * 
+ * Thus, a player must traverse through each quadrant to reach the end point.
+ */
+
 package RoomGenerator;
 
 import java.awt.Point;
@@ -525,7 +541,10 @@ public class HouseBuilder
 
   /*
    * Randomly chooses 1 of the 4 quadrants, and denotes a spawn in any point in
-   * a hallway
+   * a hallway.
+   * 
+   * Returns the quadrant the player spawned in and sets playerSpawnPoint to the
+   * appropriate point.
    */
   private int makePlayerSpawnPoint()
   {
@@ -619,6 +638,9 @@ public class HouseBuilder
     }
   }
 
+  /*
+   * For debugging and testing purposes, prints the map by each char tileType
+   */
   private void printMap()
   {
     for (int i = 0; i < mapHeight; i++)
