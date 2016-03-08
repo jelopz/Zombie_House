@@ -59,9 +59,61 @@ public class HouseBuilder
 
     connectQuadrants(startQuadrant);
 
+    addObstacles();
+
     if (Game.debug)
     {
       printMap();
+    }
+  }
+
+  private void addObstacles()
+  {
+    boolean badspot = false;
+    int numObstacles = 0;
+    int x, y;
+
+    while (numObstacles < 12)
+    {
+      System.out.println(numObstacles);
+      int j = rand.nextInt(mapWidth-7) + 3;
+      int i = rand.nextInt(mapHeight-7) + 3;
+      // for (int i = 3; i < mapHeight - 4; i++)
+      // {
+      // for (int j = 3; j < mapWidth - 4; j++)
+      // {
+      if (house[i][j].getTileType() == '-')
+      {
+        for (int k = 1; k < 3; k++)
+        {
+          if (house[i - k][j].getTileType() != '-' || house[i + k][j].getTileType() != '-')
+          {
+            badspot = true;
+          }
+          if (house[i][j - k].getTileType() != '-' || house[i][j + k].getTileType() != '-')
+          {
+            badspot = true;
+          }
+          if (house[i - k][j - k].getTileType() != '-' || house[i + k][j + k].getTileType() != '-')
+          {
+            badspot = true;
+          }
+          if (house[i - k][j + k].getTileType() != '-' || house[i + k][j - k].getTileType() != '-')
+          {
+            badspot = true;
+          }
+        }
+
+        if (!badspot)
+        {
+          house[i][j].setTileType('X');
+          numObstacles++;
+        }
+      }
+      badspot = false;
+      // }
+      // }
+
     }
   }
 
@@ -343,15 +395,8 @@ public class HouseBuilder
           {
             if (rand.nextDouble() < .3)
             {
-              if (house[1][i].getTileType() != 'X' && house[1][i + 1].getTileType() != 'X') // checks
-                                                                                            // to
-                                                                                            // make
-                                                                                            // sure
-                                                                                            // exit
-                                                                                            // isn't
-                                                                                            // behind
-                                                                                            // a
-                                                                                            // wall.
+              // Checks to make sure exit isn't behind a wall
+              if (house[1][i].getTileType() != 'X' && house[1][i + 1].getTileType() != 'X')
               {
                 house[0][i].setTileType('E');
                 house[0][i + 1].setTileType('E');
