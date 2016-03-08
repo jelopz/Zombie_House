@@ -841,12 +841,9 @@ public class Game extends Application
           {
             z.determineNextMove(house, playerXform.t.getTz(), playerXform.t.getTx());
           }
-          // zombies.get(0).determineNextMove(house, playerXform.t.getTz(),
-          // playerXform.t.getTx());
+          
           last = System.currentTimeMillis();
         }
-
-        zombies.get(0).move(house);
 
         for (OurZombie z : zombies)
         {

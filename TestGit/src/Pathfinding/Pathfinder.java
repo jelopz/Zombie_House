@@ -184,17 +184,8 @@ public class Pathfinder
 
     if (found)
     {
-      // currentNode.printParents();
       currentNode.printPath(path);
 
-      if (Game.debug)
-      {
-        for (Tile q : path)
-        {
-          System.out.print("( " + q.getX() + " , " + q.getY() + " ) , ");
-        }
-        System.out.println();
-      }
       pathExists = true;
     }
     else
