@@ -14,7 +14,6 @@ import javafx.scene.Group;
 
 public class OurZombie
 {
-  private final Point spawnPoint; // (x,y) coordinate of spawn Point
   private Group model;
   private static Random rand;
   private Hitbox hitbox;
@@ -33,9 +32,8 @@ public class OurZombie
 
   private boolean isRandom;
 
-  public OurZombie(int x, int y, Group m, boolean b)
+  public OurZombie(Group m, boolean b)
   {
-    spawnPoint = new Point(x, y);
     model = m;
     rand = new Random();
     hitbox = new Hitbox(model);
@@ -69,7 +67,7 @@ public class OurZombie
     double zZ = model.getTranslateZ();
     double zX = model.getTranslateX();
     double d = pathfinder.findEucl(playerZ, playerX, zZ, zX);
-    
+
     smellsPlayer = false;
     currentPath = null;
 
@@ -83,7 +81,7 @@ public class OurZombie
         currentPath = pathfinder.getPath();
         if (Game.debug)
         {
-          System.out.println("CLOSE ENOUGH TO SMELL  green " + this);
+          System.out.println("CLOSE ENOUGH TO SMELL green " + this);
         }
       }
     }
@@ -107,14 +105,20 @@ public class OurZombie
 
       model.setTranslateZ(z);
       model.setTranslateX(x);
-      
-      findNextPath((int)(z/56), (int)(x/56));
+
+      findNextPath((int) (z / 56), (int) (x / 56));
       isStuck = false;
     }
-    else
+    else if (isRandom) // randomWalk default AI
     {
       findNextAngle(house);
       isStuck = false;
+    }
+    else if (!hasAngle) // linewalk default AI
+    {
+      System.out.println("trying");
+      findNextAngle(house);
+      hasAngle = true;
     }
   }
 
@@ -122,7 +126,7 @@ public class OurZombie
   {
     translationZ = model.getTranslateZ() + angleZ;
     translationX = model.getTranslateX() + angleX;
-    
+
     for (OurZombie z : Game.zombies)
     {
       if ((!z.equals(this)) && zombieCollision(z))
@@ -132,13 +136,13 @@ public class OurZombie
         model.setTranslateX(translationX - 2 * angleX);
       }
     }
-    
+
     if (!isStuck)
     {
       model.setTranslateZ(translationZ);
       model.setTranslateX(translationX);
     }
-    
+
   }
 
   public void move(HouseBuilder house)
@@ -162,17 +166,38 @@ public class OurZombie
         {
           if ((!z.equals(this)) && zombieCollision(z))
           {
-            isStuck = true;
+            if (isRandom)
+            {
+              isStuck = true;
+            }
+            else
+            {
+              hasAngle = false;
+            }
             model.setTranslateZ(translationZ - 2 * angleZ);
             model.setTranslateX(translationX - 2 * angleX);
           }
         }
-
-        if (!isStuck)
+        if (isRandom)
         {
-          model.setTranslateZ(translationZ);
-          model.setTranslateX(translationX);
+          if (!isStuck)
+          {
+            model.setTranslateZ(translationZ);
+            model.setTranslateX(translationX);
+          }
         }
+        else
+        {
+          if (hasAngle)
+          {
+            model.setTranslateZ(translationZ);
+            model.setTranslateX(translationX);
+          }
+        }
+      }
+      else
+      {
+        hasAngle = false;
       }
     }
   }
@@ -185,19 +210,19 @@ public class OurZombie
     int tX = (int) (playerZ / Game.TILE_SIZE); // target X tile
     int tY = (int) (playerX / Game.TILE_SIZE); // target Y tile
 
-    if(tX == 0)
+    if (tX == 0)
     {
       tX = 1;
     }
-    else if(tY == 0)
+    else if (tY == 0)
     {
       tY = 1;
     }
-    else if(tX == 49)
+    else if (tX == 49)
     {
       tX = 48;
     }
-    else if(tY == 49)
+    else if (tY == 49)
     {
       tY = 48;
     }
@@ -225,15 +250,13 @@ public class OurZombie
     {
       angleX = -1 * angleX;
     }
+
   }
-  
+
   private void findNextPath(int x, int y)
   {
-    currentTargetTile = currentPath.get(currentPath.size()-1);
-    currentPath.remove(currentPath.size()-1);
-    System.out.println("---------");
-    System.out.println(x + " " + y + " .... targettile:  " + currentTargetTile.getX() + " " + currentTargetTile.getY());
-    System.out.println("---------");
+    currentTargetTile = currentPath.get(currentPath.size() - 1);
+    currentPath.remove(currentPath.size() - 1);
     if (x == currentTargetTile.getX())
     {
       if (y < currentTargetTile.getY())
