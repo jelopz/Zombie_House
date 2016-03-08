@@ -260,7 +260,10 @@ public class OurZombie
 
   private void findNextPath(int x, int y)
   {
-    currentTargetTile = currentPath.get(currentPath.size() - 1);
+    if (!currentPath.isEmpty())
+    {
+      currentTargetTile = currentPath.get(currentPath.size() - 1);
+    }
     currentPath.remove(currentPath.size() - 1);
     if (x == currentTargetTile.getX())
     {
