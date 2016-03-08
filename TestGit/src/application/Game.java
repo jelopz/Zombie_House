@@ -80,10 +80,13 @@ public class Game extends Application
 
   private int mapsBeaten;
 
+  private double stamina;
+  private boolean isSprinting;
+
   private double scaleVal = 1;
-  private double sprint = 3;
-  private double walk = 2;
-  private double speed = 1;
+  // private double sprint = 4;
+  // private double walk = 2;
+  private double speed = 2;
   private double windowX = 1024;
   private double windowY = 768;
   private double mousePosX;
@@ -495,15 +498,17 @@ public class Game extends Application
         {
           resetMap();
         }
-        if (event.isControlDown())// does nothing right now
-        {
-        }
         if (event.isShiftDown())// adds to the player movement speed
         {
-          speed = sprint;
+          if (stamina > 0)
+          {
+            isSprinting = true;
+          }
         }
         else
-          speed = walk;
+        {
+          isSprinting = false;
+        }
 
         if (event.getCode() == KeyCode.W)
         {
@@ -540,11 +545,14 @@ public class Game extends Application
       {
         if (event.isShiftDown())// adds to the player movement speed
         {
-          speed = sprint;
+          if (stamina > 0)
+          {
+            isSprinting = true;
+          }
         }
         else
         {
-          speed = walk;
+          isSprinting = false;
         }
         if (event.getCode() == KeyCode.W)
         {
@@ -593,6 +601,7 @@ public class Game extends Application
     mapXform.getChildren().clear();
     root.getChildren().clear();
     zombies.clear();
+    stamina = 5;
 
     root.getChildren().add(world);
     esc = false;
@@ -619,6 +628,8 @@ public class Game extends Application
     mapXform.getChildren().clear();
     mapXform.getChildren().clear();
     root.getChildren().clear();
+    zombies.clear();
+    stamina = 5;
 
     esc = false;
     first = true;
@@ -689,6 +700,7 @@ public class Game extends Application
   class MainGameLoop extends AnimationTimer
   {
     private long last = 0;
+    private double currentSpeed;
 
     public void handle(long now)
     {
@@ -696,7 +708,14 @@ public class Game extends Application
       // temporarily changes the camera angle;
       if (running)
       {
-
+        if (isSprinting && stamina > 0)
+        {
+          currentSpeed = 2 * speed;
+        }
+        else
+        {
+          currentSpeed = speed;
+        }
         double nextX, nextZ;
 
         double cos = Math.cos(Math.toRadians(cameraXform.ry.getAngle()));
@@ -716,8 +735,8 @@ public class Game extends Application
 
         if (back)
         {
-          nextZ = playerXform.t.getTz() - (speed * cos);
-          nextX = playerXform.t.getTx() - (speed * sin);
+          nextZ = playerXform.t.getTz() - (currentSpeed * cos);
+          nextX = playerXform.t.getTx() - (currentSpeed * sin);
 
           // sets the boundary points for the nextMove
           playerHitbox.updateBoundaryPoints(nextZ, nextX);
@@ -745,8 +764,8 @@ public class Game extends Application
               }
 
               // Update coordinates
-              cameraXform.t.setX(cameraXform.t.getTx() - (speed * sin));
-              cameraXform.t.setZ(cameraXform.t.getTz() - (speed * cos));
+              cameraXform.t.setX(cameraXform.t.getTx() - (currentSpeed * sin));
+              cameraXform.t.setZ(cameraXform.t.getTz() - (currentSpeed * cos));
 
               playerXform.t.setX(nextX);
               playerXform.t.setZ(nextZ);
@@ -756,8 +775,8 @@ public class Game extends Application
 
         if (front)
         {
-          nextZ = playerXform.t.getTz() + (speed * cos);
-          nextX = playerXform.t.getTx() + (speed * sin);
+          nextZ = playerXform.t.getTz() + (currentSpeed * cos);
+          nextX = playerXform.t.getTx() + (currentSpeed * sin);
           playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
           if (!playerHitbox.isWallCollision(house))
@@ -781,8 +800,8 @@ public class Game extends Application
                 walkClip.setLoop();
               }
 
-              cameraXform.t.setX(cameraXform.t.getTx() + (speed * sin));
-              cameraXform.t.setZ(cameraXform.t.getTz() + (speed * cos));
+              cameraXform.t.setX(cameraXform.t.getTx() + (currentSpeed * sin));
+              cameraXform.t.setZ(cameraXform.t.getTz() + (currentSpeed * cos));
 
               playerXform.t.setX(nextX);
               playerXform.t.setZ(nextZ);
@@ -792,8 +811,8 @@ public class Game extends Application
 
         if (right)
         {
-          nextZ = playerXform.t.getTz() + (speed * sin);
-          nextX = playerXform.t.getTx() - (speed * cos);
+          nextZ = playerXform.t.getTz() + (currentSpeed * sin);
+          nextX = playerXform.t.getTx() - (currentSpeed * cos);
           playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
           if (!playerHitbox.isWallCollision(house))
@@ -817,8 +836,8 @@ public class Game extends Application
                 walkClip.setLoop();
               }
 
-              cameraXform.t.setX(cameraXform.t.getTx() - (speed * cos));
-              cameraXform.t.setZ(cameraXform.t.getTz() + (speed * sin));
+              cameraXform.t.setX(cameraXform.t.getTx() - (currentSpeed * cos));
+              cameraXform.t.setZ(cameraXform.t.getTz() + (currentSpeed * sin));
 
               playerXform.t.setX(nextX);
               playerXform.t.setZ(nextZ);
@@ -828,8 +847,8 @@ public class Game extends Application
 
         if (left)
         {
-          nextZ = playerXform.t.getTz() - (speed * sin);
-          nextX = playerXform.t.getTx() + (speed * cos);
+          nextZ = playerXform.t.getTz() - (currentSpeed * sin);
+          nextX = playerXform.t.getTx() + (currentSpeed * cos);
           playerHitbox.updateBoundaryPoints(nextZ, nextX);
 
           if (!playerHitbox.isWallCollision(house))
@@ -853,8 +872,8 @@ public class Game extends Application
                 walkClip.setLoop();
               }
 
-              cameraXform.t.setX(cameraXform.t.getTx() + (speed * cos));
-              cameraXform.t.setZ(cameraXform.t.getTz() - (speed * sin));
+              cameraXform.t.setX(cameraXform.t.getTx() + (currentSpeed * cos));
+              cameraXform.t.setZ(cameraXform.t.getTz() - (currentSpeed * sin));
 
               playerXform.t.setX(nextX);
               playerXform.t.setZ(nextZ);
@@ -864,6 +883,22 @@ public class Game extends Application
 
         if ((System.currentTimeMillis() - last) > 2000)
         {
+          if (isSprinting)
+          {
+            stamina -= ((System.currentTimeMillis() - last)/1000);
+            if (stamina < 0)
+            {
+              stamina = 0;
+            }
+          }
+          else
+          {
+            stamina += ((System.currentTimeMillis() - last)/1000);
+            if (stamina > 5)
+            {
+              stamina = 5;
+            }
+          }
           if (debug)
           {
             System.out.println("------- new -----");
@@ -881,6 +916,8 @@ public class Game extends Application
         {
           z.move(house);
         }
+        
+        System.out.println(stamina);
 
       }
     }
